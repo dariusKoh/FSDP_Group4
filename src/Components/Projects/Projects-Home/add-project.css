@@ -1,0 +1,27 @@
+.AddProject{
+    border: 1px solid #a7a7a7;
+    width: 200px;
+    height: 250px;
+    border-radius: 10px;
+    padding: 5px 5px 15px 5px;
+}
+
+.preview{
+    width: 180px;
+    height: 180px;
+    position: relative;
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 1px solid; 
+    border-color: inherit;
+}
+
+.projName{
+    text-align: center;
+    font-weight: 600;
+}
+
+.AddProject:hover{
+    border-color: #86bfff;
+}

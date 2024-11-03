@@ -1,0 +1,36 @@
+.sideList{
+    height: 100%;
+    position: fixed;
+    left: 0;
+    width: max(15vw, 200px);
+    padding-top: 100px;
+    border-right: 2px solid #a7a7a7;
+}
+
+.active{
+    background-color: rgba(20,240,20,0.4);
+    padding: 10px 0 10px 10px;  
+    font-size: 24px;
+    animation: select 0.2s linear 0s 1;
+}
+
+.listItem{
+    padding: 5px 0 5px 3px;
+    font-size: 20px;
+    animation: deselect 0.2s linear 0s 1;
+}
+
+@keyframes select{
+    0% {padding: 5px 0 5px 3px;
+        font-size: 20px;}
+    100% {padding: 10px 0 10px 10px;
+        font-size: 24px;}
+}
+
+@keyframes deselect{
+    0%{padding: 10px 0 10px 10px;
+        font-size: 24px;}
+    100%{padding: 5px 0 5px 3px;
+        font-size: 20px;
+    }
+}

@@ -6,8 +6,9 @@ import Typed from "typed.js";
 import { useEffect, useRef } from "react";
 
 export default function ErrorPage() {
-    const error = useRouteError();
-    console.error(error);
+    const error = useRouteError() || "Nothing";
+    console.log("Redirecting to error");
+    console.error(error || "No error detected");
 
     const el = useRef(null);
     useEffect(

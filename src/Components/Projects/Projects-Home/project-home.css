@@ -1,0 +1,18 @@
+.projectHome{
+    margin-left: max(15vw, 200px);
+    position: absolute;
+    padding-left: 5px;
+    top: 100px;
+    width: 100%;
+}
+
+.mainHead{
+    font-size: 48px;
+}
+
+.myDesc{
+    font-size: 18px;
+    font-weight: 400;
+    font-style: italic;
+}
+
