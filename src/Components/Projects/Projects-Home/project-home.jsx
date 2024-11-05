@@ -1,7 +1,6 @@
 import React from "react";
 import { useRouteError } from "react-router-dom";
 import './project-home.css';
-import { Fragment } from "react";
 import { useEffect, useRef } from "react";
 import Typed from "typed.js";
 import MyProjects from "./my-projects";
@@ -22,11 +21,17 @@ export default function ProjectHome(projects){
         },
         []
     );
-
+    // From API get projects, split into projects type
+    let sharedProjects = ["MyGuy", "Yes"]
+    let allProjects = projects.concat(sharedProjects);
     return(
         <section className="projectHome">
             <span className="mainHead" ref={el} />
-            {MyProjects(projects)}
+            {MyProjects(projects,true,"My Projects","View your projects here.")}
+            <div className="divider"></div>
+            {MyProjects(sharedProjects,false,"Shared With You","Projects shared with you.")}
+            <div className="divider"></div>
+            {MyProjects(allProjects,true,"All projects","Every project you every had.")}
         </section>
     );
 }   

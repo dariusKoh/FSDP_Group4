@@ -9,7 +9,7 @@
 
 body {
     overflow-y: scroll; /* Enable vertical scrolling */
-    background: url('./assets/white_background_smooth.jpg')no-repeat;
+    background: url('./assets/white_background_smooth.jpg');
     background-size: cover;
     background-position: center;
     min-height: 100vh;
