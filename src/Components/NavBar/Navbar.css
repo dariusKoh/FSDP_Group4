@@ -8,8 +8,9 @@
     justify-content: space-between;
     background-color: white;
     align-items: center;
-    z-index: 100;
+    z-index: 2;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Drop shadow */
+    height: max(100px,5vw);
 }
 .header::before {
     content: '';
