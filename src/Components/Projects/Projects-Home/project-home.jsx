@@ -1,37 +1,53 @@
-import React from "react";
-import { useRouteError } from "react-router-dom";
-import './project-home.css';
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import Typed from "typed.js";
 import MyProjects from "./my-projects";
+import './project-home.css';
 
-export default function ProjectHome(projects){
+export default function ProjectHome({ projects }) {
     const el = useRef(null);
-    useEffect(
-        ()=>{
-            const typed = new Typed(el.current,{
-                strings: ["Projects","Projects Home"],
-                startDelay: 300,
-                typeSpeed: 100,
-                backSpeed: 150,
-                backDelay: 200,
-                loop: false,
-                showCursor:false
-            });
-        },
-        []
-    );
-    // From API get projects, split into projects type
-    let sharedProjects = ["MyGuy", "Yes"]
-    let allProjects = projects.concat(sharedProjects);
-    return(
+
+    useEffect(() => {
+        const typed = new Typed(el.current, {
+            strings: ["Projects", "Projects Home"],
+            startDelay: 300,
+            typeSpeed: 100,
+            backSpeed: 150,
+            backDelay: 200,
+            loop: false,
+            showCursor: false
+        });
+        return () => {
+            typed.destroy(); // Clean up Typed instance
+        };
+    }, []);
+
+    // Example shared projects (replace with data from API as needed)
+    const sharedProjects = ["MyGuy", "Yes"];
+    const allProjects = [...projects, ...sharedProjects];
+
+    return (
         <section className="projectHome">
             <span className="mainHead" ref={el} />
-            {MyProjects(projects,true,"My Projects","View your projects here.")}
+            <MyProjects 
+                projects={projects} 
+                add={true} 
+                title="My Projects" 
+                desc="View your projects here." 
+            />
             <div className="divider"></div>
-            {MyProjects(sharedProjects,false,"Shared With You","Projects shared with you.")}
+            <MyProjects 
+                projects={sharedProjects} 
+                add={false} 
+                title="Shared With You" 
+                desc="Projects shared with you." 
+            />
             <div className="divider"></div>
-            {MyProjects(allProjects,true,"All projects","Every project you every had.")}
+            <MyProjects 
+                projects={allProjects} 
+                add={true} 
+                title="All Projects" 
+                desc="Every project you ever had." 
+            />
         </section>
     );
-}   
+}

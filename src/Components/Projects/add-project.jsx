@@ -2,23 +2,26 @@ import Card from 'react-bootstrap/Card';
 import "./add-project.css";
 import addProjImg from '../../assets/add-project.png';
 import defaultImg from "../../assets/white_background_smooth.jpg";
-import CreateProject from './create-project.jsx';
 
-function AddProject(name,icon,key,lastOpened) {
-  if (name == null){
+function AddProject({ name, icon, id, lastOpened, onClick }) {
+  const handleClick = () => {
+    onClick(id);  // Pass the `id` prop when clicking
+  };
+
+  if (name == null) {
     return (
-      <Card className='AddProject' key={key} onClick={()=>{
-        CreateProject(key)}}>
-        <Card.Img className='preview' variant="top" src={addProjImg} draggable="false" select/>
+      <Card className='AddProject' onClick={handleClick}>
+        <Card.Img className='preview' variant="top" src={addProjImg} draggable="false" />
         <Card.Body>
           <Card.Title className='projName'>Add New Project</Card.Title>
         </Card.Body>
       </Card>
     );
   }
+
   return (
-    <Card className='AddProject' key={key}>
-      <Card.Img className='preview' variant="top" src={icon || defaultImg} draggable="false"/>
+    <Card className='AddProject' onClick={handleClick}>
+      <Card.Img className='preview' variant="top" src={icon || defaultImg} draggable="false" />
       <Card.Body>
         <Card.Title className='projName'>{name}</Card.Title>
         <div className='lastOpen'>Last opened: {lastOpened}</div>
@@ -28,5 +31,4 @@ function AddProject(name,icon,key,lastOpened) {
 }
 
 export default AddProject;
-
 

@@ -1,53 +1,53 @@
-import React from "react";
-import { useRouteError } from "react-router-dom";
-import './project-home.css';
-import { useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import AddProject from "../add-project";
+import CreateProject from "../create-project";
 
-export default function MyProjects(projects,add,title,desc){
-    const scrollContainerRef =useRef(null);
+export default function MyProjects({ projects, add, title, desc }) {
+  const scrollContainerRef = useRef(null);
+  const [selectedProject, setSelectedProject] = useState(null);
 
-    useEffect(()=>{
-        // Handle horizontal scrolling on mouse wheel
-        const handleScroll = (event) => {
-            event.preventDefault(); // Prevent vertical scrolling
-            scrollContainerRef.current.scrollLeft += event.deltaY; // Scroll horizontally
-        };
+  useEffect(() => {
+    const handleScroll = (event) => {
+      event.preventDefault();
+      scrollContainerRef.current.scrollLeft += event.deltaY;
+    };
+    const scrollContainer = scrollContainerRef.current;
+    scrollContainer.addEventListener('wheel', handleScroll);
 
-        // Add wheel event listener to scroll container
-        const scrollContainer = scrollContainerRef.current;
-        scrollContainer.addEventListener('wheel', handleScroll);
+    return () => {
+      scrollContainer.removeEventListener('wheel', handleScroll);
+    };
+  }, []);
 
-        return()=>{
-            scrollContainer.removeEventListener('wheel', handleScroll); // Clean up event listener
-        }
-    })
-    if (projects == null){
-        return (
-            <>
-                <h1>{title}</h1>
-                <h2 className="myDesc">You currently have no projects here!</h2>
-                {add ? AddProject(null,null) : null}
-            </>
-        )
-    }
-    else{
-        let len = projects.length;
-        return (
-            <>
-                <h1>{title}</h1>
-                <h2 className="myDesc">{desc}</h2>
-                <section className="projContainer" ref={scrollContainerRef}>
-                    <div className="projList">
-                    {
-                        projects.map((project) => AddProject(project,null,project,"29/08/2006"))
-                    }
-                    {
-                        add ? AddProject(null,null, len) : null
-                    }
-                    </div>
-                </section>
-            </>
-        )
-    }
+  const handleCardClick = (id) => {
+    setSelectedProject(id);
+  };
+
+  const handleCloseCreateProject = () => {
+    setSelectedProject(null); // Close the CreateProject component
+  };
+
+  return (
+    <>
+      <h1>{title}</h1>
+      <h2 className="myDesc">{desc}</h2>
+      <section className="projContainer" ref={scrollContainerRef}>
+        <div className="projList">
+          {projects.map((project, index) => (
+            <AddProject
+              key={index}
+              id={index}
+              name={project}
+              onClick={handleCardClick}
+            />
+          ))}
+          {add && <AddProject name={null} id="add" onClick={handleCardClick} />}
+        </div>
+      </section>
+
+      {selectedProject !== null && selectedProject == "add" && (
+        <CreateProject projCount={projects.length} onClose={handleCloseCreateProject} />
+      )}
+    </>
+  );
 }

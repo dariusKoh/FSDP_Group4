@@ -43,7 +43,7 @@ export default function ErrorPage() {
             <p className="mainDesc">Hey, we're so sorry that an unexpected error has occurred. Maybe <i>try something else</i>?</p>
             <p>If you're struggling with solving this issue, report this error to our staff.</p>
             <p className="errorMessage">
-                <i>{error.data || error.message}</i>
+                <i>{error.data || error.message || "No idea what caused this."}</i>
             </p>    
             <button className="returnBtn" onClick={function(){history.back()}}>Back</button>
             </div>
