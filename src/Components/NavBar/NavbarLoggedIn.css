@@ -25,6 +25,7 @@
     display: flex;
     align-items: center;
 }
+
 .logo-image {
     width: 150px;  /* Adjust the width as needed */
     height: auto;
@@ -35,7 +36,6 @@
     color: rgb(0, 0, 0);
     font-weight: 500;
     margin-left: 40px;
-    text-decoration: none;
 }
 .navbar a::before{
     content: '';
@@ -49,11 +49,4 @@
 }
 .navbar a:hover::before{
     width: 100%;
-}
-.navbar .login-link {
-    color: red !important;
-}
-
-.navbar .login-link::before {
-    background-color: red !important;
 }

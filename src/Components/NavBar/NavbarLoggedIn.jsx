@@ -1,7 +1,7 @@
 import React from "react";
-import './Navbar.css'
+import './NavbarLoggedIn.css'
 
-const Navbar = () => {
+const NavbarLoggedIn = () => {
     return(
         <header className="header" >
             <a href="/" className="logo">
@@ -9,14 +9,13 @@ const Navbar = () => {
             </a>
 
             <nav className="navbar">
-                <a href="/">Home</a>
-                <a href="projects">Product</a>
-                <a href="tests">Status</a>
+                <a href="/">My Projects</a>
+                <a href="projects">Servers</a>
+                <a href="tests">Help</a>
                 <a href="/">Credits</a>
-                <a href="/" className="login-link">Login</a>
             </nav>
             
         </header>
     )
 }
-export default Navbar
+export default NavbarLoggedIn
