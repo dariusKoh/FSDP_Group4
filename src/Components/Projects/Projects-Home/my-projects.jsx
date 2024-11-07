@@ -26,7 +26,16 @@ export default function MyProjects({ projects, add, title, desc }) {
   const handleCloseCreateProject = () => {
     setSelectedProject(null); // Close the CreateProject component
   };
-
+  console.log("Projects = "+projects.length)
+  if (projects == []){
+    console.log("No proj.");
+    return (
+      <>
+      <h1>{title}</h1>
+      <h2 className="myDesc">Nothing here.</h2>
+      </>
+    )
+  }
   return (
     <>
       <h1>{title}</h1>

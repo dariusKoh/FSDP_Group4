@@ -6,11 +6,19 @@
     padding-top: 100px;
     border-right: 2px solid #a7a7a7;
     z-index: 1;
-    background-color: #ffeaea;
+    background-color: #ffffff;
+}
+
+.listItem:hover{
+    background-color: rgba(255, 100, 100, 1);
+    padding: 10px 0 10px 10px;  
+    font-size: 24px;
+    animation: select 0.2s linear 0s 1;
+    color: #ffffff;
 }
 
 .active{
-    background-color: rgba(20,240,20,0.4);
+    background-color: rgba(255, 11, 11, 0.8);
     padding: 10px 0 10px 10px;  
     font-size: 24px;
     animation: select 0.2s linear 0s 1;

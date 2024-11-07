@@ -22,7 +22,7 @@ export default function ProjectHome({ projects }) {
     }, []);
 
     // Example shared projects (replace with data from API as needed)
-    const sharedProjects = ["MyGuy", "Yes"];
+    const sharedProjects = [];
     const allProjects = [...projects, ...sharedProjects];
 
     return (

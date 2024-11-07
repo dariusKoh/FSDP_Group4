@@ -6,7 +6,8 @@ import Typed from "typed.js";
 import { useEffect, useRef } from "react";
 
 export default function ErrorPage() {
-    const error = useRouteError() || "Nothing";
+    const error = useRouteError();
+    console.log(error == null)
     console.log("Redirecting to error");
     console.error(error || "No error detected");
 
@@ -14,7 +15,7 @@ export default function ErrorPage() {
     useEffect(
         ()=>{
             const typed = new Typed(el.current,{
-                strings: [error.status.toString() , error.status.toString() + " " + (error.statusText || error.message)],
+                strings: [error.status.toString() || "No idea what" , (error.status.toString() + " " + (error.statusText || error.message)) || "Try checking logs"],
                 startDelay: 300,
                 typeSpeed: 100,
                 backSpeed: 150,

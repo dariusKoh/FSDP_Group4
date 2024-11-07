@@ -28,7 +28,7 @@
     animation: onHover 0.2s linear 0s 1;
     box-shadow: 3px 3px #a7a7a7;
     transform: translate(-3px, 3px);
-    border-color: #86bfff;
+    border-color: #ff8686;
 }
 
 .preview {

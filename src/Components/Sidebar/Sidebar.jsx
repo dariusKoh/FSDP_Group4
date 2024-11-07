@@ -7,7 +7,7 @@ function Sidebar(base){
     base ? items = ["Home", "Projects", "View Cases", "Edit Cases","Run Tests","Config"] : items = ["Home","Projects","Guide","Account"];
     let icons = [];
 
-    const [selectedIndex,setSelectedIndex] = useState(-1);
+    const [selectedIndex,setSelectedIndex] = useState(0);
 
     return(
         <>
