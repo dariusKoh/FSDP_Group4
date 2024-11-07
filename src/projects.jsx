@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import Navbar from "./Components/NavBar/Navbar";
+import NavbarLoggedIn from "./Components/NavBar/NavbarLoggedIn";
 import Sidebar from "./Components/Sidebar/Sidebar";
 import ProjectHome from "./Components/Projects/Projects-Home/project-home";
 
@@ -8,9 +8,9 @@ export default function ProjectPage() {
 
     return (
         <Fragment>
-            <Navbar />
+            <NavbarLoggedIn />
             <Sidebar showSidebar={true} />
-            <ProjectHome projects={projects} />
+            {/* <ProjectHome projects={projects} /> */}
         </Fragment>
     );
 }

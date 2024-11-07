@@ -10,37 +10,37 @@
 }
 
 .listItem:hover{
-    background-color: rgba(255, 100, 100, 1);
+    background-color: rgb(251, 135, 135);
     padding: 10px 0 10px 10px;  
     font-size: 24px;
     animation: select 0.2s linear 0s 1;
-    color: #ffffff;
 }
 
 .active{
-    background-color: rgba(255, 11, 11, 0.8);
+    background-color: rgba(255, 0, 0, 0.8);
+    color: #ffffff;
     padding: 10px 0 10px 10px;  
-    font-size: 24px;
+    font-size: 20px;
     animation: select 0.2s linear 0s 1;
 }
 
 .listItem{
     padding: 5px 0 5px 3px;
-    font-size: 20px;
+    font-size: 16px;
     animation: deselect 0.2s linear 0s 1;
 }
 
 @keyframes select{
     0% {padding: 5px 0 5px 3px;
-        font-size: 20px;}
+        font-size: 18px;}
     100% {padding: 10px 0 10px 10px;
-        font-size: 24px;}
+        font-size: 20px;}
 }
 
 @keyframes deselect{
     0%{padding: 10px 0 10px 10px;
-        font-size: 24px;}
+        font-size: 20px;}
     100%{padding: 5px 0 5px 3px;
-        font-size: 20px;
+        font-size: 18px;
     }
 }

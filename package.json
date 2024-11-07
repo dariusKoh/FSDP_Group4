@@ -19,7 +19,9 @@
     "vite": "^5.4.10"
   },
   "dependencies": {
+    "chart.js": "^4.4.6",
     "react-bootstrap": "^2.10.5",
+    "react-chartjs-2": "^5.2.0",
     "react-router-dom": "^6.27.0",
     "typed.js": "^2.1.0"
   }

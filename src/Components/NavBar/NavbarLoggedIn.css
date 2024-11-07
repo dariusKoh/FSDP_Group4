@@ -50,3 +50,10 @@
 .navbar a:hover::before{
     width: 100%;
 }
+.navbar .logout-link {
+    color: red !important;
+}
+
+.navbar .logout-link::before {
+    background-color: red !important;
+}

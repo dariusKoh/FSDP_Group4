@@ -13,6 +13,7 @@ const NavbarLoggedIn = () => {
                 <a href="projects">Servers</a>
                 <a href="tests">Help</a>
                 <a href="/">Credits</a>
+                <a href="logout" className="logout-link">Logout</a>
             </nav>
             
         </header>
