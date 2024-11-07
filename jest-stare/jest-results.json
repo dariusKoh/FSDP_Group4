@@ -1,0 +1,99 @@
+{
+  "numFailedTestSuites": 1,
+  "numFailedTests": 1,
+  "numPassedTestSuites": 0,
+  "numPassedTests": 1,
+  "numPendingTestSuites": 0,
+  "numPendingTests": 0,
+  "numRuntimeErrorTestSuites": 0,
+  "numTodoTests": 0,
+  "numTotalTestSuites": 1,
+  "numTotalTests": 2,
+  "openHandles": [],
+  "snapshot": {
+    "added": 0,
+    "didUpdate": false,
+    "failure": false,
+    "filesAdded": 0,
+    "filesRemoved": 0,
+    "filesRemovedList": [],
+    "filesUnmatched": 0,
+    "filesUpdated": 0,
+    "matched": 0,
+    "total": 0,
+    "unchecked": 0,
+    "uncheckedKeysByFile": [],
+    "unmatched": 0,
+    "updated": 0
+  },
+  "startTime": 1730965961207,
+  "success": false,
+  "testResults": [
+    {
+      "leaks": false,
+      "numFailingTests": 1,
+      "numPassingTests": 1,
+      "numPendingTests": 0,
+      "numTodoTests": 0,
+      "openHandles": [],
+      "perfStats": {
+        "end": 1730965966820,
+        "runtime": 5513,
+        "slow": true,
+        "start": 1730965961307
+      },
+      "skipped": false,
+      "snapshot": {
+        "added": 0,
+        "fileDeleted": false,
+        "matched": 0,
+        "unchecked": 0,
+        "uncheckedKeys": [],
+        "unmatched": 0,
+        "updated": 0
+      },
+      "testFilePath": "C:\\Users\\ifccJ\\OneDrive\\Desktop\\Poly\\YEAR2\\FSDP\\FSDP_Group4\\tests\\chrome.test.js",
+      "testResults": [
+        {
+          "ancestorTitles": [
+            "Test if Wikipedia's home page's title is correct"
+          ],
+          "duration": 139,
+          "failureDetails": [],
+          "failureMessages": [],
+          "fullName": "Test if Wikipedia's home page's title is correct test",
+          "invocations": 1,
+          "location": null,
+          "numPassingAsserts": 1,
+          "retryReasons": [],
+          "status": "passed",
+          "title": "test"
+        },
+        {
+          "ancestorTitles": [
+            "Test if able to perform basic authentication"
+          ],
+          "duration": 132,
+          "failureDetails": [
+            {
+              "name": "NoSuchElementError",
+              "remoteStacktrace": "#0 0x55da2561013a <unknown>\n#1 0x55da2512b460 <unknown>\n#2 0x55da25177f96 <unknown>\n#3 0x55da25178221 <unknown>\n#4 0x55da251bd5d4 <unknown>\n#5 0x55da2519c03d <unknown>\n#6 0x55da251baaf6 <unknown>\n#7 0x55da2519bdb3 <unknown>\n#8 0x55da2516ac10 <unknown>\n#9 0x55da2516bbee <unknown>\n#10 0x55da255dc3cb <unknown>\n#11 0x55da255e0368 <unknown>\n#12 0x55da255c9eec <unknown>\n#13 0x55da255e0ee7 <unknown>\n#14 0x55da255af13f <unknown>\n#15 0x55da255fe858 <unknown>\n#16 0x55da255fea20 <unknown>\n#17 0x55da2560efb6 <unknown>\n#18 0x7fb50c507a94 <unknown>\n#19 0x7fb50c594c3c <unknown>\n"
+            }
+          ],
+          "failureMessages": [
+            "NoSuchElementError: no such element: Unable to locate element: {\"method\":\"css selector\",\"selector\":\"p\"}\n  (Session info: chrome=130.0.6723.91)\n    at Object.throwDecodedError (C:\\Users\\ifccJ\\OneDrive\\Desktop\\Poly\\YEAR2\\FSDP\\FSDP_Group4\\node_modules\\selenium-webdriver\\lib\\error.js:521:15)\n    at parseHttpResponse (C:\\Users\\ifccJ\\OneDrive\\Desktop\\Poly\\YEAR2\\FSDP\\FSDP_Group4\\node_modules\\selenium-webdriver\\lib\\http.js:514:13)\n    at Executor.execute (C:\\Users\\ifccJ\\OneDrive\\Desktop\\Poly\\YEAR2\\FSDP\\FSDP_Group4\\node_modules\\selenium-webdriver\\lib\\http.js:446:28)\n    at processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at thenableWebDriverProxy.execute (C:\\Users\\ifccJ\\OneDrive\\Desktop\\Poly\\YEAR2\\FSDP\\FSDP_Group4\\node_modules\\selenium-webdriver\\lib\\webdriver.js:744:17)\n    at Object.<anonymous> (C:\\Users\\ifccJ\\OneDrive\\Desktop\\Poly\\YEAR2\\FSDP\\FSDP_Group4\\tests\\chrome.test.js:56:27)"
+          ],
+          "fullName": "Test if able to perform basic authentication test",
+          "invocations": 1,
+          "location": null,
+          "numPassingAsserts": 0,
+          "retryReasons": [],
+          "status": "failed",
+          "title": "test"
+        }
+      ],
+      "failureMessage": "\u001b[1m\u001b[31m  \u001b[1m● \u001b[22m\u001b[1mTest if able to perform basic authentication › test\u001b[39m\u001b[22m\n\n    NoSuchElementError: no such element: Unable to locate element: {\"method\":\"css selector\",\"selector\":\"p\"}\n      (Session info: chrome=130.0.6723.91)\n\u001b[2m\u001b[22m\n\u001b[2m    \u001b[0m \u001b[90m 54 |\u001b[39m             )\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 55 |\u001b[39m             \u001b[22m\n\u001b[2m    \u001b[31m\u001b[1m>\u001b[22m\u001b[2m\u001b[39m\u001b[90m 56 |\u001b[39m             \u001b[36mlet\u001b[39m element \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m driver\u001b[33m.\u001b[39mfindElement(webdriver\u001b[33m.\u001b[39m\u001b[33mBy\u001b[39m\u001b[33m.\u001b[39mcss(\u001b[32m'p'\u001b[39m))\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m    |\u001b[39m                           \u001b[31m\u001b[1m^\u001b[22m\u001b[2m\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 57 |\u001b[39m             expect(\u001b[36mawait\u001b[39m element\u001b[33m.\u001b[39mgetText())\u001b[33m.\u001b[39mtoEqual(\u001b[32m\"Congratulations! You must have the proper credentials.\"\u001b[39m)\u001b[33m;\u001b[39m\u001b[22m\n\u001b[2m     \u001b[90m 58 |\u001b[39m         } \u001b[36mcatch\u001b[39m (err) {\u001b[22m\n\u001b[2m     \u001b[90m 59 |\u001b[39m             \u001b[36mthrow\u001b[39m err\u001b[33m;\u001b[39m\u001b[0m\u001b[22m\n\u001b[2m\u001b[22m\n\u001b[2m      \u001b[2mat Object.throwDecodedError (\u001b[22m\u001b[2mnode_modules/selenium-webdriver/lib/error.js\u001b[2m:521:15)\u001b[22m\u001b[2m\u001b[22m\n\u001b[2m      \u001b[2mat parseHttpResponse (\u001b[22m\u001b[2mnode_modules/selenium-webdriver/lib/http.js\u001b[2m:514:13)\u001b[22m\u001b[2m\u001b[22m\n\u001b[2m      \u001b[2mat Executor.execute (\u001b[22m\u001b[2mnode_modules/selenium-webdriver/lib/http.js\u001b[2m:446:28)\u001b[22m\u001b[2m\u001b[22m\n\u001b[2m      \u001b[2mat thenableWebDriverProxy.execute (\u001b[22m\u001b[2mnode_modules/selenium-webdriver/lib/webdriver.js\u001b[2m:744:17)\u001b[22m\u001b[2m\u001b[22m\n\u001b[2m      \u001b[2mat Object.<anonymous> (\u001b[22m\u001b[2m\u001b[0m\u001b[36mtests/chrome.test.js\u001b[39m\u001b[0m\u001b[2m:56:27)\u001b[22m\u001b[2m\u001b[22m\n"
+    }
+  ],
+  "wasInterrupted": false
+}
