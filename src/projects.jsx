@@ -1,6 +1,7 @@
 import React, { Fragment } from "react";
 import NavbarLoggedIn from "./Components/NavBar/NavbarLoggedIn";
 import Sidebar from "./Components/Sidebar/Sidebar";
+import Overview from "./Components/ProjectOverview/overview";
 import ProjectHome from "./Components/Projects/Projects-Home/project-home";
 
 export default function ProjectPage() {
@@ -10,6 +11,7 @@ export default function ProjectPage() {
         <Fragment>
             <NavbarLoggedIn />
             <Sidebar showSidebar={true} />
+            <Overview /> 
             {/* <ProjectHome projects={projects} /> */}
         </Fragment>
     );

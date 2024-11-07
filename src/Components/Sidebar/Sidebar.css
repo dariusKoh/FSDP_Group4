@@ -3,7 +3,6 @@
     position: fixed;
     left: 0;
     width: max(15vw, 200px);
-    padding-top: 100px;
     border-right: 2px solid #a7a7a7;
     z-index: 1;
     background-color: #ffffff;
