@@ -7,7 +7,6 @@ import { useEffect, useRef } from "react";
 
 export default function ErrorPage() {
     const error = useRouteError();
-    console.log(error == null)
     console.log("Redirecting to error");
     console.error(error || "No error detected");
 
