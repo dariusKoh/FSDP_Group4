@@ -11,8 +11,8 @@ export default function ProjectPage() {
         <Fragment>
             <NavbarLoggedIn />
             <Sidebar showSidebar={true} />
-            <Overview /> 
-            {/* <ProjectHome projects={projects} /> */}
+            {/* <Overview />  */}
+            <ProjectHome projects={projects} />
         </Fragment>
     );
 }
