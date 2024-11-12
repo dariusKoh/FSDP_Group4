@@ -2,39 +2,62 @@ const Docker = require('dockerode');
 //const docker = new Docker({ socketPath: '/var/run/docker.sock' });
 const docker = new Docker({ socketPath: '//./pipe/docker_engine' });
 
+async function pullImage(imageName) {
+    try {
+        return new Promise((resolve, reject) => {
+            docker.pull(imageName, (err, stream) => {
+                if (err) return reject(err);
+
+                docker.modem.followProgress(stream, (err, output) => {
+                    if (err) return reject(err);
+                    console.log(`Image ${imageName} pulled successfully.`);
+                    resolve();
+                });
+                
+                // docker.modem.followProgress(stream, onFinished, (err, res) => (err ? reject(err) : resolve(res)));
+
+                // function onFinished(err, output) {
+                //     if (err) console.error("Pull error:", err);
+                //     else console.log(`Image ${imageName} pulled successfully.`);
+                // }
+            });
+        });
+    } catch (error) {
+        console.error(`Error pulling image ${imageName}: ${error.message}`);
+    }
+}
+
 async function startSeleniumHub() {
-    await docker.pull('selenium/hub');
+    // Pull the images
+    await pullImage('selenium/hub');
+
     const hub = await docker.createContainer({
         Image: 'selenium/hub',
         name: 'selenium-hub',
-        ExposedPorts: { '4444:4444': {} },
-        Env: [
-            'SE_EVENT_BUS_PUBLISH_PORT=4442',
-            'SE_EVENT_BUS_SUBSCRIBE_PORT=4443'
-        ],
+        ExposedPorts: { 
+            '4442/tcp': {},
+            '4443/tcp': {},
+            '4444/tcp': {},
+        },
         HostConfig: {
-            PortBindings: { '4444:4444': [{ HostPort: '4444' }] },
+            PortBindings: { 
+                '4442/tcp': [{ HostPort: '4442' }],
+                '4443/tcp': [{ HostPort: '4443' }],
+                '4444/tcp': [{ HostPort: '4444' }],
+            },
         },
     });
+
     await hub.start();
+    console.log("Selenium Hub started");
 }
 
 async function startBrowserNode(image, name) {
+    // Ensure that image exists
+    await pullImage(image);
+
     console.log("Starting pull");
-    await docker.pull(image, (err, stream) => {
-        if (err) {
-            throw err;
-        }
 
-        console.log(`Pulling image ${image}...`);
-
-        docker.modem.followProgress(stream, (err, output) => {
-            if (err) {
-                throw err;
-            }
-            console.log(`Pulled image ${image}.`);
-        })
-    });
     const node = await docker.createContainer({
         Image: image,
         name: name,
@@ -52,18 +75,46 @@ async function startBrowserNode(image, name) {
 // Run the Hub and nodes
 async function setupSeleniumGrid() {
     console.log('Setting up Selenium Grid...');
+
+    // Start Sekeium Hub image and container
     await startSeleniumHub();
-    await startBrowserNode('selenium/node-chrome', 'chrome-node');
-    await startBrowserNode('selenium/node-firefox', 'firefox-node');
-    await startBrowserNode('selenium/node-edge', 'edge-node');
+
+    // Start image and container for each browser
+    await createContainers(1);
+
+    console.log('Selenium Grid setup complete');
 }
 
 // Create a container for each browser
 async function createContainers(containers) {
+    const runningContainers = await getRunningContainers();
+    console.log("Running Containers:", runningContainers.length);
+
+    // Check if there are container nodes running, else set to 0
+    let nodesPerBrowser =  runningContainers.length < 1 ? 0 : (runningContainers.length - 1) / 3;
+
     for (var i = 0; i < containers; i++) {
-        await startBrowserNode('selenium/node-chrome', 'chrome-node');
-        await startBrowserNode('selenium/node-firefox', 'firefox-node');
-        await startBrowserNode('selenium/node-edge', 'edge-node');
+        await startBrowserNode('selenium/node-chrome', `chrome-node-${nodesPerBrowser + 1}`);
+        await startBrowserNode('selenium/node-firefox', `firefox-node-${nodesPerBrowser + 1}`);
+        await startBrowserNode('selenium/node-edge', `edge-node-${nodesPerBrowser + 1}`);
+    }
+}
+
+async function getRunningContainers() {
+    try {
+        // List only running containers
+        const containers = await docker.listContainers({ filters: { status: ["running"] } });
+        
+        // Extract container IDs
+        const containerInfo = containers.map(container => ({
+            id: container.Id,
+            name: container.Names[0] // First name if multiple names are assigned
+        }));
+
+        console.log("Running Containers:", containerInfo);
+        return containerInfo;
+    } catch (error) {
+        console.error("Error fetching running containers:", error);
     }
 }
 
@@ -106,6 +157,7 @@ async function listContainers() {
 module.exports = {
     setupSeleniumGrid,
     createContainers,
+    getRunningContainers,
     stopContainer,
     stopAllContainers,
     listContainers

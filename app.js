@@ -1,7 +1,9 @@
 const { exec } = require('child_process');
 const docker = require('./docker-container-management');
 
+docker.setupSeleniumGrid();
 docker.createContainers(2);
+
 
 
 // Run tests
