@@ -9,17 +9,21 @@
   "jest": {
     "reporters": [
       "default",
-      ["jest-stare", {
-        "report": false
-      }]
+      [
+        "jest-stare",
+        {
+          "report": false
+        }
+      ]
     ]
   },
-
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "jest": "^29.7.0",
+    "jest-stare": "^2.5.2",
+    "mongodb": "^6.10.0",
     "selenium-webdriver": "^4.26.0"
   },
   "directories": {
