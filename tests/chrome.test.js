@@ -4,6 +4,7 @@ let capabilities = Capabilities.chrome();
 
 describe("Test if Wikipedia's home page's title is correct", () => {
     let driver;
+    
     beforeAll(async () => {
         driver = new Builder()
             .usingServer('http://localhost:4444')

@@ -8,7 +8,7 @@ npm init -y
 ```
 
 ```shell
-npm i selenium-webdriver jest
+npm i dockerode selenium-webdriver jest
 ```
 
 ```shell
