@@ -1,14 +1,9 @@
-:root {
-    --primary-color: #fe2345;
-    --secondary-color: #ff0000;
-    --background-color: #ff9696;
-    --surface-color: #ffffff;
-    --text-color: #000000;
-    --error-color: #d63031;
-    --success-color: #00b894;
+  img{
+    height: 100px;
+    align-self: center;
   }
-  
   .flexBox {
+    top: 50px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -26,25 +21,17 @@
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
   }
   
-  
-  
-  #signInDescription {
-    color: var(--secondary-color);
-    font-size: 30px;
-    font-weight: 500;
+  #returnbtn{
+    background-color: white;
+    border: 1px solid var(--primary-color);
   }
-  
-  input {
-    width: 100%;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border: 1px solid var(--background-color);
-    border-radius: 8px;
-    font-size: 1rem;
-    background-color: rgba(255, 255, 255, 0.1);
-    color: var(--text-color);
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+#registerDescription {
+    color: var(--primary-color);
+    font-size: 50px;
+    font-weight: bolder;
+    animation: fadeIn 1s ease-out;
   }
+
   
   input:focus {
     background-color: rgba(255, 255, 255, 0.2);
@@ -63,31 +50,49 @@
     margin-top: 1rem;
   }
   
-  .finalPress{
+  button, #deleteUser, .finalPress {
     padding: 1rem 1.5rem;
+    border: none;
     border-radius: 8px;
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    color: var(--primary-color);
   }
   
-  .finalPress:hover{
+  button:hover, #deleteUser:hover, .finalPress:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   }
   
-  .finalPress:first-child{
-    background-color: var(--primary-color);
-    color: var(--primary-color)
+  button:active, #deleteUser:active, .finalPress:active {
+    transform: translateY(0);
   }
+
   
-  .finalPress:last-child {
+  button:last-child, #deleteUser:last-child, .finalPress:last-child {
     background-color: var(--error-color);
-    color: var(--primary-color);
+    color: white;
   }
   
+  #userId {
+    font-weight: bold;
+    color: var(--secondary-color);
+  }
+  
+  #changeIcon{
+    font-weight: bold;
+    color: #a7a7a7;
+  }
+  
+  #displayName{
+    font-size: 32px;
+    font-weight: 500;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    color: var(--secondary-color);
+  }
+
   /* Animations  */
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-20px); }
@@ -105,12 +110,13 @@
     box-shadow: 0 0 0 2px var(--error-color);
   }
   
-  .finalPress {
+  
+  button, #deleteUser, .finalPress {
     position: relative;
     overflow: hidden;
   }
   
-  .finalPress::after {
+  button::after, #deleteUser::after, .finalPress::after {
     content: "";
     position: absolute;
     top: -50%;
@@ -122,37 +128,27 @@
     transition: opacity 0.3s ease;
   }
   
-  .finalPress:hover::after {
+  button:hover::after, #deleteUser:hover::after, .finalPress:hover::after {
     opacity: 1;
   }
 
-  
-  img{
-    height: 50px;
+  #iconNameDesc{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+  #displayDescription{
+    padding-top: 15px;
+    max-width: 500px;
+    overflow-wrap: break-word;
+    height: fit-content;
   }
 
-#regNew, #forgetPassword{
-    text-decoration: none;
-    background-color: #ffffff;
-    text-align: center;
-}
-#regNew{
-    border: 1px solid var(--primary-color);
-}
 
-#forgetPassword{
-    border: none;
-    align-self: flex-end;
-}
-a{
-    text-decoration: inherit;
-    color: var(--primary-color);
-}
-
-#loginForm{
+  #regForm{
     position: absolute;
+    top: 80%;
     left: 50%;
-    top: 20%;
-    transform: translateX(-50%);
-    width: 100%;
-}
+    transform: translate(-50%,-50%);
+    width: 90vw;
+  }
