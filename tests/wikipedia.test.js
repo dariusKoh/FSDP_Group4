@@ -1,6 +1,6 @@
 const webdriver = require('selenium-webdriver');
 const { By, until, Builder, Capabilities } = webdriver
-let capabilities = Capabilities.firefox();
+let capabilities = Capabilities.chrome();
 
 describe('Test if the search bar is working correctly', () => {
     let driver;
@@ -24,8 +24,10 @@ describe('Test if the search bar is working correctly', () => {
             await searchBar.click()
             await searchBar.sendKeys("Programming language")
             await searchBar.submit()
+
             let span = await driver.wait(until.elementLocated(By.className('mw-page-title-main')), 5000)
             let title = await span.getText()
+
             expect(title).toEqual("Programming language");
         } catch (err) {
             throw err;
