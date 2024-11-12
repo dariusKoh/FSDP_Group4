@@ -11,6 +11,10 @@ npm init -y
 npm i dockerode selenium-webdriver jest
 ```
 
+```shell
+npm i jest-stare
+```
+
 ## Running the tests on Docker (Chrome)
 
 ### Pull a Docker Image
