@@ -1,6 +1,7 @@
 node_modules
+jest-stare
 package-lock.json
 .env
 dockerid.txt
 screenshot*
-jest-stare
+jest-results.json
