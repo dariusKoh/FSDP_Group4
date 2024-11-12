@@ -1,6 +1,6 @@
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const fs = require('fs');
-const path = "./jest-stare/jest-results.json";
+const path = "../jest-stare/jest-results.json";
 const constants = {
   FILE_PATH: path,
   TEST_ID_PREFIX: "TC_",
