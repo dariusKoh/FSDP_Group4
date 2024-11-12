@@ -10,28 +10,28 @@ export default function ProjectPage() {
     const projects = ["Proj#1", "HahaTest", "random proj", "kanatan", 'yes', 'et cetra', 'corn', 'yaasdasd'];
     const [activeState, setActiveState] = useState("Project Home");
 
-    // Debugging: Log to ensure setActiveState exists
-    console.log("ProjectPage: setActiveState function exists:", typeof setActiveState === 'function');
-
+    // Function to render the appropriate component based on `activeState`
     const renderComponent = () => {
         switch (activeState) {
-            case "View Cases":
-                return <ProjectHome projects={projects} />;
+            case "Project Overview":
+                return <Overview />;
             case "Run Cases":
                 return <LoadingScreen />;
             case "Project Home":
-                return <Overview />;
+            case "Project Name":
+            case "My Projects":
+            case "Shared With You":
+            case "All Projects":
+                return <ProjectHome projects={projects} />;
             default:
-                return null;
+                return <ProjectHome projects={projects} />;
         }
     };
 
     return (
         <Fragment>
-            {/* Conditionally render the Navbar based on login state */}
             {<NavbarLoggedIn />}
-            {/* Pass setActiveState to Sidebar */}
-            <Sidebar setActiveState={setActiveState} base={true}/>
+            <Sidebar base={true} setActiveState={setActiveState} />
             {renderComponent()}
         </Fragment>
     );
