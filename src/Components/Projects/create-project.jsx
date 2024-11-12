@@ -44,6 +44,7 @@ function CreateProject({ projCount, onClose }) {
             </div>
           </div>
         </div>
+        <button className="returnBtn2" onClick={() => console.log("CreateProj")}>Create</button>
       </form>
     </div>
   );

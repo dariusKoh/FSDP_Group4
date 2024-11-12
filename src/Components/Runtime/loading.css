@@ -36,6 +36,12 @@
     border: 1px solid var(--primary-color);
     color: var(--primary-color);
     background-color: var(--surface-color);
-    top: 10px;
-    position: relative;
+    bottom: 20px;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    position: absolute;
+    z-index: 3;
+}
+.returnBtn2:active{
+    transform: translate(-50%,-50%);
 }
