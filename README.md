@@ -15,6 +15,10 @@ npm i dockerode selenium-webdriver jest
 npm i jest-stare
 ```
 
+```shell
+npm i mongodb
+```
+
 ## Running the tests on Docker (Chrome)
 
 ### Pull a Docker Image
