@@ -33,11 +33,15 @@ function CreateProject({ projCount, onClose }) {
         </div>
         <div>
           <h2>Visibility</h2>
-          <div className="labelInput">
-            <input type="radio" className="visibility" id="public" name="visib" />
-            <label htmlFor="public">Public</label>
-            <input type="radio" className="visibility" id="private" name="visib" />
-            <label htmlFor="private">Private</label>
+          <div className="labelInput" id="visBox">
+            <div className='radioBox'>
+              <input type="radio" className="visibility" id="public" name="visib" />
+              <label htmlFor="public">Public</label>
+            </div>
+            <div className="radioBox">
+              <input type="radio" className="visibility" id="private" name="visib" />
+              <label htmlFor="private">Private</label>
+            </div>
           </div>
         </div>
       </form>
