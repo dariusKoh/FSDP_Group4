@@ -76,3 +76,10 @@ async function listContainers() {
         console.error(`Failed to list containers: ${error.message}`);
     }
 }
+
+module.exports = {
+    setupSeleniumGrid,
+    stopContainer,
+    stopAllContainers,
+    listContainers
+};
