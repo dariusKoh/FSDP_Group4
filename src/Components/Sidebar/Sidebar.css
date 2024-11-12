@@ -1,4 +1,5 @@
-.sideList{
+/* Main list styles */
+.sideList {
     height: 100%;
     position: fixed;
     left: 0;
@@ -6,16 +7,18 @@
     border-right: 2px solid #a7a7a7;
     z-index: 1;
     background-color: #ffffff;
+    top: max(100px, 5vw);
 }
 
-.listItem:hover{
+.listItem:hover {
     background-color: rgb(251, 135, 135);
     padding: 10px 0 10px 10px;  
     font-size: 24px;
     animation: select 0.2s linear 0s 1;
 }
 
-.active{
+/* Active item styles */
+.active {
     background-color: rgba(255, 0, 0, 0.8);
     color: #ffffff;
     padding: 10px 0 10px 10px;  
@@ -23,23 +26,50 @@
     animation: select 0.2s linear 0s 1;
 }
 
-.listItem{
+.listItem {
     padding: 5px 0 5px 3px;
     font-size: 16px;
     animation: deselect 0.2s linear 0s 1;
 }
 
-@keyframes select{
-    0% {padding: 5px 0 5px 3px;
-        font-size: 18px;}
-    100% {padding: 10px 0 10px 10px;
-        font-size: 20px;}
+/* Dropdown styles */
+.dropdownList {
+    list-style-type: none;
+    padding-left: 20px;
+    margin: 0;
+    background-color: #f9f9f9;
 }
 
-@keyframes deselect{
-    0%{padding: 10px 0 10px 10px;
-        font-size: 20px;}
-    100%{padding: 5px 0 5px 3px;
-        font-size: 18px;
-    }
+/* Button styles for dropdown items */
+.btnItem {
+    background: none;
+    border: none;
+    text-align: left;
+    padding: 5px 15px;
+    width: 100%;
+    cursor: pointer;
+    font-size: 14px;
+    color: #000;
+    outline: none;
+}
+
+.btnItem:hover {
+    background-color: rgba(251, 135, 135, 0.7);
+}
+
+/* Active button styles */
+.active.btnItem {
+    background-color: rgba(255, 0, 0, 0.8);
+    color: #ffffff;
+    font-weight: bold;
+}
+
+@keyframes select {
+    0% { padding: 5px 0 5px 3px; font-size: 18px; }
+    100% { padding: 10px 0 10px 10px; font-size: 20px; }
+}
+
+@keyframes deselect {
+    0% { padding: 10px 0 10px 10px; font-size: 20px; }
+    100% { padding: 5px 0 5px 3px; font-size: 18px; }
 }
