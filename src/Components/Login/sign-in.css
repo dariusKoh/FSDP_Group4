@@ -78,10 +78,6 @@
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
   }
   
-  .finalPress:active{
-    transform: translateY(0);
-  }
-  
   .finalPress:first-child{
     background-color: var(--primary-color);
     color: var(--primary-color)
