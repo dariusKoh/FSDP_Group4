@@ -20,8 +20,8 @@ const LoginPage = () => {
                         <input type="password" name="password" id="password"></input>
                         <div id="forgetPassword" className="padItem finalPress"><a href="::blank">Forgot Password?</a></div>
                         <div className="buttons">
-                            <div id="regNew" className="finalPress"><a href="signUp">Register an account</a></div>
-                            <button id="signNext" className="finalPress" type="submit">Sign In</button>
+                            <a id="regNew" className="finalPress" href="signup">Register an account</a>
+                            <a id="signNext" className="finalPress">Sign In</a>
                         </div>
                     </div>
                 </section>

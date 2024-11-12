@@ -38,7 +38,7 @@
     width: 100%;
     padding: 1rem;
     margin-bottom: 1rem;
-    border: 1px solid red;
+    border: 1px solid var(--background-color);
     border-radius: 8px;
     font-size: 1rem;
     background-color: rgba(255, 255, 255, 0.1);
@@ -65,12 +65,12 @@
   
   .finalPress{
     padding: 1rem 1.5rem;
-    border: none;
     border-radius: 8px;
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
+    color: var(--primary-color);
   }
   
   .finalPress:hover{
@@ -84,12 +84,12 @@
   
   .finalPress:first-child{
     background-color: var(--primary-color);
-    color: white;
+    color: var(--primary-color)
   }
   
   .finalPress:last-child {
     background-color: var(--error-color);
-    color: white;
+    color: var(--primary-color);
   }
   
   /* Animations  */
