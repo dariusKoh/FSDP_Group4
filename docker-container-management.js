@@ -94,9 +94,9 @@ async function createContainers(containers) {
     let nodesPerBrowser =  runningContainers.length < 1 ? 0 : (runningContainers.length - 1) / 3;
 
     for (var i = 0; i < containers; i++) {
-        await startBrowserNode('selenium/node-chrome', `chrome-node-${nodesPerBrowser + 1}`);
-        await startBrowserNode('selenium/node-firefox', `firefox-node-${nodesPerBrowser + 1}`);
-        await startBrowserNode('selenium/node-edge', `edge-node-${nodesPerBrowser + 1}`);
+        await startBrowserNode('selenium/node-chrome', `chrome-node-${nodesPerBrowser + i + 1}`);
+        await startBrowserNode('selenium/node-firefox', `firefox-node-${nodesPerBrowser + i + 1}`);
+        await startBrowserNode('selenium/node-edge', `edge-node-${nodesPerBrowser + i + 1}`);
     }
 }
 
