@@ -20,7 +20,7 @@ npm i mongodb
 ```
 
 ```shell
-npm install mongodb bcrypt
+npm i bcrypt
 ```
 
 ```shell
