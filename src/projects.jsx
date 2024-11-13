@@ -47,7 +47,7 @@ export default function ProjectPage() {
             <Sidebar 
                 base={true} 
                 setActiveState={updateActiveState} 
-                projectName="HahaTest" 
+                projectName={currentProject}
                 onProjectOpened={true} 
             />
             {renderComponent()}
