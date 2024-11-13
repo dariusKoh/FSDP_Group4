@@ -1,15 +1,24 @@
-const { spawn } = require('child_process');
+const { exec } = require('child_process');
+const docker = require('./docker-container-management');
 
-const testProcess = spawn('npm', ['test']);
 
-testProcess.stdout.on('data', (data) => {
-  console.log(`Output:\n${data}`);
-});
+docker.setupSeleniumGrid()
+    .then(() => docker.createContainers(2))
+    .catch(error => {
+        console.error("Error in Selenium Grid setup:", error);
+    });
 
-testProcess.stderr.on('data', (data) => {
-  console.error(`Errors:\n${data}`);
-});
 
-testProcess.on('close', (code) => {
-  console.log(`npm test finished with exit code ${code}`);
-});
+
+// Run tests
+// exec('npm test', (error, stdout, stderr) => {
+//     if (error) {
+//         console.error(`Error executing npm test: ${error.message}`);
+//         return;
+//     }
+
+//     console.log(`Output:\n${stdout}`);
+//     if (stderr) {
+//         console.error(`Errors:\n${stderr}`);
+//     }
+// });

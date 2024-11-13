@@ -19,6 +19,13 @@ npm i jest-stare
 npm i mongodb
 ```
 
+```shell
+npm install mongodb bcrypt
+```
+
+```shell
+npm install mongoose
+```
 ## Running the tests on Docker (Chrome)
 
 ### Pull a Docker Image
