@@ -1,16 +1,20 @@
 import React, { Fragment, useState } from "react";
 import NavbarLoggedIn from "./Components/NavBar/NavbarLoggedIn";
-import Navbar from "./Components/NavBar/Navbar";
 import Sidebar from "./Components/Sidebar/Sidebar";
 import Overview from "./Components/ProjectOverview/overview";
 import ProjectHome from "./Components/Projects/Projects-Home/project-home";
 import LoadingScreen from "./Components/Runtime/loading";
+import CreateProject from "./Components/Projects/create-project"; // Import CreateProject component
 
 export default function ProjectPage() {
-    const projects = ["Proj#1", "HahaTest", "random proj", "kanatan", 'yes', 'et cetra', 'corn', 'yaasdasd'];
-    const [activeState, setActiveState] = useState("Project Home");
+    const [projects, setProjects] = useState(["Proj#1", "HahaTest", "random proj", "kanatan", 'yes', 'et cetra', 'corn', 'yaasdasd']);
+    const [activeState, setActiveState] = useState(null);
+    const [showCreateProject, setShowCreateProject] = useState(false);
 
-    // Function to render the appropriate component based on `activeState`
+    function handleAddProject(projectName) {
+        setProjects((prevProjects) => [...prevProjects, projectName]);
+    };
+
     const renderComponent = () => {
         switch (activeState) {
             case "Project Overview":
@@ -27,12 +31,31 @@ export default function ProjectPage() {
                 return <ProjectHome projects={projects} />;
         }
     };
+    
+    const updateActiveState = (val) => {
+        console.log(val)
+        setActiveState(val);
+    }
 
     return (
         <Fragment>
-            {<NavbarLoggedIn />}
-            <Sidebar base={true} setActiveState={setActiveState} />
+            <NavbarLoggedIn />
+            <Sidebar 
+                base={true} 
+                setActiveState={updateActiveState} 
+                projectName="HahaTest" 
+                onProjectOpened={true} 
+            />
             {renderComponent()}
+            {showCreateProject && (
+                <CreateProject 
+                    projCount={projects.length + 1} 
+                    onClose={() => setShowCreateProject(false)} 
+                    onAddProject={handleAddProject} // Ensure handleAddProject is passed as onAddProject
+                />
+            )}
+
+            <button onClick={() => setShowCreateProject(true)}>Add New Project</button>
         </Fragment>
     );
 }

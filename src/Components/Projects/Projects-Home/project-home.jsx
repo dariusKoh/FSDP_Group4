@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import Typed from "typed.js";
 import MyProjects from "./my-projects";
-import Sidebar from "../../Sidebar/Sidebar"; // Assuming Sidebar is in the same folder
 import './project-home.css';
 
 export default function ProjectHome({ projects }) {
@@ -34,13 +33,6 @@ export default function ProjectHome({ projects }) {
     return (
         <section className="projectHome">
             {/* Pass selectedProject state and onProjectSelect handler to Sidebar */}
-            <Sidebar 
-                isLoggedIn={true} 
-                selectedProject={selectedProject} 
-                onProjectSelect={handleProjectSelect}
-                onProjectOpened={!!selectedProject}  // Set to true if a project is selected
-                projectName={selectedProject}       // Pass the selected project name
-            />
             <span className="mainHead" ref={el} />
             <MyProjects 
                 projects={projects} 
