@@ -13,13 +13,6 @@ async function pullImage(imageName) {
                     console.log(`Image ${imageName} pulled successfully.`);
                     resolve();
                 });
-                
-                // docker.modem.followProgress(stream, onFinished, (err, res) => (err ? reject(err) : resolve(res)));
-
-                // function onFinished(err, output) {
-                //     if (err) console.error("Pull error:", err);
-                //     else console.log(`Image ${imageName} pulled successfully.`);
-                // }
             });
         });
     } catch (error) {
@@ -56,15 +49,15 @@ async function startBrowserNode(image, name) {
     // Ensure that image exists
     await pullImage(image);
 
-    console.log("Starting pull");
+    console.log("Creating container for image", image);
 
     const node = await docker.createContainer({
         Image: image,
         name: name,
         Env: [
-        'SE_EVENT_BUS_HOST=selenium-hub',
-        'SE_EVENT_BUS_PUBLISH_PORT=4442',
-        'SE_EVENT_BUS_SUBSCRIBE_PORT=4443'
+            'SE_EVENT_BUS_HOST=selenium-hub',
+            'SE_EVENT_BUS_PUBLISH_PORT=4442',
+            'SE_EVENT_BUS_SUBSCRIBE_PORT=4443',
         ],
         HostConfig: { NetworkMode: 'bridge' },
     });
@@ -91,9 +84,10 @@ async function createContainers(containers) {
     console.log("Running Containers:", runningContainers.length);
 
     // Check if there are container nodes running, else set to 0
-    let nodesPerBrowser =  runningContainers.length < 1 ? 0 : (runningContainers.length - 1) / 3;
+    let nodesPerBrowser = runningContainers.length < 1 ? 0 : (runningContainers.length - 1) / 3;
 
     for (var i = 0; i < containers; i++) {
+        console.log(i)
         await startBrowserNode('selenium/node-chrome', `chrome-node-${nodesPerBrowser + i + 1}`);
         await startBrowserNode('selenium/node-firefox', `firefox-node-${nodesPerBrowser + i + 1}`);
         await startBrowserNode('selenium/node-edge', `edge-node-${nodesPerBrowser + i + 1}`);
@@ -110,8 +104,6 @@ async function getRunningContainers() {
             id: container.Id,
             name: container.Names[0] // First name if multiple names are assigned
         }));
-
-        console.log("Running Containers:", containerInfo);
         return containerInfo;
     } catch (error) {
         console.error("Error fetching running containers:", error);

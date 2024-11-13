@@ -1,8 +1,12 @@
 const { exec } = require('child_process');
 const docker = require('./docker-container-management');
 
-docker.setupSeleniumGrid();
-docker.createContainers(2);
+
+docker.setupSeleniumGrid()
+    .then(() => docker.createContainers(2))
+    .catch(error => {
+        console.error("Error in Selenium Grid setup:", error);
+    });
 
 
 
