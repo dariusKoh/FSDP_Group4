@@ -1,5 +1,4 @@
 const Docker = require('dockerode');
-//const docker = new Docker({ socketPath: '/var/run/docker.sock' });
 const docker = new Docker({ socketPath: '//./pipe/docker_engine' });
 
 async function pullImage(imageName) {
@@ -20,9 +19,24 @@ async function pullImage(imageName) {
     }
 }
 
+async function createNetwork() {
+    try {
+        const network = await docker.createNetwork({
+            Name: "selenium-network",
+            CheckDuplicate: true,
+            Driver: 'bridge', // Use 'bridge' for isolated networks
+        });
+        console.log(`Network ${network.Name} created with ID: ${network.id}`);
+        return network;
+    } catch (error) {
+        console.error(`Error creating network: ${error}`);
+    }
+}
+
 async function setupSeleniumGrid() {
     // Pull the images
     await pullImage('selenium/hub');
+    await createNetwork();
 
     var success = false;
 
@@ -36,6 +50,7 @@ async function setupSeleniumGrid() {
                 '4444/tcp': {},
             },
             HostConfig: {
+                NetworkMode: "selenium-network",
                 PortBindings: { 
                     '4442/tcp': [{ HostPort: '4442' }],
                     '4443/tcp': [{ HostPort: '4443' }],
@@ -59,6 +74,12 @@ async function setupSeleniumGrid() {
 }
 
 async function startBrowserNode(image, name) {
+    // Ensure the hub is ready before starting nodes
+    const hubStatus = await docker.getContainer('selenium-hub').inspect();
+    if (!hubStatus.State.Running) {
+        throw new Error('Selenium Hub is not running. Start the hub first.');
+    }
+
     // Ensure that image exists
     await pullImage(image);
 
@@ -73,7 +94,7 @@ async function startBrowserNode(image, name) {
                 'SE_EVENT_BUS_PUBLISH_PORT=4442',
                 'SE_EVENT_BUS_SUBSCRIBE_PORT=4443',
             ],
-            HostConfig: { NetworkMode: 'bridge' },
+            HostConfig: { NetworkMode: "selenium-network" },
         });
         await node.start();
         console.log(`Started container ${name} with id ${node.id} with image ${image}.`);
@@ -125,7 +146,7 @@ async function stopAllContainers() {
 // List all running containers
 async function listContainers(returntype) {
     try {
-        // List only running containers
+        // List all containers
         const containers = await docker.listContainers({ all: true });
         
         // Extract container IDs
@@ -140,6 +161,16 @@ async function listContainers(returntype) {
         return containerInfo;
     } catch (error) {
         console.error("Error fetching running containers:", error);
+    }
+}
+
+async function listContainersOnNetwork() {
+    try {
+        const network = docker.getNetwork("selenium-network");
+        const containers = await network.inspect();
+        console.log(`Containers on network ${network.Name}:`, containers.Containers);
+    } catch (error) {
+        console.error(`Error listing containers on network selenium-network: ${error}`);
     }
 }
 
@@ -204,5 +235,6 @@ module.exports = {
     stopContainer,
     stopAllContainers,
     listContainers,
+    listContainersOnNetwork,
     runTestInContainers,
 };

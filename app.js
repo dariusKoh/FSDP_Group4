@@ -1,19 +1,18 @@
-const { exec } = require('child_process');
 const docker = require('./docker-container-management');
+const tests = require('./scripts/run-tests');
 
-
+// Create the Selenium Grid and run tests
 docker.setupSeleniumGrid()
-    .then(() => docker.createContainers(2))
+    .then(() => docker.listContainersOnNetwork())
+    .then(() => tests.runTests())
     .catch(error => {
         console.error("Error in Selenium Grid setup:", error);
     });
 
-
-
-// Run tests
-// exec('npm test', (error, stdout, stderr) => {
+// const { exec } = require('child_process');
+// exec('docker compose up', (error, stdout, stderr) => {
 //     if (error) {
-//         console.error(`Error executing npm test: ${error.message}`);
+//         console.error(`Error executing compose: ${error.message}`);
 //         return;
 //     }
 
