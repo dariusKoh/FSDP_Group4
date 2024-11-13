@@ -1,5 +1,6 @@
 const { exec } = require('child_process');
 
+// Execute ``npm test`` in the current directory
 async function runTests() {
     console.log("Running tests...");
     exec('npm test', (error, stdout, stderr) => {

@@ -16,6 +16,8 @@ npm i apexcharts bcrypt chart.js dockerode dotenv express jest jest-stare lottie
 npm run dev
 ```
 
+Follow instructions provided in the terminal to launch the app.
+
 ## Running tests
 
 ### Make sure Node.js is installed

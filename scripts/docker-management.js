@@ -1,13 +1,14 @@
 const Docker = require('dockerode');
 const docker = new Docker({ socketPath: '//./pipe/docker_engine' });
 
+// Create and pull Docker images
 async function pullImage(imageName) {
     try {
         return new Promise((resolve, reject) => {
             docker.pull(imageName, (err, stream) => {
                 if (err) return reject(err);
 
-                docker.modem.followProgress(stream, (err, output) => {
+                docker.modem.followProgress(stream, (err) => {
                     if (err) return reject(err);
                     console.log(`Image ${imageName} pulled successfully.`);
                     resolve();
@@ -19,6 +20,7 @@ async function pullImage(imageName) {
     }
 }
 
+// Create a network for the Selenium Grid
 async function createNetwork() {
     try {
         const network = await docker.createNetwork({
@@ -33,13 +35,14 @@ async function createNetwork() {
     }
 }
 
+// Setup the Selenium Grid with a hub and browser nodes
 async function setupSeleniumGrid() {
     // Pull the images
     await pullImage('selenium/hub');
     await createNetwork();
 
     var success = false;
-
+    // Create the Selenium Hub container
     try {
         const hub = await docker.createContainer({
             Image: 'selenium/hub',
@@ -66,6 +69,7 @@ async function setupSeleniumGrid() {
         console.error("Error starting Selenium Hub:", error);
     }
 
+    // If the hub container was successfully started, create containers for browsers
     if (success === true) {
         // Start image and container for each browser
         console.log("Creating containers for browsers");
@@ -73,6 +77,7 @@ async function setupSeleniumGrid() {
     }
 }
 
+// Start a browser node container
 async function startBrowserNode(image, name) {
     // Ensure the hub is ready before starting nodes
     const hubStatus = await docker.getContainer('selenium-hub').inspect();
@@ -83,6 +88,7 @@ async function startBrowserNode(image, name) {
     // Ensure that image exists
     await pullImage(image);
 
+    // Create and start the container
     try {
         console.log("Creating container for image", image);
 
@@ -105,6 +111,7 @@ async function startBrowserNode(image, name) {
 
 // Create a container for each browser
 async function createContainers(containers) {
+    // Get all running containers
     const runningContainers = await listContainers();
     console.log("Running Containers:", runningContainers.length);
 
@@ -130,12 +137,24 @@ async function stopContainer(containerId) {
     }
 }
 
+// Stop and remove an image
+async function removeImage(imageId) {
+    try {
+        const image = docker.getImage(imageId);
+        await image.remove();
+        console.log(`Removed image with ID: ${image.id}`);
+    } catch (error) {
+        console.error(`Failed to remove image: ${error.message}`);
+    }
+}
+
 // Stop and remove all containers
 async function stopAllContainers() {
     try {
         const containers = await listContainers();
+        console.log(containers);
         for (const container of containers) {
-            await stopContainer(container.Id);
+            await stopContainer(container.id);
         }
         console.log('Stopped and removed all containers.');
     } catch (error) {
@@ -143,7 +162,26 @@ async function stopAllContainers() {
     }
 }
 
-// List all running containers
+// Stop and remove all images
+async function removeAllImages() {
+    try {
+        const images = await docker.listImages();
+        for (const image of images) {
+            await removeImage(image.Id);
+        }
+        console.log('Removed all images.');
+    } catch (error) {
+        console.error(`Failed to remove all images: ${error.message}`);
+    }
+}
+
+// Stop and remove all containers and images
+async function removeAllContainersAndImages() {
+    await stopAllContainers()
+        .then(() => removeAllImages());
+}
+
+// List all containers
 async function listContainers(returntype) {
     try {
         // List all containers
@@ -164,6 +202,7 @@ async function listContainers(returntype) {
     }
 }
 
+// List all containers on the selenium-network
 async function listContainersOnNetwork() {
     try {
         const network = docker.getNetwork("selenium-network");
@@ -234,6 +273,9 @@ module.exports = {
     createContainers,
     stopContainer,
     stopAllContainers,
+    removeImage,
+    removeAllImages,
+    removeAllContainersAndImages,
     listContainers,
     listContainersOnNetwork,
     runTestInContainers,
