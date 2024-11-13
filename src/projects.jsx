@@ -10,6 +10,7 @@ export default function ProjectPage() {
     const [projects, setProjects] = useState(["Proj#1", "HahaTest", "random proj", "kanatan", 'yes', 'et cetra', 'corn', 'yaasdasd']);
     const [activeState, setActiveState] = useState(null);
     const [showCreateProject, setShowCreateProject] = useState(false);
+    const [currentProject, setCurrentProject ] = useState(null);
 
     function handleAddProject(projectName) {
         setProjects((prevProjects) => [...prevProjects, projectName]);
@@ -18,7 +19,10 @@ export default function ProjectPage() {
     const renderComponent = () => {
         switch (activeState) {
             case "Project Overview":
-                return <Overview />;
+                return <Overview projName={currentProject} onClose={() => {
+                    setCurrentProject(null);
+                    setActiveState("Project Home");
+                }}/>;
             case "Run Cases":
                 return <LoadingScreen />;
             case "Project Home":
@@ -26,9 +30,9 @@ export default function ProjectPage() {
             case "My Projects":
             case "Shared With You":
             case "All Projects":
-                return <ProjectHome projects={projects} />;
+                return <ProjectHome projects={projects} setCurrentProject={setCurrentProject}/>;
             default:
-                return <ProjectHome projects={projects} />;
+                return <ProjectHome projects={projects} setCurrentProject={setCurrentProject}/>;
         }
     };
     

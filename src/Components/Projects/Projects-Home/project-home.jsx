@@ -2,9 +2,9 @@ import React, { useEffect, useRef, useState } from "react";
 import Typed from "typed.js";
 import MyProjects from "./my-projects";
 import './project-home.css';
-import ViewProject from "../view-projects";
+import Overview from "../../ProjectOverview/overview";
 
-export default function ProjectHome({ projects }) {
+export default function ProjectHome({ projects, setCurrentProject }) {
     const el = useRef(null);
     const [selectedProject, setSelectedProject] = useState(null);
     const [currentCategory, setCurrentCategory] = useState("myProjects");
@@ -27,6 +27,7 @@ export default function ProjectHome({ projects }) {
     const handleProjectSelect = (projectName, category) => {
         setSelectedProject(projectName);
         setCurrentCategory(category);  // Track the category of the selected project
+        setCurrentProject(projectName);
     };
 
     const handleCloseProject = () => {
@@ -36,18 +37,19 @@ export default function ProjectHome({ projects }) {
     const sharedProjects = [];
     const allProjects = [...projects, ...sharedProjects];
 
+    
     return (
-        <section className="projectHome">
+        <div>
             {/* Pass selectedProject state and onProjectSelect handler to Sidebar */}
-            <span className="mainHead" ref={el} />
     
             {/* Conditional rendering: Show ViewProject if a project is selected, otherwise show the MyProjects sections */}
             {selectedProject ? (
                 // Render only ViewProject if a project is selected
-                <ViewProject projectId={selectedProject} onClose={() => setSelectedProject(null)} />
+                <Overview projName={selectedProject} lastDate="11/12/2024" onClose={() => setSelectedProject(null)} />
             ) : (
                 // Render all MyProjects sections if no project is selected
-                <>
+                <section className="projectHome">
+                    <span className="mainHead" ref={el} />
                     <MyProjects 
                         projects={projects} 
                         add={true} 
@@ -71,9 +73,10 @@ export default function ProjectHome({ projects }) {
                         desc="Every project you ever had."
                         onProjectSelect={handleProjectSelect}
                     />
-                </>
+                </section>
             )}
-        </section>
+        </div>
     );
-    
 }
+
+

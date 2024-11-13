@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import AddProject from "../add-project";
 import CreateProject from "../create-project";
-import ViewProject from "../view-projects";
+import Overview from "../../ProjectOverview/overview";
 
 export default function MyProjects({ projects, add, title, desc, onProjectSelect }) {
     const scrollContainerRef = useRef(null);
@@ -55,7 +55,7 @@ export default function MyProjects({ projects, add, title, desc, onProjectSelect
                 </div>
             ) : (
                 <div className="view-project">
-                    <ViewProject projectId={selectedProject} onClose={handleCloseViewProject} />
+                    <Overview projName={selectedProject} lastDate="21/12/2023" onClose={onClose} />
                 </div>
             )}
         </div>

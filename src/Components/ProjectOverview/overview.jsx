@@ -1,10 +1,30 @@
 import React, { useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import "./overview.css";
+import Typed from "typed.js";
+import { useRef, useEffect } from "react";
 
-const Overview = () => {
+function Overview({ projName, lastDate = "11/12/2024", onClose }) {
     const [filter, setFilter] = useState("All");
+    const el = useRef(null);
+    useEffect(() => {
+        const typed = new Typed(el.current, {
+            strings: [projName , projName + " Overview"],
+            startDelay: 300,
+            typeSpeed: 100,
+            backSpeed: 150,
+            backDelay: 200,
+            loop: false,
+            showCursor: false
+        });
+        return () => {
+            typed.destroy(); // Clean up Typed instance
+        };
+    }, []);
 
+
+
+    // Sample data
     const data = {
         totalTasks: 144,
         passedTasks: 80,
@@ -17,6 +37,7 @@ const Overview = () => {
         { name: "LolTest", id: "TC_2", status: "Fail", remarks: "Remarks" },
     ];
 
+    // Filter tests based on selected filter
     const filteredTests = filter === "All" ? tests : tests.filter(test => test.status === filter);
 
     const createChartData = (value) => ({
@@ -30,19 +51,12 @@ const Overview = () => {
                 radialBar: {
                     startAngle: -135,
                     endAngle: 225,
-                    hollow: {
-                        size: "70%",
-                    },
-                    track: {
-                        background: "#e0e0e0",
-                        strokeWidth: "100%",
-                    },
+                    hollow: { size: "70%" },
+                    track: { background: "#e0e0e0", strokeWidth: "100%" },
                     dataLabels: {
                         show: true,
                         value: {
-                            formatter: function (val) {
-                                return parseInt(val);
-                            },
+                            formatter: (val) => parseInt(val),
                             color: "#111",
                             fontSize: "36px",
                             show: true,
@@ -63,14 +77,11 @@ const Overview = () => {
                     stops: [0, 100],
                 },
             },
-            stroke: {
-                lineCap: "round",
-            },
+            stroke: { lineCap: "round" },
             labels: ["Percent"],
         },
     });
 
-    // Helper function to determine chart status class
     const getStatusClass = (status) => {
         if (status === "Pass") return "passed";
         if (status === "Fail") return "failed";
@@ -79,9 +90,12 @@ const Overview = () => {
 
     return (
         <div className="overview-container">
+            <button onClick={onClose} className="returnBtn"id="backProj" >Close</button>
+            <span className="mainHead Title" ref={el} />
             <h2 className="Title">
-                Title of Project <span>Last Edited: (Date)</span>
+                <span>Last Edited: {lastDate}</span>
             </h2>
+
             <div className="overview-summary">
                 <div className="tasks-overview">
                     <h1 className="task-overview-header">Overview</h1>
@@ -92,11 +106,10 @@ const Overview = () => {
                     <h1>{data.pendingTasks}</h1>
                     <p>out of {data.totalTasks} tasks Pending</p>
                 </div>
+
                 <div className="chart-container">
                     <div className="radial-chart">
-                        <div className={`chart-status ${getStatusClass("Pass")}`}>
-                            Passed
-                        </div>
+                        <div className={`chart-status ${getStatusClass("Pass")}`}>Passed</div>
                         <ReactApexChart
                             options={createChartData((data.passedTasks / data.totalTasks) * 100).options}
                             series={createChartData((data.passedTasks / data.totalTasks) * 100).series}
@@ -105,9 +118,7 @@ const Overview = () => {
                         />
                     </div>
                     <div className="radial-chart">
-                        <div className={`chart-status ${getStatusClass("Fail")}`}>
-                            Failed
-                        </div>
+                        <div className={`chart-status ${getStatusClass("Fail")}`}>Failed</div>
                         <ReactApexChart
                             options={createChartData((data.failedTasks / data.totalTasks) * 100).options}
                             series={createChartData((data.failedTasks / data.totalTasks) * 100).series}
@@ -116,9 +127,7 @@ const Overview = () => {
                         />
                     </div>
                     <div className="radial-chart">
-                        <div className={`chart-status ${getStatusClass("Pending")}`}>
-                            Pending
-                        </div>
+                        <div className={`chart-status ${getStatusClass("Pending")}`}>Pending</div>
                         <ReactApexChart
                             options={createChartData((data.pendingTasks / data.totalTasks) * 100).options}
                             series={createChartData((data.pendingTasks / data.totalTasks) * 100).series}
@@ -128,6 +137,7 @@ const Overview = () => {
                     </div>
                 </div>
             </div>
+
             <div className="test-table">
                 <h3>View Past Tests</h3>
                 <div className="filter">
@@ -161,6 +171,6 @@ const Overview = () => {
             </div>
         </div>
     );
-};
+}
 
 export default Overview;
