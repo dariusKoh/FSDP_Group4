@@ -8,7 +8,7 @@ npm init -y
 ```
 
 ```shell
-npm i bcrypt dockerode express jest jest-stare mongodb mongoose selenium-webdriver
+npm i apexcharts bcrypt chart.js dockerode dotenv express jest jest-stare lottie-react mongodb mongoose react-apexcharts react-bootstrap react-chartjs react-dom react-router-dom react realm-web selenium-webdriver typed.js vite
 ```
 
 ## Running the tests
