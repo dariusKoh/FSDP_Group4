@@ -8,37 +8,22 @@ npm init -y
 ```
 
 ```shell
-npm i dockerode selenium-webdriver jest
+npm i bcrypt dockerode express jest jest-stare mongodb mongoose selenium-webdriver
 ```
 
+## Running the tests
+
+### Make sure Node.js is installed
 ```shell
-npm i jest-stare
+node -v
 ```
 
+### Make sure Docker is installed
 ```shell
-npm i mongodb
+docker -v
 ```
 
+### Run app.js
 ```shell
-npm i bcrypt
-```
-
-```shell
-npm install mongoose
-```
-## Running the tests on Docker (Chrome)
-
-### Pull a Docker Image
-```shell
-docker pull selenium/standalone-chrome
-```
-
-### Create Container
-```shell
-docker run -d -p 4444:4444 -p 7900:7900 --shm-size="2g" selenium/standalone-chrome
-```
-
-### Running the tests
-```shell
-npm run test
+node app.js
 ```
