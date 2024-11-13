@@ -13,23 +13,24 @@ export default function MyProjects({ projects, add, title, desc, onProjectSelect
             scrollContainerRef.current.scrollLeft += event.deltaY;
         };
         const scrollContainer = scrollContainerRef.current;
-        scrollContainer.addEventListener('wheel', handleScroll);
+        scrollContainer.addEventListener("wheel", handleScroll);
 
         return () => {
-            scrollContainer.removeEventListener('wheel', handleScroll);
+            scrollContainer.removeEventListener("wheel", handleScroll);
         };
     }, []);
 
     const handleCardClick = (id, name) => {
         setSelectedProject(id);
-        onProjectSelect(name);  // Notify parent component of project selection
+        onProjectSelect(name);
     };
 
     const handleCloseCreateProject = () => {
         setSelectedProject(null);
     };
 
-    const handleCloseViewProject = () => {
+    const handleCreateProject = (newProjectName) => {
+        projects.push(newProjectName);
         setSelectedProject(null);
     };
 
@@ -49,13 +50,30 @@ export default function MyProjects({ projects, add, title, desc, onProjectSelect
                                     onClick={() => handleCardClick(index, project)}
                                 />
                             ))}
-                            {add && <AddProject name={null} id="add" onClick={() => handleCardClick("add")} />}
+                            {/* Add project card */}
+                            {add && (
+                                <AddProject
+                                    name={null}
+                                    id="add"
+                                    onClick={() => setSelectedProject("add")}
+                                />
+                            )}
                         </div>
                     </section>
                 </div>
+            ) : selectedProject === "add" ? (
+                <CreateProject
+                    projCount={projects.length + 1}
+                    onClose={handleCloseCreateProject}
+                    onAddProject={handleCreateProject}
+                />
             ) : (
                 <div className="view-project">
-                    <Overview projName={selectedProject} lastDate="21/12/2023" onClose={onClose} />
+                    <Overview
+                        projName={projects[selectedProject]}
+                        lastDate="21/12/2023"
+                        onClose={handleCloseCreateProject}
+                    />
                 </div>
             )}
         </div>

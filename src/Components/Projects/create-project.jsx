@@ -45,14 +45,14 @@ function CreateProject({ projCount, onClose, onAddProject }) {
     setSelectedFiles(files);
   };
 
-  function handleCreateProject (event){
+  function handleCreateProject(event) {
     event.preventDefault();
-    console.log('onAddProject:', onAddProject); // Check if it’s defined
     if (typeof onAddProject === 'function') {
-        onAddProject(projectName);
+      onAddProject(projectName);
     }
     onClose();
-};
+  }
+  
 
   return (
     <div>
