@@ -1,6 +1,8 @@
 import React from 'react';
+import { useState } from 'react';
 import { useLottie } from 'lottie-react';
 import Loading from "../../assets/Loading.json";
+import downloadDocker from '../../assets/download-docker.mp4';
 import './docs.css';
 
 const Docs = () => {
@@ -46,47 +48,9 @@ const Docs = () => {
   const { View:Circle5 } = useLottie(options, animStyle2);
   const { View:Circle6 } = useLottie(options, animStyle6);
 
-
-  const textSegment = `
-------------------------------------------------
-npm i dockerode selenium-webdriver jest
-------------------------------------------------
-
-------------------------------------------------
-npm i jest-stare
-------------------------------------------------
-
-------------------------------------------------
-npm i mongodb
-------------------------------------------------
-
-------------------------------------------------
-npm i bcrypt
-------------------------------------------------
-
-------------------------------------------------
-npm install mongoose
-------------------------------------------------
-## Running the tests on Docker (Chrome)
-
-### Pull a Docker Image
-------------------------------------------------
-docker pull selenium/standalone-chrome
-------------------------------------------------
-
-### Create Container
-------------------------------------------------
-docker run -d -p 4444:4444 -p 7900:7900 --shm-size="2g" selenium/standalone-chrome
-------------------------------------------------
-
-### Running the tests
-------------------------------------------------
-npm run test
-------------------------------------------------
-  `;
-
-
-  const installAll = "npm i apexcharts chart.js dotenv lottie-react mongodb react-apexcharts react-bootstrap react-chartjs react-dom react-router-dom react realm-web typed.js vite"
+  const npmIns = "npm i apexcharts bcrypt chart.js dockerode dotenv express jest jest-stare lottie-react mongodb mongoose react-apexcharts react-bootstrap react-chartjs react-dom react-router-dom react realm-web selenium-webdriver typed.js vite";
+  const runFront = "npm run dev";
+  
   return (
     <div className="overview-container">
         <h1 className='mainHead'>Documentation</h1>
@@ -94,7 +58,7 @@ npm run test
             {Circle1}
             {Circle2}
             {Circle3}
-            <p className="doc-subHead">How this works</p>
+            <p className="doc-subHead">Product Overview</p>
             {Circle6}
             {Circle5}
             {Circle4}
@@ -102,69 +66,89 @@ npm run test
         
         <section className='text-section'>
             <h1> Project Setup </h1>
-            <h2> Required Node Modules </h2>
-            <ul className='module-list'>
-                <li className="module">
-                    Apexcharts: |Version 3.54.1 or higher|
-                </li>
-                <li className="module">
-                    Chart.js: |Version 4.4.6 or higher|
-                </li>
-                <li className="module">
-                    Dotenv: |Version 16.4.5 or higher|
-                </li>
-                <li className="module">
-                    Lottie-react: |Version 2.4.0 or higher|
-                </li>
-                <li className="module">
-                    Mongodb: |Version 6.10.0 or higher|
-                </li>
-                <li className="module">
-                    Mongoose: |Version 8.8.1 or higher|
-                </li>
-                <li className="module">
-                    React-apexcharts: |Version 1.5.0 or higher|
-                </li>
-                <li className="module">
-                    React-bootstrap: |Version 2.10. or higher|
-                </li>
-                <li className="module">
-                    React-chartjs-2: |Version 5.2.0 or higher|
-                </li>
-                <li className="module">
-                    React-router-dom: |Version 6.27.0 or higher|
-                </li>
-                <li className="module">
-                    Realm-web: |Version 2.0.1 or higher|
-                </li>
-                <li className="module">
-                    Typed.js: |Version 2.1.0 or higher|
-                </li>
-                <li className='module'>
-                    Bcrypt: |Version 5.1.1 or higher|
-                </li>
-                <li className="module">
-                    Dockerode: |Version 4.0.2 or higher|
-                </li>
-                <li className="module">
-                    Jest: |Version 29.7.0 or higher|
-                </li>
-                <li className="module">
-                    Jest-stare: |Version 2.5.2 or higher|
-                </li>
-                <li className="module">
-                    Selenium-webdriver: |Version 4.26.0 or higher|
-                </li>
-            </ul>
+            <h2> Installing Node Modules </h2>
+            <p>Open up a terminal where this project is running, and run the following code into the terminal.</p>
+            <code>
+                <p className="modules">{npmIns}</p>
+            <button className="copy" onClick={async () =>{
+                await window.navigator.clipboard.writeText(npmIns);
+                console.log("Copied!");
+                window.alert("Copied!");
+            }}>Copy</button>
+            </code>
             <div className='divider'></div>
-            <h2>Installing dependencies</h2>
-            <pre className="code">
-                <code>
-                    {installAll}
-                </code>
-                {textSegment}   
-            </pre>
+            <p>This installs all the required dependencies for this project automatically. For the list of used modules, refer below:</p>
 
+
+            <ul className='module-list'>
+                <p className='listHead'>Front-End</p>
+                <li className='module'>React</li>
+                <p className="moduleDesc">React language to create front-end using TypeScript.</p>
+                <li className='module'>React-Bootstrap</li>
+                <p className="moduleDesc">Module that integrates the Bootstrap library for React.</p>
+                <li className='module'>React-Router-Dom</li>
+                <p className="moduleDesc">Routing through the DOM with React together with React-Dom.</p>
+                <li className='module'>React-Dom</li>
+                <p className="moduleDesc">Enables a DOM structure for routing pages with React-Router-Dom.</p>
+                <li className='module'>React-Apexcharts</li>
+                <p className="moduleDesc">React library that integrates the Apexchart library for React.</p>
+                <li className='module'>React-Chart.js</li>
+                <p className="moduleDesc">React library that builds Chart.js for charts and graphs.</p>
+                <li className='module'>Lottie-React</li>
+                <p className="moduleDesc">Used for adding lottie based animations.</p>
+                <li className='module'>Apexcharts</li>
+                <p className="moduleDesc">Apexcharts library for charting models and graphs.</p>
+                <li className='module'>Typed</li>
+                <p className="moduleDesc">Used for the Typed.js library of animations for words.</p>
+                <li className='module'>Vite</li>
+                <p className="moduleDesc">Vite plugin that allows front-end to be built and run on a local website.</p>
+
+                <p className='listHead'>Back-End</p>
+                <li className='module'>Dockerode</li>
+                <p className="moduleDesc">Dockerode to implement Docker based solutions for back-end.</p>
+                <li className='module'>Bcrypt</li>
+                <p className="moduleDesc">Encyption library for backend to encrypt data for security.</p>
+                <li className='module'>Dotenv</li>
+                <p className="moduleDesc">Dotenv for running database environments in code.</p>
+                <li className='module'>Jest</li>
+                <p className="moduleDesc">JavaScript Testing Framework with a focus on simplicity.</p>
+                <li className='module'>Jest-Stare</li>
+                <p className="moduleDesc">Jest HTML reporter that
+                    takes summary test results from jest and 
+                    parses them into an HTML file for 
+                    improved readability and filtering.</p>
+                    <li className='module'>MongoDB</li>
+                <p className="moduleDesc">MongoDB to access the MongoDB database used for storing our users, test datas, and test files.</p>
+                <li className='module'>Mongoose</li>
+                <p className="moduleDesc">Accessing Atlas App Services from a web-browser, for use with MongoDB.</p>
+                <li className='module'>Selenium WebDriver</li>
+                <p className="moduleDesc">Selenium WebDriver is used to drive a browser natively, as a user would, either locally or on a remote machine using the Selenium server.</p>
+            </ul>
+
+            <div className='divider'></div>
+            <h2> Running Test </h2>
+            <div className='divider'></div>
+            <p>To run the tests, follow these steps:</p>
+            <h3>Make sure Node.js is installed</h3>
+            <p>Run <a>node -v</a> in the terminal.</p>
+            <h3>Make sure Docker is installed</h3>
+            <p>Run <a>docker -v</a>.</p>
+            <h3>Run app.js</h3>
+            <p>node app.js</p>
+        </section>
+        <div className='divider'></div>
+        <section className='text-section'>
+            <h2>Running Front-End</h2>
+            <p>Return to the command terminal of the project, and run the following:
+            <code>
+                <p className="modules">{runFront}</p>
+            <button className="copy" onClick={async () =>{
+                await window.navigator.clipboard.writeText(npmIns);
+                console.log("Copied!");
+                window.alert("Copied!");
+            }}>Copy</button>
+            </code>
+            </p>
         </section>
     </div>
   )
