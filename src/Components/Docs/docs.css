@@ -1,0 +1,22 @@
+.doc-subHead{
+    font-size: 32px;
+    font-weight: 600;
+}
+
+.code{
+    width: 100%;
+    padding: 5px 0px 5px 15px;
+    border: 1px solid var(--background-color);
+    white-space: pre-wrap;
+}
+
+.module-list{
+    border: 1px solid var(--background-color)
+}
+
+.module{
+    font-style: normal;
+    list-style: none;
+    padding: 5px 0px 5px 15px;
+    font-size: 20px;
+}

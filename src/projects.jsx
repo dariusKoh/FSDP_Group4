@@ -6,6 +6,7 @@ import ProjectHome from "./Components/Projects/Projects-Home/project-home";
 import LoadingScreen from "./Components/Runtime/loading";
 import CreateProject from "./Components/Projects/create-project"; // Import CreateProject component
 import ViewCases from "./Components/Viewcase/View-Cases";
+import Docs from "./Components/Docs/docs";
 
 export default function ProjectPage() {
     const [projects, setProjects] = useState(["Proj#1", "HahaTest", "random proj", "kanatan", 'yes', 'et cetra', 'corn', 'yaasdasd']);
@@ -28,6 +29,8 @@ export default function ProjectPage() {
                 return <ViewCases projName={currentProject}/>
             case "Run Cases":
                 return <LoadingScreen />;
+            case "Documentation":
+                return <Docs />;
             case "Project Home":
             case "Project Name":
             case "My Projects":

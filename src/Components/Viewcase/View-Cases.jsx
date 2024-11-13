@@ -24,20 +24,20 @@ function ViewCases({cases, projName}){
 
   let sampledata = [
     {
-      test_id: 2,
+      testId: 2,
       name: "Corn",
-      success: "PASSED",
+      status: "PASSED",
       duration: 1322,
-      last_done: "12/12/2024",
-      remarks: null
+      createdAt: "12/12/2024",
+      failureMessages: null
     },
     {
-      test_id: 3,
+      testId: 3,
       name: "test2",
-      success: "FAILED",
+      status: "FAILED",
       duration: 329,
-      last_done: "23/11/2022",
-      remarks: "Test Case to do shii"
+      createdAt: "23/11/2022",
+      failureMessages: "Test Case to do shii"
     }
   ]
   cases = sampledata;
@@ -53,7 +53,7 @@ function ViewCases({cases, projName}){
               <tr>
                 <th>Test ID</th>
                 <th>Test Case Name</th>
-                <th>Success</th>
+                <th>Status</th>
                 <th>Duration</th>
                 <th>Last Tested</th>
                 <th>Comments</th>
@@ -61,13 +61,13 @@ function ViewCases({cases, projName}){
               </thead>
               <tbody>
               {filteredTests.map((test, index) => (
-                <tr key={index} className={test.success === "PASSED" ? "pass" : "fail"}>
+                <tr key={index} className={test.status === "PASSED" ? "pass" : "fail"}>
                   <td>{test.name}</td>
-                  <td>{test.test_id}</td>
-                  <td>{test.success}</td>
+                  <td>{test.testId}</td>
+                  <td>{test.status}</td>
                   <td>{test.duration}</td>
-                  <td>{test.last_done}</td>
-                  <td>{test.remarks}</td>
+                  <td>{test.createdAt}</td>
+                  <td>{test.failureMessages}</td>
                 </tr>
                 ))}
             </tbody>
