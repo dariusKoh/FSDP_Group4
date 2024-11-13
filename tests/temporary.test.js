@@ -13,11 +13,13 @@ browsers.forEach((browserName) => {
 				.usingServer(GRID_URL)
 				.forBrowser(browserName)
 				.build();
-		});
+		}, 30000); // Set timeout to 30 seconds
 
 		afterAll(async () => {
-			await driver.quit();
-		});
+			if (driver) {
+				await driver.quit();
+			}
+		}, 30000); // Set timeout to 30 seconds
 
 		test("should load the page and check title", async () => {
 			await driver.get("https://google.com"); // Replace with your URL
