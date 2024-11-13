@@ -23,10 +23,30 @@ async function pushScripts() {
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
     const db = client.db();
-    const collection = db.collection('scripts');
+    const usersCollection = db.collection('users');
+    const scriptsCollection = db.collection('scripts');
 
-    const count = await collection.countDocuments();
-    console.log(`Current document count: ${count}`);
+    async function getUserByName(name) {
+      try {
+        const user = await usersCollection.findOne({ name }, { projection: { _id: 0, userid: 1, name: 1 } });
+        return user;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    // Get the current user
+    const username = 'Darius';
+    const user = await getUserByName(username);
+    if (!user) {
+      console.log('User not found');
+      return;
+    }
+
+    console.log(`Retrieved user: ${user.name} (${user.userid})`);
+
+    const count = await scriptsCollection.countDocuments();
+    console.log(`Current script document count: ${count}`);
 
     // Wait for the scripts to be parsed
     const parsedData = await parseScripts();
@@ -40,12 +60,20 @@ async function pushScripts() {
     const documents = parsedData.map((script) => {
       const { scriptName, scriptContent } = script;
       console.log(`Script name: ${scriptName}\nScript content: ${scriptContent}\n`);
-      return { scriptName, scriptContent };
+      return { 
+        scriptName, 
+        scriptContent,
+        userid: user.userid, // Assign the script to the retrieved user
+        createdAt: new Date() 
+      };
     });
 
     // Insert the documents into MongoDB
-    const result = await collection.insertMany(documents);
+    const result = await scriptsCollection.insertMany(documents);
     console.log(`Inserted ${result.insertedCount} documents into the collection`);
+
+    // Return the inserted documents
+    return result.insertedDocs;
   } finally {
     await client.close();
   }
@@ -79,4 +107,6 @@ async function parseScripts() {
 }
 
 
-pushScripts().catch(console.dir);
+pushScripts().then((result) => {
+  console.log("Inserted documents:", result);
+}).catch(console.dir);
