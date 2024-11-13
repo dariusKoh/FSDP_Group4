@@ -1,4 +1,5 @@
 const { exec } = require('child_process');
+const docker = require('./docker-management');
 
 // Execute ``npm test`` in the current directory
 async function runTests() {
@@ -15,6 +16,12 @@ async function runTests() {
         }
     });
 }
+
+docker.setupSeleniumGrid()
+    .then(() => runTests())
+    .catch(error => {
+        console.error("Error in Selenium Grid setup:", error);
+    });
 
 module.exports = {
     runTests
