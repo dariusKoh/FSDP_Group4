@@ -44,6 +44,5 @@ docker.setupSeleniumGrid()
 }
 
 module.exports = {
-    runTests,
     runTestInContainers,
 }

@@ -1,18 +1,17 @@
 const express = require('express');
 const cors = require('cors');
 const { MongoClient } = require('mongodb');
-const { runTests, runTestInContainers } = require('./scripts/run-tests'); // Import runTests
+
+const { runTestInContainers } = require('./scripts/run-tests'); // Import runTests
 const dbQuery = require('./scripts/query-db'); // Import databse query script
 const { pushScripts } = require('./scripts/push-scripts'); // Import pushScripts
 const { waitForFile, pushResults } = require('./scripts/insert-db'); // Import pushResults
+
 const app = express();
 const port = 3001;
-
-
 const constants = {
     MONGO_URI: "mongodb+srv://teoyuanmao20:Password1234@cluster1.kv3es.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1",
 };
-
 const client = new MongoClient(constants.MONGO_URI);
 
 app.use(cors());
@@ -61,6 +60,7 @@ app.post('/create-project', async (req, res) => {
         await client.close();
     }
 });
+
 // API to fetch test logs from MongoDB
 app.get('/get-logs', async (req, res) => {
     try {
@@ -74,8 +74,6 @@ app.get('/get-logs', async (req, res) => {
     }
 });
 
-
-
 // API to fetch test cases from MongoDB
 app.get('/get-scripts', async (req, res) => {
     try {
@@ -88,7 +86,6 @@ app.get('/get-scripts', async (req, res) => {
         await client.close();
     }
 });
-
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
