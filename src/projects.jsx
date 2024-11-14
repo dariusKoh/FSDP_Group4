@@ -28,7 +28,7 @@ export default function ProjectPage() {
         setActiveState("Run Cases");
     
         try {
-            // Trigger the test run
+            // Trigger the test run by calling the backend endpoint
             const response = await fetch('http://localhost:3001/run-tests');
             if (!response.ok) {
                 console.error("Error running tests");
@@ -46,10 +46,13 @@ export default function ProjectPage() {
         }
     };
     
+    
+    
     // Function to fetch logs from MongoDB
     const fetchLogsFromDB = async () => {
         try {
             const response = await fetch('http://localhost:3001/get-logs');
+            console.log(response)
             const logsData = await response.json();
             const latestLogs = logsData.map(log => log.log).join("\n");
             setLogs(latestLogs);
