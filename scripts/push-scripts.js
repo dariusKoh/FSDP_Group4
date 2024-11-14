@@ -50,17 +50,11 @@ async function pushScripts() {
 
     // Wait for the scripts to be parsed
     const parsedData = await parseScripts();
-    if (Array.isArray(parsedData)) {
-      console.log("scripts is an array");
-    } else {
-      console.log("scripts is not an array");
-    }
 
     // Map over the parsed scripts and create document objects
     const documents = parsedData.map((script) => {
       const { scriptName, scriptContent } = script;
-      console.log(`Script name: ${scriptName}\nScript content: ${scriptContent}\n`);
-      return { 
+      return {
         scriptName, 
         scriptContent,
         userid: user.userid, // Assign the script to the retrieved user
@@ -80,7 +74,6 @@ async function pushScripts() {
 }
 
 async function parseScripts() {
-  const scripts = [];
 
   // Return a Promise that resolves when all files have been processed
   const files = await fs.promises.readdir(constants.FILE_PATH);

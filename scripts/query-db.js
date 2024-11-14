@@ -47,7 +47,7 @@ async function queryDataByUserId(collectionName, userId) {
     }
 }
 
-async function queryData(collectionName) {
+async function queryAllData(collectionName) {
     try {
         // Connect the client to the server (optional starting in v4.7)
         await client.connect();
@@ -60,7 +60,7 @@ async function queryData(collectionName) {
         const collection = db.collection(collectionName);
 
         // Execute the query and fetch the results
-        const results = await collection.find().toArray();
+        const results = await collection.find({}, {"sort" : ['datefield', 'asc']} ).toArray(function(err,docs) {});
         console.log(`Found ${results.length} documents that match the query.`);
         // Return the results
         return results;
@@ -72,3 +72,11 @@ async function queryData(collectionName) {
         await client.close();
     }
 }
+
+//queryDataByUserId("scripts",7).then(console.log).catch(console.error);
+//queryAllData("test_results").then(console.log).catch(console.error);
+
+module.exports = { 
+    queryAllData, 
+    queryDataByUserId
+};

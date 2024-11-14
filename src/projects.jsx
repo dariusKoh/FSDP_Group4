@@ -11,7 +11,7 @@ import Help from "./Components/Help/help";
 
 export default function ProjectPage() {
     const [projects, setProjects] = useState([
-        "Proj#1", "HahaTest", "random proj", "kanatan", 'yes', 'et cetra', 'corn', 'yaasdasd'
+        
     ]);
     const [activeState, setActiveState] = useState(null);
     const [showCreateProject, setShowCreateProject] = useState(false);
