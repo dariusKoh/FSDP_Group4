@@ -18,61 +18,73 @@ export default function ProjectPage() {
     const [currentProject, setCurrentProject] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
-    // Function to run tests by calling the backend
+    
+
+
+    const [logs, setLogs] = useState("");
+
     const handleRunCases = async () => {
         setIsLoading(true);
         setActiveState("Run Cases");
-
+    
         try {
-            // Call the backend to run tests
+            // Trigger the test run
             const response = await fetch('http://localhost:3001/run-tests');
-            if (response.ok) {
-                console.log("Tests completed successfully");
-                setIsLoading(false);
-                setActiveState("Project Overview");
-            } else {
+            if (!response.ok) {
                 console.error("Error running tests");
                 setIsLoading(false);
+                return;
             }
+    
+            console.log("Tests started, waiting for completion...");
+    
+            // Poll for logs after a short delay
+            setTimeout(fetchLogsFromDB, 5000);
         } catch (error) {
             console.error("Failed to run tests:", error);
             setIsLoading(false);
         }
     };
+    
+    // Function to fetch logs from MongoDB
+    const fetchLogsFromDB = async () => {
+        try {
+            const response = await fetch('http://localhost:3001/get-logs');
+            const logsData = await response.json();
+            const latestLogs = logsData.map(log => log.log).join("\n");
+            setLogs(latestLogs);
+            setIsLoading(false);
+            setActiveState("Project Overview");
+        } catch (error) {
+            console.error("Failed to fetch logs:", error);
+            setIsLoading(false);
+        }
+    };
+    
+
+    // Pass logs to LoadingScreen
+    const renderComponent = () => {
+        if (isLoading) {
+            return <LoadingScreen logs={logs} />;
+        }
+        switch (activeState) {
+            case "Project Overview":
+                return <Overview projName={currentProject} />;
+            case "View Cases":
+                return <ViewCases projName={currentProject} />;
+            default:
+                return <ProjectHome projects={projects} setCurrentProject={setCurrentProject} />;
+        }
+    };
+    
+
+    
 
     function handleAddProject(projectName) {
         setProjects((prevProjects) => [...prevProjects, projectName]);
     }
 
-    const renderComponent = () => {
-        if (isLoading) {
-            return <LoadingScreen />;
-        }
-        switch (activeState) {
-            case "Project Overview":
-                return (
-                    <Overview
-                        projName={currentProject}
-                        onClose={() => {
-                            setCurrentProject(null);
-                            setActiveState("Project Home");
-                        }}
-                    />
-                );
-            case "View Cases":
-                return <ViewCases projName={currentProject} />;
-            case "Run Cases":
-                return <LoadingScreen />;
-            case "Documentation":
-                return <Docs />;
-            case "Help":
-                return <Help />;
-            case "Project Home":
-                return <ProjectHome projects={projects} setCurrentProject={setCurrentProject} />;
-            default:
-                return <ProjectHome projects={projects} setCurrentProject={setCurrentProject} />;
-        }
-    };
+    
 
     const updateActiveState = (val) => {
         if (val === "Run Cases") {

@@ -1,26 +1,34 @@
 const express = require('express');
-const docker = require('./scripts/docker-management');
-const tests = require('./scripts/run-tests');
 const cors = require('cors');
-
-
-
+const { MongoClient } = require('mongodb');
 const app = express();
-const port = 3001; // You can adjust the port if needed
+const port = 3001;
+
+const constants = {
+    MONGO_URI: "mongodb+srv://teoyuanmao20:Password1234@cluster1.kv3es.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1",
+};
+
+const client = new MongoClient(constants.MONGO_URI);
+
 app.use(cors());
-// Endpoint to run tests
-app.get('/run-tests', async (req, res) => {
+app.use(express.json());
+
+// API to fetch test logs from MongoDB
+app.get('/get-logs', async (req, res) => {
     try {
-        await docker.setupSeleniumGrid();
-        await tests.runTests();
-        res.status(200).json({ message: "Tests completed" });
+        await client.connect();
+        const db = client.db('test');
+        const collection = db.collection('test_results');
+        const logs = await collection.find().sort({ createdAt: -1 }).toArray();
+        res.json(logs);
     } catch (error) {
-        console.error("Error during Selenium Grid setup or tests:", error);
-        res.status(500).json({ message: "Error running tests", error });
+        console.error("Error fetching logs from MongoDB:", error);
+        res.status(500).send("Failed to fetch logs");
+    } finally {
+        await client.close();
     }
 });
 
-// Start the server
 app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
+    console.log(`Server is running on http://localhost:${port}`);
 });
