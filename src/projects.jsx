@@ -79,6 +79,10 @@ export default function ProjectPage() {
                 return <Overview projName={currentProject} />;
             case "View Cases":
                 return <ViewCases cases={testCases} projName={currentProject} />; // Pass test cases to ViewCases
+            case "Help":
+                return <Help />
+            case "Documentation":
+                return <Docs />
             default:
                 return <ProjectHome projects={projects} setCurrentProject={setCurrentProject} />;
         }
