@@ -20,7 +20,6 @@ app.use(express.json());
 app.get('/run-tests', async (req, res) => {
     console.log("App.js run-tests");
     try {
-        await pushScripts(); // Call pushScripts function
         await runTestInContainers(); // Call runTests function
         res.status(200).json({ message: "Tests started successfully" });
     } catch (error) {

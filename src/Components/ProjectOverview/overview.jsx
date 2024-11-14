@@ -29,13 +29,9 @@ function Overview({ projName, lastDate = "11/12/2024", onClose }) {
         };
     }, [projName]);
 
-    const tests = [
-        { name: "Test Home Page", id: "TC_1", status: "Pass", remarks: "No Remarks" },
-        { name: "LolTest", id: "TC_2", status: "Fail", remarks: "Remarks" },
-    ];
     // Sample data
     let passed = testLogs.filter(test => test.status == "PASSED");
-    let failed = testLogs.filter(test => test.status == "FAILED");
+    let failed = testLogs.filter(test => test.status !== "PASSED");
     const data = {
         totalTasks: testLogs.length,
         passedTasks: passed.length,
@@ -44,8 +40,6 @@ function Overview({ projName, lastDate = "11/12/2024", onClose }) {
     };
     
 
-    // Filter tests based on selected filter
-    const filteredTests = filter === "All" ? tests : tests.filter(test => test.status === filter);
 
     const createChartData = (value) => ({
         series: [value],
