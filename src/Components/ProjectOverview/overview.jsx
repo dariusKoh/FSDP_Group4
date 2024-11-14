@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import ReactApexChart from "react-apexcharts";
 import Typed from "typed.js";
 import "./overview.css";
-//import jestData from "../.././../jest-stare/jest-results.json"
+//Removed Jest
 
 function Overview({ projName, lastDate = "11/12/2024", onClose }) {
     const [filter, setFilter] = useState("All");
