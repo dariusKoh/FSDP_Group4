@@ -52,30 +52,38 @@ async function pushResults() {
 
     const data = fs.readFileSync(constants.FILE_PATH);
     const obj = JSON.parse(data);
-    const testResults = obj.testResults[0].testResults;
-    const perfStats = obj.testResults[0].perfStats;
+    // Loop through the top-level test results
+    const testResults = obj.testResults.flatMap(testResult => testResult.testResults); // Flattening nested testResults
+    const perfStats = obj.testResults[0].perfStats; // Performance stats from the first test suite
+
     const { numFailedTests, numPassedTests, numPendingTests, numTodoTests, numTotalTests } = obj;
-    const totalDuration = parseInt(perfStats.runtime, 10) / 1000;
+    const totalDuration = parseInt(perfStats.runtime, 10) / 1000; // Convert runtime to seconds
 
     console.log("Test Summary:");
+
     const documents = testResults.map((test, index) => {
-      const testId = `${constants.TEST_ID_PREFIX}${count + index + 1}`;
-      const ancestorTitles = test.ancestorTitles;
+      const testId = `${constants.TEST_ID_PREFIX}${index + 1}`;
+      const ancestorTitles = test.ancestorTitles.join(' > '); // Join ancestor titles to create a hierarchy
+      const fullTitle = test.fullName;
       const duration = test.duration;
       const status = test.status.toUpperCase();
-      const testFailureMessages = test.failureMessages.length === 0 ? "None" : test.failureMessages;
-      const createdAt = new Date(); 
+      const failureMessages = test.failureMessages.length === 0 ? "None" : test.failureMessages.join('\n'); // Join failure messages if any
+      const failureDetails = test.failureDetails.length === 0 ? "None" : test.failureDetails.map(detail => detail.message).join('\n');
+      const createdAt = new Date();
 
-      console.log(`Test id: ${testId}\nTest name: ${ancestorTitles}\nStatus: ${status}\nDuration: ${duration}ms\nFailure messages: ${testFailureMessages}\n`);
+      // Log individual test details
+      console.log(`Test id: ${testId}\nTest name: ${ancestorTitles}\nStatus: ${status}\nDuration: ${duration}ms\nFailure messages: ${failureMessages}\nFailure details: ${failureDetails}\n`);
 
       return {
-        testId,
-        ancestorTitles,
-        duration,
-        status,
-        failureMessages: testFailureMessages,
-        userid: user.userid,
-        createdAt, 
+          testId,
+          ancestorTitles,
+          fullTitle,
+          duration,
+          status,
+          failureMessages,
+          failureDetails,
+          userid: user.userid, // Assuming `user` is defined elsewhere
+          createdAt,
       };
     });
 
@@ -94,21 +102,4 @@ async function pushResults() {
   }
 }
 
-function waitForFile(interval = 3000) {
-  return new Promise((resolve, reject) => {
-    const startTime = Date.now();
-
-    const checkFile = () => {
-      if (fs.existsSync(constants.FILE_PATH)) {
-        resolve(`File found: ${constants.FILE_PATH}`);
-      } 
-      else {
-        setTimeout(checkFile, interval); // Check again after the specified interval
-      }
-    };
-
-    checkFile();
-  });
-}
-
-module.exports = { waitForFile, pushResults }; 
+module.exports = { pushResults }; 

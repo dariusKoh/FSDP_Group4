@@ -11,10 +11,10 @@ async function runTests() {
     return new Promise((resolve, reject) => {
         // Execute ``npm test`` in the current directory
         exec('npm test', (error, stdout, stderr) => {
-            if (error) {
+            /*if (error) {
                 console.error(`Error executing npm test: ${error.message}`);
                 reject(error);
-            }
+            }*/
         
             console.log(`Output:\n${stdout}`);
             if (stderr) {
@@ -49,8 +49,8 @@ async function runTestInContainers() {
         });
 }
 
-runTestInContainers();
+//runTestInContainers();
 
 module.exports = {
-    runTestInContainers,
+    runTestInContainers
 }
