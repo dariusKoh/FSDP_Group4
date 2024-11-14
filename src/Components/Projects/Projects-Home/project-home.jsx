@@ -49,8 +49,8 @@ export default function ProjectHome({ setCurrentProject, setActiveState }) {
         setActiveState(projectName);
     };
 
-    const handleAddNewProject = (newProjectName) => {
-        setProjects([...projects, newProjectName]);
+    const handleAddNewProject = (newProject) => {
+        setProjects([...projects, newProject]);
     };
 
     const handleCloseProject = () => {

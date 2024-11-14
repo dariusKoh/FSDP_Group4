@@ -80,7 +80,7 @@ function CreateProject({ projCount, onClose, onAddProject }) {
             
             // Pass the project name up
             if (typeof onAddProject === 'function') {
-                onAddProject(data.project.projectName);
+                onAddProject(data.project);
             }
             onClose();
         } else {
