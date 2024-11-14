@@ -61,7 +61,7 @@ export default function ProjectPage() {
     // Function to fetch test cases when "View Cases" is active
     const fetchTestCases = async () => {
         try {
-            const response = await fetch('http://localhost:3001/get-test-cases');
+            const response = await fetch('http://localhost:3001/get-scripts');
             const data = await response.json();
             setTestCases(data);
         } catch (error) {
@@ -71,9 +71,6 @@ export default function ProjectPage() {
     
     // Determine which component to render
     const renderComponent = () => {
-        if (isLoading) {
-            return <LoadingScreen logs={logs} />;
-        }
         switch (activeState) {
             case "Project Overview":
                 return <Overview projName={currentProject} />;
@@ -84,7 +81,11 @@ export default function ProjectPage() {
             case "Documentation":
                 return <Docs />
             default:
+                if (isLoading) {
+                    return <LoadingScreen logs={logs} />;
+                }
                 return <ProjectHome projects={projects} setCurrentProject={setCurrentProject} setActiveState={setActiveState} />;
+                
         }
     };
 
