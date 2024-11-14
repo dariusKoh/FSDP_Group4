@@ -67,12 +67,11 @@ function Sidebar({ base, onProjectSelect, onProjectOpened, projectName, setActiv
                                 <ul className="dropdownList">
                                     {["Project Overview", "View Cases", "Run Cases"].map((subItem) => (
                                         <li key={subItem}>
-                                            <button 
+                                            <button
                                                 className={activeItem === subItem ? 'active btnItem' : 'btnItem'}
                                                 onClick={() => {
-                                                    console.log(subItem);
                                                     setActiveItem(subItem);
-                                                    setActiveState(subItem); // Set active state for sub-items
+                                                    setActiveState(subItem); // This will trigger handleRunCases if "Run Cases" is clicked
                                                 }}
                                             >
                                                 {subItem}
