@@ -1,14 +1,30 @@
+// projects-home.jsx
 import React, { useEffect, useRef, useState } from "react";
 import Typed from "typed.js";
 import MyProjects from "./my-projects";
 import './project-home.css';
 import Overview from "../../ProjectOverview/overview";
 
-export default function ProjectHome({ setCurrentProject,setActiveState }) {
+export default function ProjectHome({ setCurrentProject, setActiveState }) {
     const el = useRef(null);
     const [selectedProject, setSelectedProject] = useState(null);
     const [projects, setProjects] = useState([]); // Manage projects state here
     const [currentCategory, setCurrentCategory] = useState("myProjects");
+
+    // Fetch projects from the backend
+    useEffect(() => {
+        const fetchProjects = async () => {
+            try {
+                const response = await fetch('http://localhost:3001/projects'); // Call the new endpoint
+                const data = await response.json();
+                setProjects(data); // Set the fetched projects into state
+            } catch (error) {
+                console.error("Error fetching projects:", error);
+            }
+        };
+
+        fetchProjects();
+    }, []);  // Runs once when component mounts
 
     useEffect(() => {
         const typed = new Typed(el.current, {
@@ -18,8 +34,9 @@ export default function ProjectHome({ setCurrentProject,setActiveState }) {
             backSpeed: 150,
             backDelay: 200,
             loop: false,
-            showCursor: false
+            showCursor: false,
         });
+
         return () => {
             typed.destroy();
         };
@@ -27,7 +44,7 @@ export default function ProjectHome({ setCurrentProject,setActiveState }) {
 
     const handleProjectSelect = (projectName, category) => {
         setSelectedProject(projectName);
-        setCurrentCategory(category);  // Track the category of the selected project
+        setCurrentCategory(category);
         setCurrentProject(projectName);
         setActiveState(projectName);
     };
@@ -79,6 +96,3 @@ export default function ProjectHome({ setCurrentProject,setActiveState }) {
         </div>
     );
 }
-
-
-

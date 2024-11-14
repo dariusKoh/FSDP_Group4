@@ -2,7 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import { useLottie } from 'lottie-react';
 import Loading from "../../assets/Loading.json";
-import downloadDocker from '../../assets/download-docker.mp4';
+import homeview from "../../assets/homepage.png";
 import './docs.css';
 
 const Docs = () => {
@@ -192,9 +192,38 @@ const Docs = () => {
             <h3>Make sure Docker is installed</h3>
             <p>Run <a>docker -v</a>.</p>
             <h3>Run app.js</h3>
-            <p>node app.js</p>
+            <p>Run the command "node app.js" in the terminal.</p>
+            <code>
+                  <p className="modules">{"node app.js"}</p>
+              <button className="copy" onClick={async () =>{
+                  await window.navigator.clipboard.writeText("node app.js");
+                  console.log("Copied!");
+                  window.alert("Copied!");
+              }}>Copy</button>
+            </code>
+            <h3>Run dev for front-end</h3>
+            <p>Open up another terminal and run the command "npm run dev" at the same time.</p>
+            <code>
+              <p className="modules">{"npm run dev"}</p>
+              <button className="copy" onClick={async () =>{
+                await window.navigator.clipboard.writeText("npm run dev");
+                console.log("Copied!");
+                window.alert("Copied!");
+              }}>Copy</button>
+            </code>
+            <div className='divider'></div>
+            <h3>Open up the website</h3>
+            <p>Click the link beside "Local" in the terminal where npm run dev was run, or open up <a href="http://localhost:5173">https://localhost:5173</a>.</p>
+            <div className='divider'><h2>How it looks</h2></div>
+            <img className='imgView' src={homeview}></img>
         </section>
         <div className='divider'></div>
+        <section className='text-section'>
+          <h2>How to use</h2>
+          <p>Upon login, click the <a href='projects'>Product</a> Tab on the top navigation bar to enter the Projects Page.</p>
+          <h2>Creating a Project</h2>
+          <p>To create a project, click on "Add New Project" in either the My Projects or All Projects section of your Projects Page.</p>
+        </section>
     </div>
   )
 }
