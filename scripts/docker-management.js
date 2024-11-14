@@ -84,7 +84,12 @@ async function startBrowserNode(image, name) {
     // Ensure the hub is ready before starting nodes
     const hubStatus = await docker.getContainer('selenium-hub').inspect();
     if (!hubStatus.State.Running) {
-        throw new Error('Selenium Hub is not running. Start the hub first.');
+        try {
+            await docker.getContainer('selenium-hub').start();
+        }
+        catch (error) {
+            console.error(`Error starting selenium-hub: ${error.message}`);
+        }
     }
 
     // Ensure that image exists
