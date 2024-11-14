@@ -28,6 +28,72 @@ function Overview({ projName, lastDate = "11/12/2024", onClose }) {
         };
     }, [projName]);
 
+    const tests = [
+        { name: "Test Home Page", id: "TC_1", status: "Pass", remarks: "No Remarks" },
+        { name: "LolTest", id: "TC_2", status: "Fail", remarks: "Remarks" },
+    ];
+    // Sample data
+    let passed = testLogs.filter(test => test.status == "PASSED");
+    let failed = testLogs.filter(test => test.status == "FAILED");
+    const data = {
+        totalTasks: testLogs.length,
+        passedTasks: passed.length,
+        failedTasks: failed.length,
+        pendingTasks: testLogs.length - passed.length - failed.length,
+    };
+    
+
+    // Filter tests based on selected filter
+    const filteredTests = filter === "All" ? tests : tests.filter(test => test.status === filter);
+
+    const createChartData = (value) => ({
+        series: [value],
+        options: {
+            chart: {
+                height: 350,
+                type: "radialBar",
+            },
+            plotOptions: {
+                radialBar: {
+                    startAngle: -135,
+                    endAngle: 225,
+                    hollow: { size: "70%" },
+                    track: { background: "#e0e0e0", strokeWidth: "100%" },
+                    dataLabels: {
+                        show: true,
+                        value: {
+                            formatter: (val) => parseInt(val),
+                            color: "#111",
+                            fontSize: "36px",
+                            show: true,
+                        },
+                    },
+                },
+            },
+            fill: {
+                type: "gradient",
+                gradient: {
+                    shade: "dark",
+                    type: "horizontal",
+                    shadeIntensity: 0.5,
+                    gradientToColors: ["#ABE5A1"],
+                    inverseColors: true,
+                    opacityFrom: 1,
+                    opacityTo: 1,
+                    stops: [0, 100],
+                },
+            },
+            stroke: { lineCap: "round" },
+            labels: ["Percent"],
+        },
+    });
+
+    const getStatusClass = (status) => {
+        if (status === "Pass") return "passed";
+        if (status === "Fail") return "failed";
+        return "pending";
+    };
+
     // Function to fetch logs from the backend
     const fetchLogsFromDB = async () => {
         try {
@@ -48,6 +114,48 @@ function Overview({ projName, lastDate = "11/12/2024", onClose }) {
             <h2 className="Title">
                 <span>Last Edited: {lastDate}</span>
             </h2>
+            <div className="overview-summary">
+                <div className="tasks-overview">
+                    <h1 className="task-overview-header">Overview</h1>
+                    <h1>{data.passedTasks}</h1>
+                    <p>out of {data.totalTasks} tasks Passed</p>
+                    <h1>{data.failedTasks}</h1>
+                    <p>out of {data.totalTasks} tasks Failed</p>
+                    <h1>{data.pendingTasks}</h1>
+                    <p>out of {data.totalTasks} tasks Pending</p>
+                </div>
+
+                <div className="chart-container">
+                    <div className="radial-chart">
+                        <div className={`chart-status ${getStatusClass("Pass")}`}>Passed</div>
+                        <ReactApexChart
+                            options={createChartData((data.passedTasks / data.totalTasks) * 100).options}
+                            series={createChartData((data.passedTasks / data.totalTasks) * 100).series}
+                            type="radialBar"
+                            height={350}
+                        />
+                    </div>
+                    <div className="radial-chart">
+                        <div className={`chart-status ${getStatusClass("Fail")}`}>Failed</div>
+                        <ReactApexChart
+                            options={createChartData((data.failedTasks / data.totalTasks) * 100).options}
+                            series={createChartData((data.failedTasks / data.totalTasks) * 100).series}
+                            type="radialBar"
+                            height={350}
+                        />
+                    </div>
+                    <div className="radial-chart">
+                        <div className={`chart-status ${getStatusClass("Pending")}`}>Pending</div>
+                        <ReactApexChart
+                            options={createChartData((data.pendingTasks / data.totalTasks) * 100).options}
+                            series={createChartData((data.pendingTasks / data.totalTasks) * 100).series}
+                            type="radialBar"
+                            height={350}
+                        />
+                    </div>
+                </div>
+            </div>
+            
 
             {/* Test Logs Section */}
             <div className="test-table">
