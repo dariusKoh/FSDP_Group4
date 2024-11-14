@@ -27,6 +27,35 @@ app.get('/run-tests', async (req, res) => {
     }
 });
 
+app.post('/create-project', async (req, res) => {
+    const { projectName, visibility, files } = req.body; //Creates a new project
+
+    try {
+        await client.connect();
+        const db = client.db('test');
+        const collection = db.collection('projects');
+
+        // Get the current count of projects
+        const projectCount = await collection.countDocuments();
+        const newProjectId = projectCount + 1; // Use the next number as the project ID
+
+        const newProject = {
+            proj_id: newProjectId, // Generate a unique identifier for the project
+            projectName,
+            visibility,
+            files, // Array of files with { name, content }
+            createdAt: new Date(),
+        };
+
+        const result = await collection.insertOne(newProject);
+        res.status(201).json({ message: "Project created successfully", project: newProject });
+    } catch (error) {
+        console.error("Error creating project:", error);
+        res.status(500).json({ error: "Failed to create project" });
+    } finally {
+        await client.close();
+    }
+});
 // API to fetch test logs from MongoDB
 app.get('/get-logs', async (req, res) => {
     try {

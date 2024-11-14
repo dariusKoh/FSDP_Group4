@@ -106,10 +106,10 @@ export default function ProjectPage() {
         <Fragment>
             <NavbarLoggedIn />
             <Sidebar
-                base={true}
+                base={false} //Edits here
                 setActiveState={updateActiveState}
                 projectName={currentProject}
-                onProjectOpened={true}
+                onProjectOpened={false} //Edits here
             />
             {renderComponent()}
             {showCreateProject && (

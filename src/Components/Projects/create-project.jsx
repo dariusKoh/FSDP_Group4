@@ -6,6 +6,7 @@ function CreateProject({ projCount, onClose, onAddProject }) {
   const [dragActive, setDragActive] = useState(false);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [projectName, setProjectName] = useState(`New Project #${projCount}`);
+  const [visibilityOption, setVisibilityOption] = useState("Public"); // File visibility
 
   useEffect(() => {
     const handleEscPress = (event) => {
@@ -13,7 +14,6 @@ function CreateProject({ projCount, onClose, onAddProject }) {
         onClose();
       }
     };
-
     window.addEventListener('keydown', handleEscPress);
     return () => {
       window.removeEventListener('keydown', handleEscPress);
@@ -26,7 +26,20 @@ function CreateProject({ projCount, onClose, onAddProject }) {
 
   const handleFileChange = (event) => {
     const files = Array.from(event.target.files);
-    setSelectedFiles(files);
+    
+    // Read file contents
+    const fileReaders = files.map(file => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve({ name: file.name, content: e.target.result });
+        reader.onerror = reject;
+        reader.readAsText(file);
+      });
+    });
+
+    Promise.all(fileReaders)
+      .then(fileContents => setSelectedFiles(fileContents))
+      .catch(error => console.error("Error reading files:", error));
   };
 
   const handleDragOver = (event) => {
@@ -42,17 +55,39 @@ function CreateProject({ projCount, onClose, onAddProject }) {
     event.preventDefault();
     setDragActive(false);
     const files = Array.from(event.dataTransfer.files);
-    setSelectedFiles(files);
+    handleFileChange({ target: { files } });
   };
 
-  function handleCreateProject(event) {
+  const handleCreateProject = async (event) => {
     event.preventDefault();
-    if (typeof onAddProject === 'function') {
-      onAddProject(projectName);
+
+    const newProject = {
+      projectName,
+      visibility: visibilityOption,
+      files: selectedFiles,
+    };
+
+    try {
+      const response = await fetch('http://localhost:3001/create-project', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newProject),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Project created:", data);
+        if (typeof onAddProject === 'function') {
+          onAddProject(data.project);
+        }
+        onClose();
+      } else {
+        console.error("Error creating project");
+      }
+    } catch (error) {
+      console.error("Failed to create project:", error);
     }
-    onClose();
-  }
-  
+  };
 
   return (
     <div>
@@ -79,11 +114,23 @@ function CreateProject({ projCount, onClose, onAddProject }) {
           <label className="labelField">Visibility:</label>
           <div className="visibilityOptions">
             <label className="radioOption">
-              <input type="radio" name="visibility" value="Public" />
+              <input
+                type="radio"
+                name="visibility"
+                value="Public"
+                checked={visibilityOption === "Public"}
+                onChange={() => setVisibilityOption("Public")}
+              />
               <span>Public</span>
             </label>
             <label className="radioOption">
-              <input type="radio" name="visibility" value="Private" />
+              <input
+                type="radio"
+                name="visibility"
+                value="Private"
+                checked={visibilityOption === "Private"}
+                onChange={() => setVisibilityOption("Private")}
+              />
               <span>Private</span>
             </label>
           </div>

@@ -7,14 +7,16 @@ function Sidebar({ base, onProjectSelect, onProjectOpened, projectName, setActiv
     // Define items based on login state and whether a project is opened
     let items;
     if (onProjectOpened) {
-        items = ["Home", projectName, "Help", "Documentation"];
-    } else if (base) {
-        items = ["Home", "Projects", "Guide", "Account"];
-    } else {
-        items = ["Home", "Project Home", "Help", "Documentation"];
+        items = [projectName, "Help", "Documentation"];
+    } 
+    // else if (base) {
+    //     items = ["Projects", "Guide", "Account"];
+    // }
+     else {
+        items = ["Project Home", "Help", "Documentation"];
     }
 
-    const [activeItem, setActiveItem] = useState(items[0]);
+    const [activeItem, setActiveItem] = useState(items[0] || "Project Home"); // Default to "Project Home"
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     return (
