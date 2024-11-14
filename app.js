@@ -6,6 +6,7 @@ const db = require('./scripts/query-db'); // Import databse query script
 const app = express();
 const port = 3001;
 
+
 const constants = {
     MONGO_URI: "mongodb+srv://teoyuanmao20:Password1234@cluster1.kv3es.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1",
 };
@@ -38,6 +39,25 @@ app.get('/get-logs', async (req, res) => {
         await client.close();
     }
 });
+
+
+
+// API to fetch test cases from MongoDB
+app.get('/get-test-cases', async (req, res) => {
+    try {
+        await client.connect();
+        const db = client.db('test');
+        const collection = db.collection('scripts');
+        const testCases = await collection.find().sort({ createdAt: -1 }).toArray();
+        res.json(testCases);
+    } catch (error) {
+        console.error("Error fetching test cases from MongoDB:", error);
+        res.status(500).send("Failed to fetch test cases");
+    } finally {
+        await client.close();
+    }
+});
+
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
