@@ -22,7 +22,7 @@ browsers.forEach((browserName) => {
 		}, 30000); // Set timeout to 30 seconds
 
 		test("should load the page and check title", async () => {
-			await driver.get("https://google.com"); // Replace with your URL
+			await driver.get("https://google.com", 10000); // Replace with your URL
 			const title = await driver.getTitle();
 			expect(title).toBe("Google"); // Replace with the expected title
 		});
