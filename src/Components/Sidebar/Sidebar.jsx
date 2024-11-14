@@ -18,7 +18,7 @@ function Sidebar({ base, onProjectSelect, onProjectOpened, projectName, setActiv
 
     const [activeItem, setActiveItem] = useState(items[0] || "Project Home"); // Default to "Project Home"
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
+    console.log("onProjOpen: "+onProjectOpened)
     return (
         <ul className="sideList">
             {items.map((item) => (

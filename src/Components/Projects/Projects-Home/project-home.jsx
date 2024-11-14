@@ -4,7 +4,7 @@ import MyProjects from "./my-projects";
 import './project-home.css';
 import Overview from "../../ProjectOverview/overview";
 
-export default function ProjectHome({ setCurrentProject }) {
+export default function ProjectHome({ setCurrentProject,setActiveState }) {
     const el = useRef(null);
     const [selectedProject, setSelectedProject] = useState(null);
     const [projects, setProjects] = useState([]); // Manage projects state here
@@ -29,6 +29,7 @@ export default function ProjectHome({ setCurrentProject }) {
         setSelectedProject(projectName);
         setCurrentCategory(category);  // Track the category of the selected project
         setCurrentProject(projectName);
+        setActiveState(projectName);
     };
 
     const handleAddNewProject = (newProjectName) => {
