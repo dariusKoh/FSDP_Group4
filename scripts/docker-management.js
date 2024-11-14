@@ -72,8 +72,10 @@ async function setupSeleniumGrid() {
     // If the hub container was successfully started, create containers for browsers
     if (success === true) {
         // Start image and container for each browser
-        console.log("Creating containers for browsers");
-        await createContainers(1);
+        console.log("Creating images for browsers...");
+        await pullImage("selenium/node-chrome");
+        await pullImage("selenium/node-firefox");
+        await pullImage("selenium/node-edge");
     }
 }
 
@@ -151,10 +153,12 @@ async function removeImage(imageId) {
 // Stop and remove all containers
 async function stopAllContainers() {
     try {
-        const containers = await listContainers();
-        console.log(containers);
+        const containers = await listContainersOnNetwork();
+
         for (const container of containers) {
-            await stopContainer(container.id);
+            if (!container[1].Name.includes('selenium-hub')) {
+                await stopContainer(container[0]);
+            }
         }
         console.log('Stopped and removed all containers.');
     } catch (error) {
@@ -206,8 +210,12 @@ async function listContainers(returntype) {
 async function listContainersOnNetwork() {
     try {
         const network = docker.getNetwork("selenium-network");
-        const containers = await network.inspect();
-        console.log(`Containers on network ${network.Name}:`, containers.Containers);
+        const networkDetails = await network.inspect();
+        // Get containers on the network
+        const containers = Object.entries(networkDetails.Containers);
+
+        //console.log(`Containers on network ${networkDetails.Name}:`, containers);
+        return containers;
     } catch (error) {
         console.error(`Error listing containers on network selenium-network: ${error}`);
     }

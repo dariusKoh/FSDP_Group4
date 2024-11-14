@@ -1,26 +1,48 @@
 const { exec } = require('child_process');
 const docker = require('./docker-management');
 
-// Execute ``npm test`` in the current directory
+// Run tests and return the output
 async function runTests() {
     console.log("Running tests...");
-    exec('npm test', (error, stdout, stderr) => {
-        if (error) {
-            console.error(`Error executing npm test: ${error.message}`);
-            return;
-        }
-    
-        console.log(`Output:\n${stdout}`);
-        if (stderr) {
-            console.error(`Errors:\n${stderr}`);
-        }
+
+    return new Promise((resolve, reject) => {
+        // Execute ``npm test`` in the current directory
+        exec('npm test', (error, stdout, stderr) => {
+            if (error) {
+                console.error(`Error executing npm test: ${error.message}`);
+                reject(error);
+            }
+        
+            console.log(`Output:\n${stdout}`);
+            if (stderr) {
+                console.error(`Errors:\n${stderr}`);
+            }
+            resolve(stdout);
+        });
     });
 }
 
+//docker.listContainersOnNetwork();
+//docker.stopAllContainers();
+//docker.createContainers(1);
+
+
 docker.setupSeleniumGrid()
-    .then(() => runTests())
+    .then(() => docker.createContainers(1))
+    .then(() => {
+        return runTests();
+    })
+    .then(() => {
+        console.log("Tests completed. Proceeding to clean up...");
+    })
     .catch(error => {
-        console.error("Error in Selenium Grid setup:", error);
+        console.error("Error during setup or test execution:", error);
+    })
+    .finally(() => {
+        console.log("Cleaning up containers...");
+        docker.stopAllContainers()
+            .then(() => console.log("All containers removed successfully."))
+            .catch(error => console.error("Error removing containers:", error));
     });
 
 module.exports = {
