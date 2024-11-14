@@ -132,7 +132,7 @@ const Help = () => {
             <h3>Step 1: Open up Docker Website</h3>
             <p>Open up the Docker Website, 
                 or use the link 
-                <a href="https://www.docker.com">docker.com</a>. 
+                <a href="https://www.docker.com"> docker.com</a>. 
                 When you hover over the Download Docker button,
                 under the Download button,
                 you can 
@@ -146,8 +146,11 @@ const Help = () => {
                 or an Intel chip. To download, simply click it.
                 If your device initially blocks the download,
                 press "Download unverified file" to download anyways.
-                </p>
-                <video className="docVid" loop autoPlay src={downloadDocker}></video>
+              </p>
+              <video className="docVid" loop autoPlay src={downloadDocker}></video>
+              <div className='divider'></div>
+              <h3>Step 2: Run the Docker installation executable</h3>
+              <p>Run the file you downloaded and follow the instalation wizard's steps. Upon completion, Docker will fully restart your computer once it has finished updating.</p>
         </section>
     </div>
   )
