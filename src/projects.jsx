@@ -79,6 +79,10 @@ export default function ProjectPage() {
                 return <Overview projName={currentProject} />;
             case "View Cases":
                 return <ViewCases cases={testCases} projName={currentProject} />; // Pass test cases to ViewCases
+            case "Help":
+                return <Help />
+            case "Documentation":
+                return <Docs />
             default:
                 return <ProjectHome projects={projects} setCurrentProject={setCurrentProject} />;
         }
@@ -106,10 +110,10 @@ export default function ProjectPage() {
         <Fragment>
             <NavbarLoggedIn />
             <Sidebar
-                base={true}
+                base={false} //Edits here
                 setActiveState={updateActiveState}
                 projectName={currentProject}
-                onProjectOpened={true}
+                onProjectOpened={false} //Edits here
             />
             {renderComponent()}
             {showCreateProject && (
