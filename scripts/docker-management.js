@@ -31,9 +31,7 @@ async function createNetwork() {
         console.log(`Network ${network.Name} created with ID: ${network.id}`);
         return network;
     } catch (error) {
-        if (!error.includes(`network with name selenium-network already exists`)) {
-            console.error(`Error creating network: ${error}`);
-        }
+        console.error(`Error creating network: ${error}`);
     }
 }
 
