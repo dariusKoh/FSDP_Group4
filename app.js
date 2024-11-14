@@ -4,7 +4,6 @@ const { MongoClient } = require('mongodb');
 const { runTests } = require('./scripts/run-tests'); // Import runTests
 const dbQuery = require('./scripts/query-db'); // Import databse query script
 const { pushScripts } = require('./scripts/push-scripts'); // Import pushScripts
-const { waitForFile, pushResults } = require('./scripts/insert-db'); // Import pushResults
 const app = express();
 const port = 3001;
 
@@ -23,7 +22,6 @@ app.get('/run-tests', async (req, res) => {
     try {
         await pushScripts(); // Call pushScripts function
         await runTests(); // Call runTests function
-        waitForFile().then(() => pushResults()); // Call pushResults function
         res.status(200).json({ message: "Tests started successfully" });
     } catch (error) {
         console.error("Failed to start tests:", error);

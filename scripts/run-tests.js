@@ -1,6 +1,8 @@
 const { exec } = require('child_process');
 const docker = require('./docker-management');
 
+const { pushResults } = require('./insert-db');
+
 // Run tests and return the output
 async function runTests() {
     console.log("Running tests...");
@@ -30,6 +32,9 @@ docker.setupSeleniumGrid()
     })
     .then(() => {
         console.log("Tests completed. Proceeding to clean up...");
+    })
+    .then(() => {
+        return pushResults();
     })
     .catch(error => {
         console.error("Error during setup or test execution:", error);
