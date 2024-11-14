@@ -43,6 +43,15 @@ npm i apexcharts bcrypt cors dockerode dotenv express jest jest-stare lottie-rea
 * [Selenium](https://www.selenium.dev/) - Used with Jest to run test scripts on different browsers
 
 ## Running the app
+
+### Create 2 terminal instances
+
+#### Terminal instance 1
+```shell
+node app.js
+```
+
+#### Terminal instance 2
 ```shell
 npm run dev
 ```
