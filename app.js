@@ -5,6 +5,7 @@ const { MongoClient } = require('mongodb');
 const { runTestInContainers } = require('./scripts/run-tests'); // Import runTests
 const dbQuery = require('./scripts/query-db'); // Import databse query script
 const { pushScripts } = require('./scripts/push-scripts'); // Import pushScripts
+const { run } = require('jest');
 const app = express();
 const port = 3001;
 const constants = {
@@ -20,7 +21,7 @@ app.get('/run-tests', async (req, res) => {
     console.log("App.js run-tests");
     try {
         await pushScripts(); // Call pushScripts function
-        await runTests(); // Call runTests function
+        await runTestInContainers(); // Call runTests function
         res.status(200).json({ message: "Tests started successfully" });
     } catch (error) {
         console.error("Failed to start tests:", error);
