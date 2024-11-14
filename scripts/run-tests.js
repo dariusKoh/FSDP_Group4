@@ -24,6 +24,7 @@ async function runTests() {
     });
 }
 
+async function runTestInContainers() {
 // Sets up the Selenium Grid, creates a container, runs tests, and cleans up
 docker.setupSeleniumGrid()
     .then(() => docker.createContainers(1))
@@ -45,7 +46,9 @@ docker.setupSeleniumGrid()
             .then(() => console.log("All containers removed successfully."))
             .catch(error => console.error("Error removing containers:", error));
     });
+}
 
 module.exports = {
-    runTests
+    runTests,
+    runTestInContainers,
 }

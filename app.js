@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { MongoClient } = require('mongodb');
-const { runTests } = require('./scripts/run-tests'); // Import runTests
+const { runTests, runTestInContainers } = require('./scripts/run-tests'); // Import runTests
 const dbQuery = require('./scripts/query-db'); // Import databse query script
 const { pushScripts } = require('./scripts/push-scripts'); // Import pushScripts
 const app = express();
@@ -19,6 +19,7 @@ app.use(express.json());
 
 // API to trigger test run
 app.get('/run-tests', async (req, res) => {
+    console.log("App.js run-tests");
     try {
         await pushScripts(); // Call pushScripts function
         await runTests(); // Call runTests function
