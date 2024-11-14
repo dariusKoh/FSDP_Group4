@@ -50,7 +50,7 @@ export default function ProjectPage() {
             const logsData = await response.json();
             const latestLogs = logsData.map(log => log.log).join("\n");
             setLogs(latestLogs);
-            setIsLoading(false);
+            setTimeout(setIsLoading(false),5000);
             setActiveState("Project Overview");
         } catch (error) {
             console.error("Failed to fetch logs:", error);
@@ -85,7 +85,7 @@ export default function ProjectPage() {
                     return <LoadingScreen logs={logs} />;
                 }
                 return <ProjectHome projects={projects} setCurrentProject={setCurrentProject} setActiveState={setActiveState} />;
-                
+
         }
     };
 
