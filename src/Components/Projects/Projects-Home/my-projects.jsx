@@ -3,7 +3,7 @@ import AddProject from "../add-project";
 import CreateProject from "../create-project";
 import Overview from "../../ProjectOverview/overview";
 
-export default function MyProjects({ projects, add, title, desc, onProjectSelect }) {
+export default function MyProjects({ projects, add, title, desc, onProjectSelect, onAddNewProject }) {
     const scrollContainerRef = useRef(null);
     const [selectedProject, setSelectedProject] = useState(null);
 
@@ -14,12 +14,10 @@ export default function MyProjects({ projects, add, title, desc, onProjectSelect
         };
         const scrollContainer = scrollContainerRef.current;
         scrollContainer.addEventListener("wheel", handleScroll);
-
         return () => {
             scrollContainer.removeEventListener("wheel", handleScroll);
         };
     }, []);
-
     const handleCardClick = (id, name) => {
         setSelectedProject(id);
         onProjectSelect(name);
@@ -30,7 +28,7 @@ export default function MyProjects({ projects, add, title, desc, onProjectSelect
     };
 
     const handleCreateProject = (newProjectName) => {
-        projects.push(newProjectName);
+        onAddNewProject(newProjectName);
         setSelectedProject(null);
     };
 
@@ -47,10 +45,9 @@ export default function MyProjects({ projects, add, title, desc, onProjectSelect
                                     key={index}
                                     id={index}
                                     name={project}
-                                    onClick={() => handleCardClick(index, project)}
+                                    onClick={() => onProjectSelect(project)}
                                 />
                             ))}
-                            {/* Add project card */}
                             {add && (
                                 <AddProject
                                     name={null}
@@ -61,7 +58,7 @@ export default function MyProjects({ projects, add, title, desc, onProjectSelect
                         </div>
                     </section>
                 </div>
-            ) : selectedProject === "add" ? (
+            ) :selectedProject === "add" ? (
                 <CreateProject
                     projCount={projects.length + 1}
                     onClose={handleCloseCreateProject}

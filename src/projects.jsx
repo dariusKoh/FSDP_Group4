@@ -84,7 +84,7 @@ export default function ProjectPage() {
             case "Documentation":
                 return <Docs />
             default:
-                return <ProjectHome projects={projects} setCurrentProject={setCurrentProject} />;
+                return <ProjectHome projects={projects} setCurrentProject={setCurrentProject} setActiveState={setActiveState} />;
         }
     };
 
@@ -113,7 +113,7 @@ export default function ProjectPage() {
                 base={false} //Edits here
                 setActiveState={updateActiveState}
                 projectName={currentProject}
-                onProjectOpened={false} //Edits here
+                onProjectOpened={currentProject !== null} 
             />
             {renderComponent()}
             {showCreateProject && (
