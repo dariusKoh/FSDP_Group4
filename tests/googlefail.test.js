@@ -22,13 +22,9 @@ browsers.forEach((browserName) => {
 		}, 30000); // Set timeout to 30 seconds
 
 		test("should load the page and fail to check title", async () => {
-			try {
-				await driver.get("https://google.com", 10000);
-				const title = await driver.getTitle();
-				expect(title).toBe("Bing");
-			} catch (err) {
-				throw err;
-			}
+            await driver.get("https://google.com", 10000);
+            const title = await driver.getTitle();
+            expect(title).toBe("Bing");
 		});
 	});
 });
