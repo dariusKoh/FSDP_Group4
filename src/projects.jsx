@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import NavbarLoggedIn from "./Components/NavBar/NavbarLoggedIn";
 import Sidebar from "./Components/Sidebar/Sidebar";
 import Overview from "./Components/ProjectOverview/overview";
@@ -17,16 +17,13 @@ export default function ProjectPage() {
     const [showCreateProject, setShowCreateProject] = useState(false);
     const [currentProject, setCurrentProject] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-
-    
-
-
     const [logs, setLogs] = useState("");
+    const [testCases, setTestCases] = useState([]); // State to store test cases
 
     const handleRunCases = async () => {
         setIsLoading(true);
         setActiveState("Run Cases");
-    
+
         try {
             // Trigger the test run by calling the backend endpoint
             const response = await fetch('http://localhost:3001/run-tests');
@@ -35,9 +32,9 @@ export default function ProjectPage() {
                 setIsLoading(false);
                 return;
             }
-    
+
             console.log("Tests started, waiting for completion...");
-    
+
             // Poll for logs after a short delay
             setTimeout(fetchLogsFromDB, 5000);
         } catch (error) {
@@ -45,14 +42,11 @@ export default function ProjectPage() {
             setIsLoading(false);
         }
     };
-    
-    
-    
+
     // Function to fetch logs from MongoDB
     const fetchLogsFromDB = async () => {
         try {
             const response = await fetch('http://localhost:3001/get-logs');
-            console.log(response)
             const logsData = await response.json();
             const latestLogs = logsData.map(log => log.log).join("\n");
             setLogs(latestLogs);
@@ -63,9 +57,19 @@ export default function ProjectPage() {
             setIsLoading(false);
         }
     };
-    
 
-    // Pass logs to LoadingScreen
+    // Function to fetch test cases when "View Cases" is active
+    const fetchTestCases = async () => {
+        try {
+            const response = await fetch('http://localhost:3001/get-test-cases');
+            const data = await response.json();
+            setTestCases(data);
+        } catch (error) {
+            console.error("Error fetching test cases:", error);
+        }
+    };
+    
+    // Determine which component to render
     const renderComponent = () => {
         if (isLoading) {
             return <LoadingScreen logs={logs} />;
@@ -74,28 +78,29 @@ export default function ProjectPage() {
             case "Project Overview":
                 return <Overview projName={currentProject} />;
             case "View Cases":
-                return <ViewCases projName={currentProject} />;
+                return <ViewCases cases={testCases} projName={currentProject} />; // Pass test cases to ViewCases
             default:
                 return <ProjectHome projects={projects} setCurrentProject={setCurrentProject} />;
         }
     };
-    
-
-    
 
     function handleAddProject(projectName) {
         setProjects((prevProjects) => [...prevProjects, projectName]);
     }
 
-    
-
     const updateActiveState = (val) => {
+        console.log("updateActiveState called with value:", val); // Added for debugging
         if (val === "Run Cases") {
             handleRunCases();
         } else {
             setActiveState(val);
+            if (val === "View Cases") {
+                console.log("Fetching test cases..."); // Added for debugging
+                fetchTestCases(); // Fetch test cases when "View Cases" is selected
+            }
         }
     };
+    
 
     return (
         <Fragment>
