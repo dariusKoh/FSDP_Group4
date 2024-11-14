@@ -48,7 +48,7 @@ const Docs = () => {
   const { View:Circle5 } = useLottie(options, animStyle2);
   const { View:Circle6 } = useLottie(options, animStyle6);
 
-  const npmIns = "npm i apexcharts bcrypt chart.js dockerode dotenv express jest jest-stare lottie-react mongodb mongoose react-apexcharts react-bootstrap react-chartjs react-dom react-router-dom react realm-web selenium-webdriver typed.js vite";
+  const npmIns = "npm i apexcharts bcrypt dockerode dotenv express jest jest-stare lottie-react mongodb mongoose react-apexcharts react-bootstrap  react-dom react-router-dom react realm-web selenium-webdriver typed.js vite";
   const runFront = "npm run dev";
   
   return (
@@ -63,9 +63,22 @@ const Docs = () => {
             {Circle5}
             {Circle4}
         </div>
-        
+        <section className="table-contents">
+          <ul>
+            <li><a>Project Setup</a></li>
+          </ul>
+        </section>
+        <div className='divider'></div>
         <section className='text-section'>
-            <h1> Project Setup </h1>
+          <h1> Project Setup </h1>
+          <h2>Required Dependencies</h2>
+          <h2>Docker</h2>
+          <p>Head over to the installation page for Docker (<a href="https://docs.docker.com/engine/install/">https://docs.docker.com/engine/install/</a>) and install the right engine for your device.</p>
+          <div className='divider'></div>
+          <h2>Node.js</h2>
+          <p>Make sure Node.js is installed on your computer before running the app. (<a href="https://nodejs.org/en/download/">https://nodejs.org/en/download/</a>)</p>
+        </section>
+        <section className='text-section'>
             <h2> Installing Node Modules </h2>
             <p>Open up a terminal where this project is running, and run the following code into the terminal.</p>
             <code>
@@ -77,9 +90,40 @@ const Docs = () => {
             }}>Copy</button>
             </code>
             <div className='divider'></div>
-            <p>This installs all the required dependencies for this project automatically. For the list of used modules, refer below:</p>
-
-
+            <p>If an error occurs when installing dependencies, run the script below: </p>
+            <code>
+                <p className="modules">{npmIns+"--legacy-peer-deps"}</p>
+            <button className="copy" onClick={async () =>{
+                await window.navigator.clipboard.writeText(npmIns+"--legacy-peer-deps");
+                console.log("Copied!");
+                window.alert("Copied!");
+            }}>Copy</button>
+            </code>
+            <div className='divider'></div>
+            <p>If that also does not work, run the script below: </p>
+            <code>
+                <p className="modules">{npmIns+"--force"}</p>
+            <button className="copy" onClick={async () =>{
+                await window.navigator.clipboard.writeText(npmIns+"--force");
+                console.log("Copied!");
+                window.alert("Copied!");
+            }}>Copy</button>
+            </code>
+            <div className='divider'></div>
+            <p>This installs all the required dependencies for this project automatically. For the list of used modules, refer below.</p>
+            <h1>Technologies Used</h1>
+            
+            <h4>React.js</h4>(<a href="https://react.dev/">https://react.dev/</a>) - Used for the development of the Front-End
+            <h4>Node.js</h4>(<a href="https://nodejs.org/en">https://nodejs.org/en</a>) - Used for the development of the Back-End
+            <h4>MongoDB</h4>(<a href="https://www.mongodb.com/">https://www.mongodb.com/</a>) - Used as the Database for the app
+            <h4>Docker</h4>(<a href="https://www.docker.com/">https://www.docker.com/</a>) - Used for containerisation to enable scalable testing
+            <h4>Jest</h4>(<a href="https://jestjs.io/">https://jestjs.io/</a>) - Used with Selenium to run tests
+            <h4>Selenium</h4>(<a href="https://www.selenium.dev/">https://www.selenium.dev/</a>) - Used with Jest to run test scripts on different browsers
+            
+          </section>
+          <div className='divider'></div>
+          <section classsName="text-section">
+            <h2>Libraries used</h2>
             <ul className='module-list'>
                 <p className='listHead'>Front-End</p>
                 <li className='module'>React</li>
@@ -124,6 +168,20 @@ const Docs = () => {
                 <li className='module'>Selenium WebDriver</li>
                 <p className="moduleDesc">Selenium WebDriver is used to drive a browser natively, as a user would, either locally or on a remote machine using the Selenium server.</p>
             </ul>
+            <div className='divider'></div>
+            <section className='text-section'>
+              <h2>Running Front-End</h2>
+              <p>Return to the command terminal of the project, and run the following:
+              <code>
+                  <p className="modules">{runFront}</p>
+              <button className="copy" onClick={async () =>{
+                  await window.navigator.clipboard.writeText(npmIns);
+                  console.log("Copied!");
+                  window.alert("Copied!");
+              }}>Copy</button>
+              </code>
+              </p>
+            </section>
 
             <div className='divider'></div>
             <h2> Running Test </h2>
@@ -137,19 +195,6 @@ const Docs = () => {
             <p>node app.js</p>
         </section>
         <div className='divider'></div>
-        <section className='text-section'>
-            <h2>Running Front-End</h2>
-            <p>Return to the command terminal of the project, and run the following:
-            <code>
-                <p className="modules">{runFront}</p>
-            <button className="copy" onClick={async () =>{
-                await window.navigator.clipboard.writeText(npmIns);
-                console.log("Copied!");
-                window.alert("Copied!");
-            }}>Copy</button>
-            </code>
-            </p>
-        </section>
     </div>
   )
 }

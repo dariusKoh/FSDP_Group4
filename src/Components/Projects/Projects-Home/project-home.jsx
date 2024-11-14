@@ -4,9 +4,10 @@ import MyProjects from "./my-projects";
 import './project-home.css';
 import Overview from "../../ProjectOverview/overview";
 
-export default function ProjectHome({ projects, setCurrentProject }) {
+export default function ProjectHome({ setCurrentProject }) {
     const el = useRef(null);
     const [selectedProject, setSelectedProject] = useState(null);
+    const [projects, setProjects] = useState([]); // Manage projects state here
     const [currentCategory, setCurrentCategory] = useState("myProjects");
 
     useEffect(() => {
@@ -20,7 +21,7 @@ export default function ProjectHome({ projects, setCurrentProject }) {
             showCursor: false
         });
         return () => {
-            typed.destroy(); // Clean up Typed instance
+            typed.destroy();
         };
     }, []);
 
@@ -30,6 +31,10 @@ export default function ProjectHome({ projects, setCurrentProject }) {
         setCurrentProject(projectName);
     };
 
+    const handleAddNewProject = (newProjectName) => {
+        setProjects([...projects, newProjectName]);
+    };
+
     const handleCloseProject = () => {
         setSelectedProject(null);
     };
@@ -37,39 +42,34 @@ export default function ProjectHome({ projects, setCurrentProject }) {
     const sharedProjects = [];
     const allProjects = [...projects, ...sharedProjects];
 
-    
     return (
         <div>
-            {/* Pass selectedProject state and onProjectSelect handler to Sidebar */}
-    
-            {/* Conditional rendering: Show ViewProject if a project is selected, otherwise show the MyProjects sections */}
             {selectedProject ? (
-                // Render only ViewProject if a project is selected
-                <Overview projName={selectedProject} lastDate="11/12/2024" onClose={() => setSelectedProject(null)} />
+                <Overview projName={selectedProject} lastDate="11/12/2024" onClose={handleCloseProject} />
             ) : (
-                // Render all MyProjects sections if no project is selected
                 <section className="projectHome">
                     <span className="mainHead" ref={el} />
-                    <MyProjects 
-                        projects={projects} 
-                        add={true} 
-                        title="My Projects" 
+                    <MyProjects
+                        projects={projects}
+                        add={true}
+                        title="My Projects"
                         desc="View your projects here."
-                        onProjectSelect={handleProjectSelect} 
+                        onProjectSelect={handleProjectSelect}
+                        onAddNewProject={handleAddNewProject}
                     />
                     <div className="divider"></div>
-                    <MyProjects 
-                        projects={sharedProjects} 
-                        add={false} 
-                        title="Shared With You" 
+                    <MyProjects
+                        projects={sharedProjects}
+                        add={false}
+                        title="Shared With You"
                         desc="Projects shared with you."
                         onProjectSelect={handleProjectSelect}
                     />
                     <div className="divider"></div>
-                    <MyProjects 
-                        projects={allProjects} 
-                        add={true} 
-                        title="All Projects" 
+                    <MyProjects
+                        projects={allProjects}
+                        add={true}
+                        title="All Projects"
                         desc="Every project you ever had."
                         onProjectSelect={handleProjectSelect}
                     />
@@ -78,5 +78,6 @@ export default function ProjectHome({ projects, setCurrentProject }) {
         </div>
     );
 }
+
 
 

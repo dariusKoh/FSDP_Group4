@@ -62,32 +62,35 @@ function CreateProject({ projCount, onClose, onAddProject }) {
     event.preventDefault();
 
     const newProject = {
-      projectName,
-      visibility: visibilityOption,
-      files: selectedFiles,
+        projectName,
+        visibility: visibilityOption,
+        files: selectedFiles,
     };
 
     try {
-      const response = await fetch('http://localhost:3001/create-project', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newProject),
-      });
+        const response = await fetch('http://localhost:3001/create-project', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newProject),
+        });
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Project created:", data);
-        if (typeof onAddProject === 'function') {
-          onAddProject(data.project);
+        if (response.ok) {
+            const data = await response.json();
+            console.log("Project created:", data.project);
+            
+            // Pass the project name up
+            if (typeof onAddProject === 'function') {
+                onAddProject(data.project.projectName);
+            }
+            onClose();
+        } else {
+            console.error("Error creating project");
         }
-        onClose();
-      } else {
-        console.error("Error creating project");
-      }
     } catch (error) {
-      console.error("Failed to create project:", error);
+        console.error("Failed to create project:", error);
     }
-  };
+};
+
 
   return (
     <div>
