@@ -7,7 +7,7 @@ function ViewCases({ cases, projName }) {
 
     useEffect(() => {
         const typed = new Typed(el.current, {
-            strings: ["View Test Cases"],
+            strings: ["View scripts"],
             startDelay: 300,
             typeSpeed: 100,
             backSpeed: 150,
@@ -23,7 +23,7 @@ function ViewCases({ cases, projName }) {
     return (
         <div className="viewCases">
             <span className="mainHead" ref={el} />
-            <p className="desc">View all your test cases for {projName} here. See all your individual test cases!</p>
+            <p className="desc">View all your scripts for {projName} here. See all your individual scripts!</p>
             <div className="test-table">
                 <table>
                     <thead>
