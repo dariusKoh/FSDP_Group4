@@ -71,6 +71,24 @@ app.get('/get-logs', async (req, res) => {
     }
 });
 
+// API to fetch all projects
+app.get('/projects', async (req, res) => {
+    try {
+        await client.connect();
+        const db = client.db('test');
+        const collection = db.collection('projects');
+
+        const projects = await collection.find({}).toArray(); // Get all projects
+        res.status(200).json(projects);
+    } catch (error) {
+        console.error("Error fetching projects:", error);
+        res.status(500).json({ error: "Failed to fetch projects" });
+    } finally {
+        await client.close();
+    }
+});
+
+
 // API to fetch test cases from MongoDB
 app.get('/get-scripts', async (req, res) => {
     try {

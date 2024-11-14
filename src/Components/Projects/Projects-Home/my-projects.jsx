@@ -40,14 +40,15 @@ export default function MyProjects({ projects, add, title, desc, onProjectSelect
                     <h2 className="myDesc">{desc}</h2>
                     <section className="projContainer" ref={scrollContainerRef}>
                         <div className="projList">
-                            {projects.map((project, index) => (
-                                <AddProject
-                                    key={index}
-                                    id={index}
-                                    name={project}
-                                    onClick={() => onProjectSelect(project)}
-                                />
-                            ))}
+                        {projects.map((project, index) => (
+                            <AddProject
+                                key={index}
+                                id={project.proj_id}
+                                name={project.projectName} // Access project name directly
+                                onClick={() => onProjectSelect(project.projectName)} // Pass project name only
+                            />
+                        ))}
+
                             {add && (
                                 <AddProject
                                     name={null}
@@ -67,10 +68,11 @@ export default function MyProjects({ projects, add, title, desc, onProjectSelect
             ) : (
                 <div className="view-project">
                     <Overview
-                        projName={projects[selectedProject]}
+                        projName={projects[selectedProject]?.projectName} // Ensure we pass the project name
                         lastDate="21/12/2023"
                         onClose={handleCloseCreateProject}
                     />
+
                 </div>
             )}
         </div>
