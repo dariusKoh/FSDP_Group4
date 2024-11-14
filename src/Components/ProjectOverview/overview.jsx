@@ -177,7 +177,7 @@ function Overview({ projName, lastDate = "11/12/2024", onClose }) {
                     <tbody>
                         {filteredLogs.map((log, index) => (
                             <tr key={index} className={log.status === "PASSED" ? "pass" : "fail"}>
-                                <td>{log.ancestorTitles || log.ancestorTitles[0]}</td>
+                                <td>{log.ancestorTitles + " > " + log.fullTitle}</td>
                                 <td>{log.testId}</td>
                                 <td>{log.status}</td>
                                 <td>{log.duration}</td>
