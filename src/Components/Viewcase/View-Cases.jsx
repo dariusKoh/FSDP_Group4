@@ -19,7 +19,7 @@ function ViewCases({ cases, projName }) {
             typed.destroy();
         };
     }, []);
-
+    console.log(cases)
     return (
         <div className="viewCases">
             <span className="mainHead" ref={el} />
@@ -35,8 +35,8 @@ function ViewCases({ cases, projName }) {
                     </thead>
                     <tbody>
                         {cases.map((test) => (
-                            <tr key={test.testid}>
-                                <td>{test.testid}</td>
+                            <tr key={test._id}>
+                                <td>{test._id}</td>
                                 <td>{test.scriptName}</td>
                                 <td>{new Date(test.createdAt).toLocaleString()}</td>
                             </tr>
