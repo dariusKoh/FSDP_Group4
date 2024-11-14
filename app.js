@@ -2,7 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const { MongoClient } = require('mongodb');
 const { runTests } = require('./scripts/run-tests'); // Import runTests
-const db = require('./scripts/query-db'); // Import databse query script
+const dbQuery = require('./scripts/query-db'); // Import databse query script
+const { pushScripts } = require('./scripts/push-scripts'); // Import pushScripts
+const { waitForFile, pushResults } = require('./scripts/insert-db'); // Import pushResults
 const app = express();
 const port = 3001;
 
@@ -19,7 +21,9 @@ app.use(express.json());
 // API to trigger test run
 app.get('/run-tests', async (req, res) => {
     try {
+        await pushScripts(); // Call pushScripts function
         await runTests(); // Call runTests function
+        waitForFile().then(() => pushResults()); // Call pushResults function
         res.status(200).json({ message: "Tests started successfully" });
     } catch (error) {
         console.error("Failed to start tests:", error);
@@ -30,7 +34,7 @@ app.get('/run-tests', async (req, res) => {
 // API to fetch test logs from MongoDB
 app.get('/get-logs', async (req, res) => {
     try {
-        const logs = await db.queryAllData('test_results'); // Call queryAllData function
+        const logs = await dbQuery.queryAllData('test_results'); // Call queryAllData function
         res.json(logs);
     } catch (error) {
         console.error("Error fetching logs from MongoDB:", error);
@@ -43,13 +47,10 @@ app.get('/get-logs', async (req, res) => {
 
 
 // API to fetch test cases from MongoDB
-app.get('/get-test-cases', async (req, res) => {
+app.get('/get-scripts', async (req, res) => {
     try {
-        await client.connect();
-        const db = client.db('test');
-        const collection = db.collection('scripts');
-        const testCases = await collection.find().sort({ createdAt: -1 }).toArray();
-        res.json(testCases);
+        const scripts = await dbQuery.queryAllData('scripts'); // Call queryAllData function 
+        res.json(scripts);
     } catch (error) {
         console.error("Error fetching test cases from MongoDB:", error);
         res.status(500).send("Failed to fetch test cases");

@@ -100,6 +100,8 @@ async function parseScripts() {
 }
 
 
-pushScripts().then((result) => {
+/*pushScripts().then((result) => {
   console.log("Inserted documents:", result);
-}).catch(console.dir);
+}).catch(console.dir);*/
+
+module.exports = { pushScripts }; 

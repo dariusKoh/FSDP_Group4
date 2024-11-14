@@ -1,8 +1,8 @@
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const fs = require('fs');
-const path = "../jest-stare/jest-results.json";
+const path = require('path');
 const constants = {
-  FILE_PATH: path,
+  FILE_PATH: path.join(__dirname, '../jest-stare', 'jest-results.json'),
   TEST_ID_PREFIX: "TC_",
   MONGO_URI: "mongodb+srv://teoyuanmao20:Password1234@cluster1.kv3es.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1",
 };
@@ -16,7 +16,7 @@ const client = new MongoClient(constants.MONGO_URI, {
   }
 });
 
-async function run() {
+async function pushResults() {
   try {
     // Connect the client to the server (optional starting in v4.7)
     await client.connect();
@@ -40,7 +40,7 @@ async function run() {
     }
 
     // Get the current user
-    const username = 'JunHao';
+    const username = 'Darius';
     const user = await getUserByName(username);
     if (!user) {
       console.log('User not found');
@@ -93,4 +93,22 @@ async function run() {
     await client.close();
   }
 }
-run().catch(console.dir);
+
+function waitForFile(interval = 3000) {
+  return new Promise((resolve, reject) => {
+    const startTime = Date.now();
+
+    const checkFile = () => {
+      if (fs.existsSync(constants.FILE_PATH)) {
+        resolve(`File found: ${constants.FILE_PATH}`);
+      } 
+      else {
+        setTimeout(checkFile, interval); // Check again after the specified interval
+      }
+    };
+
+    checkFile();
+  });
+}
+
+module.exports = { waitForFile, pushResults }; 
