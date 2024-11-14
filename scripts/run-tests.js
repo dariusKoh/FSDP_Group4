@@ -22,11 +22,7 @@ async function runTests() {
     });
 }
 
-//docker.listContainersOnNetwork();
-//docker.stopAllContainers();
-//docker.createContainers(1);
-
-
+// Sets up the Selenium Grid, creates a container, runs tests, and cleans up
 docker.setupSeleniumGrid()
     .then(() => docker.createContainers(1))
     .then(() => {

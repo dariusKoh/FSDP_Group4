@@ -155,6 +155,7 @@ async function stopAllContainers() {
     try {
         const containers = await listContainersOnNetwork();
 
+        // Loop through all containers and stop them, except the hub
         for (const container of containers) {
             if (!container[1].Name.includes('selenium-hub')) {
                 await stopContainer(container[0]);
@@ -213,8 +214,6 @@ async function listContainersOnNetwork() {
         const networkDetails = await network.inspect();
         // Get containers on the network
         const containers = Object.entries(networkDetails.Containers);
-
-        //console.log(`Containers on network ${networkDetails.Name}:`, containers);
         return containers;
     } catch (error) {
         console.error(`Error listing containers on network selenium-network: ${error}`);
