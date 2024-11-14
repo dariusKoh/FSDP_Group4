@@ -22,16 +22,23 @@ browsers.forEach((browserName) => {
 		}, 30000); // Set timeout to 30 seconds
 
 		test("should load the page and check title", async () => {
-			await driver.get("https://google.com", 10000); // Replace with your URL
-			const title = await driver.getTitle();
-			expect(title).toBe("Google"); // Replace with the expected title
+			try {
+				await driver.get("https://google.com", 10000);
+				const title = await driver.getTitle();
+				expect(title).toBe("Google");
+			} catch (err) {
+				throw err;
+			}
 		});
 
 		test("should find and click a link", async () => {
-			const link = await driver.findElement(By.css("a"));
-			await driver.wait(until.elementIsVisible(link), 10000);
-			await link.click();
-			// Add assertions based on the expected page after clicking
+			try {
+				const link = await driver.findElement(By.css("a"));
+				await driver.wait(until.elementIsVisible(link), 10000);
+				await link.click();
+			} catch (err) {
+				throw err;
+			}
 		});
 	});
 });
