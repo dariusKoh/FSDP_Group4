@@ -36,7 +36,7 @@ export default function ProjectPage() {
             console.log("Tests started, waiting for completion...");
 
             // Poll for logs after a short delay
-            setTimeout(fetchLogsFromDB, 5000);
+            setTimeout(fetchLogsFromDB, 60000);
         } catch (error) {
             console.error("Failed to run tests:", error);
             setIsLoading(false);
