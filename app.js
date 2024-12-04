@@ -29,26 +29,38 @@ app.get('/run-tests', async (req, res) => {
 });
 
 app.post('/create-project', async (req, res) => {
-    const { projectName, visibility, files } = req.body; //Creates a new project
+    const { projectName, visibility, files } = req.body;
 
     try {
         await client.connect();
         const db = client.db('test');
-        const collection = db.collection('projects');
+        const projectsCollection = db.collection('projects');
+        const scriptsCollection = db.collection('scripts');
 
-        // Get the current count of projects
-        const projectCount = await collection.countDocuments();
-        const newProjectId = projectCount + 1; // Use the next number as the project ID
+        // Get the current count of projects for unique ID
+        const projectCount = await projectsCollection.countDocuments();
+        const newProjectId = projectCount + 1;
 
+        // Create project object
         const newProject = {
-            proj_id: newProjectId, // Generate a unique identifier for the project
+            proj_id: newProjectId,
             projectName,
             visibility,
-            files, // Array of files with { name, content }
             createdAt: new Date(),
         };
 
-        const result = await collection.insertOne(newProject);
+        // Insert the project
+        const projectResult = await projectsCollection.insertOne(newProject);
+
+        // Insert scripts associated with the project
+        const scriptDocuments = files.map(file => ({
+            proj_id: newProjectId,
+            scriptName: file.name,
+            scriptContent: file.content,
+            createdAt: new Date(),
+        }));
+        await scriptsCollection.insertMany(scriptDocuments);
+
         res.status(201).json({ message: "Project created successfully", project: newProject });
     } catch (error) {
         console.error("Error creating project:", error);
@@ -57,6 +69,7 @@ app.post('/create-project', async (req, res) => {
         await client.close();
     }
 });
+
 
 // API to fetch test logs from MongoDB
 app.get('/get-logs', async (req, res) => {

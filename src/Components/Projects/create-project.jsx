@@ -64,7 +64,7 @@ function CreateProject({ projCount, onClose, onAddProject }) {
     const newProject = {
         projectName,
         visibility: visibilityOption,
-        files: selectedFiles,
+        files: selectedFiles, // Pass uploaded files
     };
 
     try {
@@ -77,8 +77,7 @@ function CreateProject({ projCount, onClose, onAddProject }) {
         if (response.ok) {
             const data = await response.json();
             console.log("Project created:", data.project);
-            
-            // Pass the project name up
+
             if (typeof onAddProject === 'function') {
                 onAddProject(data.project);
             }
@@ -90,6 +89,7 @@ function CreateProject({ projCount, onClose, onAddProject }) {
         console.error("Failed to create project:", error);
     }
 };
+
 
 
   return (
