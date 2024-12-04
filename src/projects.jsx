@@ -73,7 +73,9 @@ export default function ProjectPage() {
     const renderComponent = () => {
         switch (activeState) {
             case "Project Overview":
-                return <Overview projName={currentProject} />;
+                return <Overview projName={currentProject} onClose={() => {
+                    setActiveState(false);
+                }} />;
             case "View Cases":
                 return <ViewCases cases={testCases} projName={currentProject} />; // Pass test cases to ViewCases
             case "Help":
@@ -120,7 +122,9 @@ export default function ProjectPage() {
             {showCreateProject && (
                 <CreateProject
                     projCount={projects.length + 1}
-                    onClose={() => setShowCreateProject(false)}
+                    onClose={() => {
+                        setShowCreateProject(false);
+                        setCurrentProject(null)}}
                     onAddProject={handleAddProject}
                 />
             )}
