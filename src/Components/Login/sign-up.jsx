@@ -1,14 +1,43 @@
-import React, { Fragment } from "react";
+import React, { useState } from "react";
 import './sign-up.css';
 import logo from '../../assets/Logo-ocbc.png';
 import Navbar from "../NavBar/Navbar";
 
+const SignUp = () => {
+    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [error, setError] = useState("");
 
-function SignUp(){
-  return (
-    <Fragment>
+    const handleRegister = async () => {
+        if (password !== confirmPassword) {
+            setError("Passwords do not match");
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:3001/api/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, email, password }),
+            });
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || "Registration failed");
+            }
+
+            alert("Registration successful!");
+        } catch (err) {
+            setError(err.message);
+        }
+    };
+
+    return (
+        <div>
             <Navbar />
-            <form id="regForm">
+            <form id="regForm" onSubmit={(e) => e.preventDefault()}>
                 <div className="flexBox">
                     <h2 id="registerDescription">Registering User</h2>
                     <section id="iconNameDesc">
@@ -18,21 +47,21 @@ function SignUp(){
                 </div>
                 <div className="flexBox">
                     <label id="createUser" className="inputLabel padItem">Enter new Username</label>
-                    <input type="text" name="username" id="username" />
+                    <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
                     <label className="inputLabel padItem">Enter backup email</label>
-                    <input type="email" name="email" id="email" />
+                    <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
                     <label className="inputLabel padItem">Create a Password</label>
-                    <input type="password" name="password" id="password" />
+                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
                     <label id="confirmLabel" className="inputLabel padItem">Confirm Password</label>
-                    <input type="password" name="confirmPassword" id="confirmPassword" />
+                    <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
                     <div className="buttons">
-                        <div id="returnbtn" class="finalPress" onClick={function(){history.back()}}>Back</div>
-                        <button id="signNext" className="finalPress" value="submit">Create Account</button>
+                        <button type="button" onClick={handleRegister} className="finalPress">Create Account</button>
                     </div>
+                    {error && <p style={{ color: 'red' }}>{error}</p>}
                 </div>
             </form>
-    </Fragment>
-  )
-}
+        </div>
+    );
+};
 
 export default SignUp;
