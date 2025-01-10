@@ -1,0 +1,65 @@
+/* Scrollable container for projects */
+.projContainer {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+}
+
+.projList {
+    display: flex;
+    gap: 15px; /* Add space between cards */
+    padding: 10px;
+}
+
+/* Card styles */
+.AddProject {
+    border: 1px solid #a7a7a7;
+    width: 200px;
+    height: 250px;
+    border-radius: 10px;
+    padding: 5px 5px 15px 5px;
+    background-color: #fefefe;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.AddProject:hover {
+    animation: onHover 0.2s linear 0s 1;
+    box-shadow: 3px 3px #a7a7a7;
+    transform: translate(-3px, 3px);
+    border-color: #ff8686;
+}
+
+.preview {
+    width: 180px;
+    height: 180px;
+    position: relative;
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 1px solid;
+    border-color: inherit;
+}
+
+.projName {
+    text-align: center;
+    font-weight: 600;
+}
+
+.lastOpen {
+    text-align: center;
+    font-size: 12px;
+    font-style: italic;
+    color: #a7a7a7;
+    position: relative;
+    top: 15px;
+    width: 100%;
+    display: hidden;
+}
+
+
+.fade {
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+}

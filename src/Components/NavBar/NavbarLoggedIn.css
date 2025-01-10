@@ -1,0 +1,70 @@
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px 10%;
+    display: flex;
+    justify-content: space-between;
+    background-color: white;
+    align-items: center;
+    z-index: 2;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: max(100px, 5vw);
+}
+
+.header::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 5px;
+    height: 100%;
+    background-color: red;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo-image {
+    width: 150px;
+    height: auto;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logout-link {
+    color: red !important; /* Ensure text color is red */
+    font-size: 18px;
+    font-weight: 500;
+    text-decoration: none;
+    position: relative;
+}
+
+.logout-link::before {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: red !important; /* Ensure underline color is red */
+    transition: width 0.3s;
+}
+
+.logout-link:hover::before {
+    width: 100%;
+}
+
+.profile-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}

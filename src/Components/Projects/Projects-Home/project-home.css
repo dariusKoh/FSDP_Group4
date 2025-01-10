@@ -1,0 +1,31 @@
+.projectHome{
+    margin-left: max(15vw, 200px);
+    position: absolute;
+    padding-left: 5px;
+    top: 100px;
+    width: calc(99vw - max(15vw,200px));
+}
+
+.mainHead{
+    font-size: 48px;
+    font-weight: 600;
+    color: #303030;
+}
+
+.myDesc{
+    font-size: 18px;
+    font-weight: 400;
+    font-style: italic;
+    padding-bottom: 15px;
+}
+
+.projContainer{
+    width: 100%;
+    overflow: hidden;
+}
+
+.divider{
+    padding: 50px 0px 25px 0px;
+    display: flex;
+    flex-direction: row;
+}

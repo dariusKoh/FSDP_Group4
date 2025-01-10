@@ -1,0 +1,47 @@
+.loadBox{
+    margin-left: max(15vw, 200px);
+    position: absolute;
+    padding-left: 5px;
+    top: 100px;
+    height: calc(99vh - max(100px,5vw));
+    width: calc(98vw - max(15vw,200px));
+    overflow: hidden;
+}
+
+.typeAnimLoad{
+    position: absolute;
+    top: 65%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 32px;
+    color: var(--primary-color);
+}
+
+.spinner{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    width: 200px;
+}
+
+.runTest{
+    top: 25px;
+    font-size: 48px;
+    position:relative;
+    top: 15px;
+}
+
+.returnBtn2{
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+    background-color: var(--surface-color);
+    bottom: 20px;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    position: absolute;
+    z-index: 3;
+}
+.returnBtn2:active{
+    transform: translate(-50%,-50%);
+}

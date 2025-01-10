@@ -1,0 +1,139 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+.content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 50px;
+    padding-top: 100px; /* Adjust for navbar height */
+    min-height: 80vh;
+}
+
+.text-section {
+    width: 50%; /* Adjust width as needed */
+    max-width: 600px;
+}
+
+.text-section h1 {
+    font-size: 36px;
+    margin-bottom: 15px;
+}
+
+.text-section p {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.buttons {
+    display: flex;
+    gap: 20px;
+}
+
+.get-started, .find-out-more {
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+}
+
+.get-started {
+    background-color: #ff0000;
+    color: #fff;
+    transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.get-started:hover {
+    background-color: #cc0000; /* Darker red on hover */
+}
+
+.find-out-more {
+    background-color: #ffffff;
+    color: #ff0000;
+    border: 1px solid #ff0000;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition */
+}
+
+.find-out-more:hover {
+    background-color: #ff0000; /* Red background on hover */
+    color: #ffffff; /* White text on hover */
+}
+
+
+.image-section {
+    width: 50%; /* Adjust width as needed */
+    display: flex;
+    justify-content: center;
+}
+
+.image-section img {
+    max-width: 60%;
+    height: auto;
+    border-radius: 8px;
+}
+.additional-info {
+    padding: 20px 50px;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.6;
+    font-size: 18px;
+    color: #333; /* Adjust text color as needed */
+}
+
+.additional-info h1 {
+    font-size: 28px;
+    margin-top: 40px;
+    margin-bottom: 20px;
+}
+
+.additional-info p {
+    margin-bottom: 20px;
+}
+
+.additional-info ol {
+    margin-left: 20px;
+    padding-left: 20px;
+}
+
+.additional-info li {
+    margin-bottom: 10px;
+}
+.cta-section {
+    text-align: center;
+    padding: 40px 20px;
+    margin-top: 40px;
+    background-color: #f9f9f9; /* Light gray background */
+}
+
+.cta-section h1 {
+    font-size: 32px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.cta-section p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.get-started-btn {
+    padding: 12px 24px;
+    font-size: 16px;
+    color: #ffffff;
+    background-color: #ff0000; /* Blue button background */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.get-started-btn:hover {
+    background-color: #7a0303; /* Darker blue on hover */
+}

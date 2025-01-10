@@ -1,0 +1,158 @@
+:root {
+    --primary-color: #fe2345;
+    --secondary-color: #ff0000;
+    --background-color: #ff9696;
+    --surface-color: #ffffff;
+    --text-color: #000000;
+    --error-color: #d63031;
+    --success-color: #00b894;
+  }
+  
+  .flexBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: var(--surface-color);
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .flexBox:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+  }
+  
+  
+  
+  #signInDescription {
+    color: var(--secondary-color);
+    font-size: 30px;
+    font-weight: 500;
+  }
+  
+  input {
+    width: 100%;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--background-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  input:focus {
+    background-color: rgba(255, 255, 255, 0.2);
+    outline: none;
+    box-shadow: 0 0 0 2px var(--primary-color);
+  }
+  
+  input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+  
+  .buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 1rem;
+  }
+  
+  .finalPress{
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--primary-color);
+  }
+  
+  .finalPress:hover{
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
+  
+  .finalPress:first-child{
+    background-color: var(--primary-color);
+    color: var(--primary-color)
+  }
+  
+  .finalPress:last-child {
+    background-color: var(--error-color);
+    color: var(--primary-color);
+  }
+  
+  /* Animations  */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+  }
+  
+  input:invalid {
+    animation: shake 0.5s ease-in-out;
+    box-shadow: 0 0 0 2px var(--error-color);
+  }
+  
+  .finalPress {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .finalPress::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .finalPress:hover::after {
+    opacity: 1;
+  }
+
+  
+  img{
+    height: 50px;
+  }
+
+#regNew, #forgetPassword{
+    text-decoration: none;
+    background-color: #ffffff;
+    text-align: center;
+}
+#regNew{
+    border: 1px solid var(--primary-color);
+}
+
+#forgetPassword{
+    border: none;
+    align-self: flex-end;
+}
+a{
+    text-decoration: inherit;
+    color: var(--primary-color);
+}
+
+#loginForm{
+    position: absolute;
+    left: 50%;
+    top: 20%;
+    transform: translateX(-50%);
+    width: 100%;
+}

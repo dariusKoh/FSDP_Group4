@@ -1,0 +1,151 @@
+/* Background overlay */
+.bgContain {
+    background-color: rgba(80, 80, 80, 0.5);
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 5;
+}
+
+/* Popup container */
+.popupBox {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #ffffff;
+    width: 600px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 6;
+    font-family: Arial, sans-serif;
+}
+
+/* Title */
+.popupBox h1 {
+    color: #e63946;
+    font-size: 32px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Close button */
+.closeButton {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #666;
+}
+
+/* Label and input styling */
+.labelInput {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.labelField {
+    width: 150px;
+    font-size: 16px;
+}
+
+.inputField {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* Visibility options styling */
+.visibilityOptions {
+    display: flex;
+    gap: 20px;
+}
+
+.radioOption {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.radioOption input[type="radio"] {
+    accent-color: #e63946;
+}
+
+/* File upload section */
+.fileUploadSection {
+    margin: 20px 0;
+}
+
+.fileDropZone {
+    border: 2px dashed #ccc;
+    background-color: #f9f9f9;
+    padding: 30px;
+    text-align: center;
+    color: #888;
+    border-radius: 6px;
+    margin-top: 8px;
+}
+
+/* Button styling */
+.buttonGroup {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.cancelButton {
+    background-color: #ffffff;
+    border: 1px solid #e63946;
+    color: #e63946;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.createButton {
+    background-color: #e63946;
+    border: none;
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* Button hover effects */
+.cancelButton:hover {
+    background-color: #ffecec;
+}
+
+.createButton:hover {
+    background-color: #cc2e3d;
+}
+/* File list styling */
+.fileList {
+    margin-top: 15px;
+}
+
+.fileList h4 {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.fileList ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    color: #555;
+}
+
+.fileList li {
+    margin-bottom: 5px;
+}
