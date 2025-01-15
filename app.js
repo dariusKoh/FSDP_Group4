@@ -35,7 +35,8 @@ app.get('/run-tests', async (req, res) => {
 
 app.post('/create-project', async (req, res) => {
     const { projectName, visibility, files } = req.body;
-
+    // Temp owner id 1
+    let ownerid = 1;
     try {
         await client.connect();
         const db = client.db('test');
@@ -49,6 +50,8 @@ app.post('/create-project', async (req, res) => {
         // Create project object
         const newProject = {
             proj_id: newProjectId,
+            owner_id: ownerid,
+            shared_with: {},
             projectName,
             visibility,
             createdAt: new Date(),
