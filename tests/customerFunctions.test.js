@@ -66,6 +66,13 @@ browsers.forEach((browserName) => {
             expect(await successMessage.getText()).toBe("Transaction successful");
         });
 
+        test("should view transactions", async () => { 
+            const transactionsButton = await driver.findElement(By.css('button[ng-click="transactions()"]'));
+            await transactionsButton.click();
+            const transactions = await driver.findElement(By.css('table.table.table-bordered.table-striped'));
+            expect(await transactions.isDisplayed()).toBe(true);
+        });
+
         test("should log out", async () => {
             const logoutButton = await driver.findElement(By.css('button[ng-click="byebye()"]'));
             await logoutButton.click();
