@@ -2,21 +2,19 @@ import React, { useState, useEffect, useRef } from "react";
 import ReactApexChart from "react-apexcharts";
 import Typed from "typed.js";
 import "./overview.css";
-//Removed Jest
 
-function Overview({ projName, lastDate = "11/12/2024", onClose }) {
+function Overview({ projName = "No Project", projId = "No ID", lastDate = "11/12/2024", onClose }) {
     const [filter, setFilter] = useState("All");
     const [testLogs, setTestLogs] = useState([]);
     const el = useRef(null);
 
-    // Fetch logs from MongoDB when the component mounts
     useEffect(() => {
         fetchLogsFromDB();
     }, []);
 
     useEffect(() => {
         const typed = new Typed(el.current, {
-            strings: [projName, projName + " Overview"],
+            strings: ["Yes", " Overview"],
             startDelay: 300,
             typeSpeed: 100,
             backSpeed: 150,
@@ -29,17 +27,24 @@ function Overview({ projName, lastDate = "11/12/2024", onClose }) {
         };
     }, [projName]);
 
-    // Sample data
-    let passed = testLogs.filter(test => test.status == "PASSED");
-    let failed = testLogs.filter(test => test.status !== "PASSED");
+    const fetchLogsFromDB = async () => {
+        try {
+            const response = await fetch("http://localhost:3001/get-logs");
+            const logsData = await response.json();
+            setTestLogs(logsData);
+        } catch (error) {
+            console.error("Failed to fetch logs:", error);
+        }
+    };
+
+    let passed = testLogs.filter((test) => test.status === "PASSED");
+    let failed = testLogs.filter((test) => test.status !== "PASSED");
     const data = {
         totalTasks: testLogs.length,
         passedTasks: passed.length,
         failedTasks: failed.length,
         pendingTasks: testLogs.length - passed.length - failed.length,
     };
-    
-
 
     const createChartData = (value) => ({
         series: [value],
@@ -89,19 +94,8 @@ function Overview({ projName, lastDate = "11/12/2024", onClose }) {
         return "pending";
     };
 
-    // Function to fetch logs from the backend
-    const fetchLogsFromDB = async () => {
-        try {
-            const response = await fetch('http://localhost:3001/get-logs');
-            const logsData = await response.json();
-            setTestLogs(logsData);
-        } catch (error) {
-            console.error("Failed to fetch logs:", error);
-        }
-    };
+    const filteredLogs = filter === "All" ? testLogs : testLogs.filter((log) => log.status === filter);
 
-    // Filter logs based on status
-    const filteredLogs = filter === "All" ? testLogs : testLogs.filter(log => log.status === filter);
     return (
         <div className="overview-container">
             <button onClick={onClose} className="returnBtn" id="backProj">Close</button>
@@ -119,7 +113,6 @@ function Overview({ projName, lastDate = "11/12/2024", onClose }) {
                     <h1>{data.pendingTasks}</h1>
                     <p>out of {data.totalTasks} tasks Pending</p>
                 </div>
-
                 <div className="chart-container">
                     <div className="radial-chart">
                         <div className={`chart-status ${getStatusClass("Pass")}`}>Passed</div>
@@ -150,9 +143,6 @@ function Overview({ projName, lastDate = "11/12/2024", onClose }) {
                     </div>
                 </div>
             </div>
-            
-
-            {/* Test Logs Section */}
             <div className="test-table">
                 <h3>View Test Logs</h3>
                 <div className="filter">
@@ -181,7 +171,7 @@ function Overview({ projName, lastDate = "11/12/2024", onClose }) {
                                 <td>{log.testId}</td>
                                 <td>{log.status}</td>
                                 <td>{log.duration}</td>
-                                <td>{log.failureMessages[0].length > 30 ? `${log.failureMessages[0].slice(0, 50)}...` : log.failureMessages}</td>
+                                <td>{log.failureMessages[0]?.slice(0, 50)}...</td>
                                 <td>{new Date(log.createdAt).toLocaleString()}</td>
                             </tr>
                         ))}

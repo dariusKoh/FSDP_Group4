@@ -3,8 +3,9 @@ import AddProject from "../add-project";
 import CreateProject from "../create-project";
 import Overview from "../../ProjectOverview/overview";
 
-export default function MyProjects({ projects, add, title, desc, onProjectSelect, onAddNewProject }) {
+export default function MyProjects({ projects, add, title, desc, onAddNewProject }) {
     const scrollContainerRef = useRef(null);
+    const [activeState, setActiveState] = useState(null);
     const [selectedProject, setSelectedProject] = useState(null);
 
     useEffect(() => {
@@ -18,9 +19,11 @@ export default function MyProjects({ projects, add, title, desc, onProjectSelect
             scrollContainer.removeEventListener("wheel", handleScroll);
         };
     }, []);
-    const handleCardClick = (id, name) => {
-        setSelectedProject(id);
-        onProjectSelect(name);
+
+    const handleCardClick = (project) => {
+        setSelectedProject(project); // Store the full project object
+        setActiveState("Project Overview");
+        console.log(project)
     };
 
     const handleCloseCreateProject = () => {
@@ -31,7 +34,7 @@ export default function MyProjects({ projects, add, title, desc, onProjectSelect
         onAddNewProject(newProjectName);
         setSelectedProject(null);
     };
-
+    
     return (
         <div className="container mx-auto p-6">
             {selectedProject === null ? (
@@ -40,15 +43,14 @@ export default function MyProjects({ projects, add, title, desc, onProjectSelect
                     <h2 className="myDesc">{desc}</h2>
                     <section className="projContainer" ref={scrollContainerRef}>
                         <div className="projList">
-                        {projects.map((project, index) => (
-                            <AddProject
-                                key={index}
-                                id={project.proj_id}
-                                name={project.projectName} // Access project name directly
-                                onClick={() => onProjectSelect(project.projectName)} // Pass project name only
-                            />
-                        ))}
-
+                            {projects.map((project, index) => (
+                                <AddProject
+                                    key={index}
+                                    id={project.proj_id}
+                                    name={project.projectName}
+                                    onClick={() => handleCardClick(project)} // Pass the entire project object
+                                />
+                            ))}
                             {add && (
                                 <AddProject
                                     name={null}
@@ -59,7 +61,7 @@ export default function MyProjects({ projects, add, title, desc, onProjectSelect
                         </div>
                     </section>
                 </div>
-            ) :selectedProject === "add" ? (
+            ) : selectedProject === "add" ? (
                 <CreateProject
                     projCount={projects.length + 1}
                     onClose={handleCloseCreateProject}
@@ -68,11 +70,11 @@ export default function MyProjects({ projects, add, title, desc, onProjectSelect
             ) : (
                 <div className="view-project">
                     <Overview
-                        projName={projects[selectedProject]?.projectName} // Ensure we pass the project name
+                        projName={selectedProject.projectName} // Use the selected project's data
+                        projId={selectedProject.proj_id} // Pass the project ID
                         lastDate="21/12/2023"
                         onClose={handleCloseCreateProject}
                     />
-
                 </div>
             )}
         </div>

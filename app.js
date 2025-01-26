@@ -22,16 +22,22 @@ app.use(cors());
 app.use(express.json());
 
 // API to trigger test run
-app.get('/run-tests', async (req, res) => {
-    console.log("App.js run-tests");
+app.post('/run-tests', async (req, res) => {
+    const { projectId, projectName } = req.body;
+
+    if (!projectId || !projectName) {
+        return res.status(400).json({ error: 'Missing project information' });
+    }
+
     try {
-        await runTestInContainers(); // Call runTests function
-        res.status(200).json({ message: "Tests started successfully" });
+        await runTestInContainers(projectId, projectName, req.user.id);  // Assuming req.user.id contains the logged-in user ID
+        res.status(200).json({ message: 'Tests started successfully and completed' });
     } catch (error) {
-        console.error("Failed to start tests:", error);
-        res.status(500).json({ error: "Failed to start tests" });
+        console.error('Error running tests:', error);
+        res.status(500).json({ error: 'Failed to run tests' });
     }
 });
+
 
 app.post('/create-project', async (req, res) => {
     const { projectName, visibility, files } = req.body;
@@ -108,6 +114,32 @@ app.get('/projects', async (req, res) => {
         await client.close();
     }
 });
+// API to fetch project details by projectName
+app.get('/projects/:projectName', async (req, res) => {
+    const { projectName } = req.params;
+
+    try {
+        await client.connect();
+        const db = client.db('test');
+        const projectsCollection = db.collection('projects');
+
+        // Find the project by projectName
+        const project = await projectsCollection.findOne({ projectName });
+        if (!project) {
+            return res.status(404).json({ message: "Project not found" });
+        }
+
+        res.status(200).json(project);
+    } catch (error) {
+        console.error("Error fetching project details:", error);
+        res.status(500).json({ error: "Failed to fetch project details" });
+    } finally {
+        await client.close();
+    }
+});
+
+
+
 
 
 // API to fetch test cases from MongoDB
