@@ -38,13 +38,39 @@ browsers.forEach((browserName) => {
             await driver.findElement(By.css('option[value="1"]')).click();
             let login = await driver.findElement(By.xpath("//*[text()='Login']"));
             await login.click();
+            const customerName = await driver.findElement(By.css('span.fontBig.ng-binding'));
+            expect(await customerName.getText()).toBe("Hermione Granger");
         });
 
         test("should make a deposit", async () => {
             const depositButton = await driver.findElement(By.css('button[ng-click="deposit()"]'));
             await depositButton.click();
-            const amount = await driver.findElement(By.css('input[ng-model="amount"]'));
+            const amountInput = await driver.findElement(By.css('input[ng-model="amount"]'));
+            await amountInput.clear();
+            await amountInput.sendKeys(100);
+            const deposit = await driver.findElement(By.css('button[type="submit"]'));
+            await deposit.click();
+            const successMessage = await driver.findElement(By.css('span[ng-show="message"]'));
+            expect(await successMessage.getText()).toBe("Deposit Successful");
         });
-        
+
+        test("should make a withdrawal", async () => { 
+            const withdrawalButton = await driver.findElement(By.css('button[ng-click="withdrawl()"]'));
+            await withdrawalButton.click();
+            const amountInput = await driver.findElement(By.css('input[ng-model="amount"]'));
+            await amountInput.clear();
+            await amountInput.sendKeys(50);
+            const withdrawal = await driver.findElement(By.css('button[type="submit"]'));
+            await withdrawal.click();
+            const successMessage = await driver.findElement(By.css('span[ng-show="message"]'));
+            expect(await successMessage.getText()).toBe("Transaction successful");
+        });
+
+        test("should log out", async () => {
+            const logoutButton = await driver.findElement(By.css('button[ng-click="byebye()"]'));
+            await logoutButton.click();
+            const customerLogin = await driver.findElement(By.css('button.btn.btn-primary.btn-lg[ng-click="customer()"]'));
+            expect(await customerLogin.isDisplayed()).toBe(true);
+        });
     });
 });
