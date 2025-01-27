@@ -41,19 +41,12 @@
     "jest-stare": "^2.5.2",
     "jsonwebtoken": "^9.0.2",
     "lottie-react": "^2.4.0",
-<<<<<<< HEAD
-    "mongodb": "^6.11.0",
-    "mongoose": "^8.8.4",
-    "react-apexcharts": "^1.7.0",
-    "react-bootstrap": "^2.10.6",
-    "react-chartjs": "^1.2.0",
-=======
+
     "mongodb": "^6.10.0",
     "mongoose": "^8.8.1",
     "react-apexcharts": "^1.5.0",
     "react-bootstrap": "^2.10.5",
     "react-chartjs": "^0.7.3",
->>>>>>> 17ce8ab37f931dc3e2a0ed39493fea192f88fa26
     "react-router-dom": "^6.28.0",
     "realm-web": "^2.0.1",
     "selenium-webdriver": "^4.27.0",
