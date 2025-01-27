@@ -84,12 +84,12 @@ If four test cases are provided and test cases 1, 2, and 4 failed while test cas
 			}));
 
 		// Log summaries
-		console.log("\n\n\nSummaries:");
-		summaries.forEach((summary) => {
-			console.log(`Test ${summary.testId}:`);
-			console.log(`Summary: ${summary.summary}`);
-			console.log("-------------------");
-		});
+		// console.log("\n\n\nSummaries:");
+		// summaries.forEach((summary) => {
+		// 	console.log(`Test ${summary.testId}:`);
+		// 	console.log(`Summary: ${summary.summary}`);
+		// 	console.log("-------------------");
+		// });
 
 		// Return summaries
 		return {

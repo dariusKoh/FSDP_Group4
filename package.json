@@ -44,6 +44,7 @@
     "lottie-react": "^2.4.1",
     "mongodb": "^6.12.0",
     "mongoose": "^8.9.5",
+    "pdfkit": "^0.16.0",
     "react-apexcharts": "^1.7.0",
     "react-bootstrap": "^2.10.8",
     "react-chartjs": "^1.2.0",

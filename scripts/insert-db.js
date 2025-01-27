@@ -73,6 +73,9 @@ async function pushResults() {
 		if (aiSummary.success) {
 			console.log("\n\nGenerated Summaries:");
 			// TODO: Insert summaries into the database
+
+			// Store the summaries in a map for quick lookup
+			const summariesMap = {};
 			aiSummary.summaries.forEach((summary) => {
 				console.log(`Test ${summary.testId}:`);
 				console.log(`Summary: ${summary.summary}`);
@@ -91,8 +94,9 @@ async function pushResults() {
 		} = obj;
 		const totalDuration = parseInt(perfStats.runtime, 10) / 1000; // Convert runtime to seconds
 
-		console.log("Test Summary:");
+		//console.log("Test Summary:");
 
+		// Map the test results and integrate AI summaries
 		const documents = testResults.map((test, index) => {
 			const testId = `${constants.TEST_ID_PREFIX}${index + 1}`;
 			const ancestorTitles = test.ancestorTitles.join(" > "); // Join ancestor titles to create a hierarchy
@@ -111,10 +115,23 @@ async function pushResults() {
 							.join("\n");
 			const createdAt = new Date();
 
-			// Log individual test details
-			// console.log(
-			// 	`Test id: ${testId}\nTest name: ${ancestorTitles}\nStatus: ${status}\nDuration: ${duration}ms\nFailure messages: ${failureMessages}\nFailure details: ${failureDetails}\n`
-			// );
+			// Parse the AI-generated summary
+			let summary = "None";
+			if (status === "FAILED") {
+				// Get the AI-generated summary or default to a fallback
+				summary =
+					summariesMap[testId] ||
+					`The test failed but no detailed AI summary was provided. Failure Messages: ${failureMessages}`;
+			}
+
+			// Log each test's details
+			// console.log(`Test id: ${testId}`);
+			// console.log(`Status: ${status}`);
+			// console.log(`Duration: ${duration}ms`);
+			// console.log(`Failure messages: ${failureMessages}`);
+			// console.log(`Failure details: ${failureDetails}`);
+			// console.log(`Summary: ${summary}`);
+			// console.log("-------------------");
 
 			return {
 				testId,
@@ -124,6 +141,7 @@ async function pushResults() {
 				status,
 				failureMessages,
 				failureDetails,
+				summary, // Add the AI-generated summary
 				userid: user.userid, // Assuming `user` is defined elsewhere
 				createdAt,
 			};

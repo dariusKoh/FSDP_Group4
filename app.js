@@ -13,6 +13,7 @@ const {
 const dbQuery = require("./scripts/query-db"); // Import databse query script
 const { pushScripts } = require("./scripts/push-scripts"); // Import pushScripts
 const { run } = require("jest");
+
 const app = express();
 const port = 3001;
 const constants = {
