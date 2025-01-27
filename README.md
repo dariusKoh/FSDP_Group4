@@ -25,19 +25,19 @@ npm init -y
 ```
 
 ```shell
-npm i apexcharts bcrypt cors dockerode dotenv express jest jest-stare lottie-react mongodb mongoose react-apexcharts react-bootstrap  react-dom react-router-dom react realm-web selenium-webdriver typed.js vite
+npm i @google/generative-ai apexcharts bcrypt cors dockerode dotenv express jest jest-stare jsonwebtoken lottie-react mongodb mongoose react-apexcharts react-bootstrap react-dom react-router-dom react realm-web selenium-webdriver typed.js vite
 ```
 
 #### If an error occurs when installing dependencies, run the script below
 
 ```shell
-npm i apexcharts bcrypt cors dockerode dotenv express jest jest-stare lottie-react mongodb mongoose react-apexcharts react-bootstrap react-dom react-router-dom react realm-web selenium-webdriver typed.js vite --legacy-peer-deps
+npm i @google/generative-ai apexcharts bcrypt cors dockerode dotenv express jest jest-stare jsonwebtoken lottie-react mongodb mongoose react-apexcharts react-bootstrap react-dom react-router-dom react realm-web selenium-webdriver typed.js vite --legacy-peer-deps
 ```
 
 #### If that also does not work, run the script below
 
 ```shell
-npm i apexcharts bcrypt cors dockerode dotenv express jest jest-stare lottie-react mongodb mongoose react-apexcharts react-bootstrapreact-dom react-router-dom react realm-web selenium-webdriver typed.js vite --force
+npm i @google/generative-ai apexcharts bcrypt cors dockerode dotenv express jest jest-stare jsonwebtoken lottie-react mongodb mongoose react-apexcharts react-bootstrapreact-dom react-router-dom react realm-web selenium-webdriver typed.js vite --force
 ```
 
 ## Technologies Used

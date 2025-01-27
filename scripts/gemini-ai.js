@@ -10,6 +10,7 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 async function summuriseFailureMessages(testResults) {
 	console.log("Summarising failure messages...");
 	try {
+		// Prompt for the AI model to generate and format summaries of failed test cases
 		var prompt = `As a QA automation expert analyzing banking application test results, create a technical summary of each failed test case. Your summary should include:  
 1. **Detailed Failure Description:** Clearly describe what caused the failure, providing specific details such as expected vs. actual results, the conditions under which the failure occurred, and the relevant component or module.  
 2. **Recommendation for Improvement:** Offer detailed and actionable recommendations to resolve the issue, ensuring clarity for the developer or QA team.  
@@ -24,7 +25,7 @@ async function summuriseFailureMessages(testResults) {
 
 ### Example Response:  
 If four test cases are provided and test cases 1, 2, and 4 failed while test case 3 passed, the response should be:  
-("Summary of failed test case 1"&;*"Summary of failed test case 2"&;*&;*"Summary of failed test case 4")
+\`"The test case failed because...\nRecommendation:...\nRoot Cause:..."&;*"The test case failed because ..."&;*&;*"The test case failed because ..."\`  
 
 ### Key Notes:  
 - Only include the formatted summary for **all test cases**.  
@@ -34,6 +35,7 @@ If four test cases are provided and test cases 1, 2, and 4 failed while test cas
 
 ### Test Results:`;
 
+		// Parse test results
 		const results = testResults.map((test) => {
 			const ancestorTitles = test.ancestorTitles.join(" > "); // Join ancestor titles to create a hierarchy
 			const fullTitle = test.fullName;
@@ -60,6 +62,7 @@ If four test cases are provided and test cases 1, 2, and 4 failed while test cas
 			};
 		});
 
+		// Update prompt with all test results to be summaried
 		for (const item of results) {
 			prompt += `\n\n
                 Test name: ${item.ancestorTitles}\n
@@ -69,10 +72,9 @@ If four test cases are provided and test cases 1, 2, and 4 failed while test cas
                 Failure details: ${item.failureDetails}`;
 			console.log(`${item.ancestorTitles}: ${item.failureMessages}\n`);
 		}
+		const result = await model.generateContent(prompt); // Generate summaries using Gemini AI model
 
-		const result = await model.generateContent(prompt);
-		//console.log("\n\n\n\n\n\n\n" + result.response.text());
-
+		// Parse and format summaries
 		const summaries = result.response
 			.text()
 			.split("&;*")
@@ -89,6 +91,7 @@ If four test cases are provided and test cases 1, 2, and 4 failed while test cas
 			console.log("-------------------");
 		});
 
+		// Return summaries
 		return {
 			success: true,
 			summaries,

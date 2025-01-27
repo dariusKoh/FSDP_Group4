@@ -38,7 +38,7 @@ async function runTestInContainers() {
 		await docker.stopAllContainers();
 		console.log("All containers removed successfully.");
 
-		// Check the test results
+		// Check the test results (for Git Hook helper function)
 		if (testResults.success) {
 			console.log("All tests passed!");
 			return { success: true };
@@ -52,6 +52,7 @@ async function runTestInContainers() {
 	}
 }
 
+// Git Hook helper function
 async function runTestsOnLocalRepo() {
 	try {
 		// Ensure we are awaiting the result of runTestInContainers
