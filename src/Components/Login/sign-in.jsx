@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import './sign-in.css';
 import logo from '../../assets/Logo-ocbc.png';
 import Navbar from "../NavBar/Navbar";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const LoginPage = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const navigate = useNavigate(); // Initialize navigation
 
     const handleLogin = async () => {
         try {
@@ -23,6 +25,7 @@ const LoginPage = () => {
 
             alert("Login successful!");
             console.log("Token:", data.token); // Store the token securely if used
+            navigate("/projects");
         } catch (err) {
             setError(err.message);
         }

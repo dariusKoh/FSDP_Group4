@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import './sign-up.css';
 import logo from '../../assets/Logo-ocbc.png';
 import Navbar from "../NavBar/Navbar";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
+
 
 const SignUp = () => {
     const [username, setUsername] = useState("");
@@ -9,6 +11,7 @@ const SignUp = () => {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
+    const navigate = useNavigate(); // Initialize navigation
 
     const handleRegister = async () => {
         if (password !== confirmPassword) {
@@ -27,7 +30,7 @@ const SignUp = () => {
             if (!response.ok) {
                 throw new Error(data.message || "Registration failed");
             }
-
+            navigate("/login");
             alert("Registration successful!");
         } catch (err) {
             setError(err.message);

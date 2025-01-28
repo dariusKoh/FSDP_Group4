@@ -2,9 +2,12 @@ import React from "react";
 import { useRef } from "react";
 import './index.css';
 import Navbar from "./Components/NavBar/Navbar";
+import LoginPage from './Components/Login/sign-in';
+import { useNavigate } from "react-router-dom";
 
 const App = () => {
     const additionalInfoRef = useRef(null);
+    const navigate = useNavigate();
 
     const scrollToAdditionalInfo = () => {
         additionalInfoRef.current.scrollIntoView({ behavior: "smooth" });
@@ -26,7 +29,7 @@ const App = () => {
                         can help you deliver high-quality software.
                     </p>
                     <div className="buttons">
-                        <button className="get-started">Get Started</button>
+                        <button className="get-started"onClick={() => navigate('/login')}>Get Started</button>
                         <button className="find-out-more" onClick={scrollToAdditionalInfo}>Find Out More</button>
                     </div>
                 </section>
@@ -61,7 +64,7 @@ const App = () => {
                     Try to run Website Automation Tests on Real devices & browsers on our Wrb Application now.
                     Test under real-world conditions for accurate test results & end-user-like experience.
                 </p>
-                <button className="get-started-btn">Get Started</button>
+                <button className="get-started-btn"onClick={() => navigate('/login')}>Get Started</button>
             </div>
 
         </div>
