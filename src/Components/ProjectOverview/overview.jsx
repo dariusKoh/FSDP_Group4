@@ -2,11 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import ReactApexChart from "react-apexcharts";
 import Typed from "typed.js";
 import "./overview.css";
-//Removed Jest
 
 function Overview({ projName, lastDate = "11/12/2024", onClose }) {
     const [filter, setFilter] = useState("All");
+    const [searchInput, setSearchInput] = useState(""); // State for the search input
     const [testLogs, setTestLogs] = useState([]);
+    const [searchResult, setSearchResult] = useState(null); // State for search results
     const el = useRef(null);
 
     // Fetch logs from MongoDB when the component mounts
@@ -29,25 +30,19 @@ function Overview({ projName, lastDate = "11/12/2024", onClose }) {
         };
     }, [projName]);
 
-    // Sample data
-    let passed = testLogs.filter(test => test.status == "PASSED");
-    let failed = testLogs.filter(test => test.status !== "PASSED");
+    const passed = testLogs.filter(test => test.status === "PASSED");
+    const failed = testLogs.filter(test => test.status !== "PASSED");
     const data = {
         totalTasks: testLogs.length,
         passedTasks: passed.length,
         failedTasks: failed.length,
         pendingTasks: testLogs.length - passed.length - failed.length,
     };
-    
-
 
     const createChartData = (value) => ({
         series: [value],
         options: {
-            chart: {
-                height: 350,
-                type: "radialBar",
-            },
+            chart: { height: 350, type: "radialBar" },
             plotOptions: {
                 radialBar: {
                     startAngle: -135,
@@ -89,10 +84,9 @@ function Overview({ projName, lastDate = "11/12/2024", onClose }) {
         return "pending";
     };
 
-    // Function to fetch logs from the backend
     const fetchLogsFromDB = async () => {
         try {
-            const response = await fetch('http://localhost:3001/get-logs');
+            const response = await fetch("http://localhost:3001/get-logs");
             const logsData = await response.json();
             setTestLogs(logsData);
         } catch (error) {
@@ -100,8 +94,25 @@ function Overview({ projName, lastDate = "11/12/2024", onClose }) {
         }
     };
 
-    // Filter logs based on status
+    // Search for specific case by caseId
+    const searchByCaseId = async () => {
+        if (!searchInput) return; // Do nothing if the search input is empty
+        try {
+            const response = await fetch(`http://localhost:3001/get-log-by-id/${searchInput}`);
+            if (response.ok) {
+                const result = await response.json();
+                setSearchResult(result); // Set the search result
+            } else {
+                setSearchResult(null); // Clear the search result if not found
+                console.error("Case not found");
+            }
+        } catch (error) {
+            console.error("Failed to search for case:", error);
+        }
+    };
+
     const filteredLogs = filter === "All" ? testLogs : testLogs.filter(log => log.status === filter);
+
     return (
         <div className="overview-container">
             <button onClick={onClose} className="returnBtn" id="backProj">Close</button>
@@ -119,7 +130,6 @@ function Overview({ projName, lastDate = "11/12/2024", onClose }) {
                     <h1>{data.pendingTasks}</h1>
                     <p>out of {data.totalTasks} tasks Pending</p>
                 </div>
-
                 <div className="chart-container">
                     <div className="radial-chart">
                         <div className={`chart-status ${getStatusClass("Pass")}`}>Passed</div>
@@ -150,10 +160,47 @@ function Overview({ projName, lastDate = "11/12/2024", onClose }) {
                     </div>
                 </div>
             </div>
-            
 
-            {/* Test Logs Section */}
             <div className="test-table">
+                <h3>Search Test Case</h3>
+                <div className="search-bar">
+                    <input
+                        type="text"
+                        placeholder="Enter Case ID"
+                        value={searchInput}
+                        onChange={(e) => setSearchInput(e.target.value)}
+                    />
+                    <button onClick={searchByCaseId}>Search</button>
+                </div>
+                {searchResult ? (
+                    <div className="search-result">
+                        <h3>Search Result</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Test Case Name</th>
+                                    <th>ID</th>
+                                    <th>Status</th>
+                                    <th>Duration (ms)</th>
+                                    <th>Failure Messages</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr className={searchResult.status === "PASSED" ? "pass" : "fail"}>
+                                    <td>{searchResult.ancestorTitles + " > " + searchResult.fullTitle}</td>
+                                    <td>{searchResult.testId}</td>
+                                    <td>{searchResult.status}</td>
+                                    <td>{searchResult.duration}</td>
+                                    <td>{searchResult.failureMessages}</td>
+                                    <td>{new Date(searchResult.createdAt).toLocaleString()}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                ) : (
+                    <p>No search results found</p>
+                )}
                 <h3>View Test Logs</h3>
                 <div className="filter">
                     <label htmlFor="filter">Filter by:</label>
@@ -181,7 +228,7 @@ function Overview({ projName, lastDate = "11/12/2024", onClose }) {
                                 <td>{log.testId}</td>
                                 <td>{log.status}</td>
                                 <td>{log.duration}</td>
-                                <td>{log.failureMessages[0].length > 30 ? `${log.failureMessages[0].slice(0, 50)}...` : log.failureMessages}</td>
+                                <td>{log.failureMessages[0]?.slice(0, 50) || "N/A"}...</td>
                                 <td>{new Date(log.createdAt).toLocaleString()}</td>
                             </tr>
                         ))}
