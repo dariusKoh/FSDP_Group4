@@ -3,7 +3,6 @@ const cors = require('cors');
 const { MongoClient } = require('mongodb');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken'); // Optional, for token-based authentication
-
 const SECRET_KEY = "your_secret_key"; // Replace with a secure key for JWT
 
 
@@ -115,12 +114,27 @@ app.get('/get-logs', async (req, res) => {
 
 // API to fetch all projects
 app.get('/projects', async (req, res) => {
+    const token = req.headers['authorization']?.split(' ')[1]; // Bearer <token>
+    if (!token) {
+        return res.status(401).json({ error: "Unauthorized" });
+    }
+
     try {
+        // Verify token
+        const decoded = jwt.verify(token, SECRET_KEY);
+        const userId = decoded.userid; // Get user id from the token
+
         await client.connect();
         const db = client.db('test');
         const collection = db.collection('projects');
 
-        const projects = await collection.find({}).toArray(); // Get all projects
+        // Fetch projects associated with the user
+        const projects = await collection.find({ userId }).toArray(); // Assuming `userId` field exists in the projects collection
+
+        if (projects.length === 0) {
+            return res.status(404).json({ message: "No projects found for this user" });
+        }
+
         res.status(200).json(projects);
     } catch (error) {
         console.error("Error fetching projects:", error);
@@ -129,7 +143,6 @@ app.get('/projects', async (req, res) => {
         await client.close();
     }
 });
-
 
 // API to fetch test cases from MongoDB
 app.get('/get-scripts', async (req, res) => {

@@ -4,16 +4,16 @@ import './NavbarLoggedIn.css';
 const NavbarLoggedIn = () => {
     return (
         <header className="header">
-            <a href="/" className="logo">
-                <img src="/src/assets/Logo-ocbc.png" alt="Logo" className="logo-image" />
-            </a>
+            <img src="/src/assets/Logo-ocbc.png" alt="Logo" className="logo-image" />
 
             <nav className="navbar">
                 {/* Logout Link */}
-                <a href="logout" className="logout-link">Logout</a>
+                <a href="/" className="logout-link">Logout</a>
                 
-                {/* Profile Picture */}
-                <img src="/src/assets/ProfilePicFSDP.jpg" alt="Profile Pic" className="profile-pic" />
+                {/* Profile Picture with Link to Account Page */}
+                <a href="/profile">
+                    <img src="/src/assets/ProfilePicFSDP.jpg" alt="Profile Pic" className="profile-pic" />
+                </a>
             </nav>
         </header>
     );
