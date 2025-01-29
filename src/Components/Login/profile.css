@@ -2,3 +2,32 @@
     top: 150px;
     position: relative;
 }
+/* Profile Component Styles */
+.logout-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 16px;
+    color: #333;
+}
+
+.finalPress {
+    cursor: pointer;
+    color: blue;
+    text-decoration: underline;
+}

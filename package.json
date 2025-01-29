@@ -1,7 +1,7 @@
 {
   "name": "fsdp_group4",
   "version": "1.0.0",
-  "description": "```shell\r npm init -y\r ```",
+  "description": "fsdp_assignment",
   "main": "index.js",
   "scripts": {
     "dev": "vite",
@@ -33,6 +33,7 @@
     "@google/generative-ai": "^0.21.0",
     "apexcharts": "^3.54.1",
     "bcrypt": "^5.1.1",
+    "chart.js": "^4.4.6",
     "cors": "^2.8.5",
     "dockerode": "^4.0.4",
     "dotenv": "^16.4.7",
@@ -46,7 +47,7 @@
     "pdfkit": "^0.16.0",
     "react-apexcharts": "^1.7.0",
     "react-bootstrap": "^2.10.8",
-    "react-chartjs": "^0.7.3",
+    "react-chartjs": "^1.2.0",
     "react-router-dom": "^6.28.2",
     "realm-web": "^2.0.1",
     "selenium-webdriver": "^4.28.1",

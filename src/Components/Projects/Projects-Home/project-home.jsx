@@ -14,15 +14,43 @@ export default function ProjectHome({ setCurrentProject, setActiveState }) {
     // Fetch projects from the backend
     useEffect(() => {
         const fetchProjects = async () => {
+            const token = localStorage.getItem('authToken');  // Retrieve the token from localStorage
+            if (!token) {
+                console.error("User is not authenticated");
+                return;
+            }
+    
             try {
-                const response = await fetch('http://localhost:3001/projects'); // Call the new endpoint
+                const response = await fetch('http://localhost:3001/projects', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`, // Include the token in the request header
+                    },
+                });
                 const data = await response.json();
                 setProjects(data); // Set the fetched projects into state
             } catch (error) {
                 console.error("Error fetching projects:", error);
             }
+            //Implementation of token (WIP)
+            // try {
+            //     const token = localStorage.getItem('token'); // if token is stored in localStorage
+            //     const response = await fetch('http://localhost:3001/projects', {
+            //         headers: {
+            //             Authorization: `Bearer ${token}`,
+            //         },
+            //     });
+            //     if (response.ok) {
+            //         const data = await response.json();
+            //         setProjects(data);
+            //     } else {
+            //         console.error("Failed to fetch projects:", await response.text());
+            //     }
+            // } catch (error) {
+            //     console.error("Error fetching projects:", error);
+            // }
         };
-
+    
         fetchProjects();
     }, []);  // Runs once when component mounts
 

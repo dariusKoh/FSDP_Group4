@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# This script is used to trigger the tests for the application when a Git push operation is executed.
+# The script sends a webhook request to the testing app to trigger the tests.
+# The webhook request includes the branch name and commit hash to run the tests for the specific branch and commit.
+
+remote="$1"
+url="$2"
+
+# Extract the branch name and commit hash
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+COMMIT=$(git rev-parse HEAD)
+
+# Notify the testing app via webhook (trigger the tests to run)
+echo "Triggering webhook for branch: $BRANCH, commit: $COMMIT"
+
+# Send a POST request to the testing app's webhook endpoint
+curl -f -X POST -H "Content-Type: application/json" \
+	-d '{"branch": "'$BRANCH'", "commit": "'$COMMIT'"}' \
+	http://localhost:3001/webhook || exit 1  # Exit if the webhook request fails
+
+# Exits on success
+echo "Tests triggered successfully."
+exit 0
