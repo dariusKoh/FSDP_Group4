@@ -32,6 +32,23 @@ export default function ProjectHome({ setCurrentProject, setActiveState }) {
             } catch (error) {
                 console.error("Error fetching projects:", error);
             }
+            //Implementation of token (WIP)
+            // try {
+            //     const token = localStorage.getItem('token'); // if token is stored in localStorage
+            //     const response = await fetch('http://localhost:3001/projects', {
+            //         headers: {
+            //             Authorization: `Bearer ${token}`,
+            //         },
+            //     });
+            //     if (response.ok) {
+            //         const data = await response.json();
+            //         setProjects(data);
+            //     } else {
+            //         console.error("Failed to fetch projects:", await response.text());
+            //     }
+            // } catch (error) {
+            //     console.error("Error fetching projects:", error);
+            // }
         };
     
         fetchProjects();
