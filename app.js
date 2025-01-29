@@ -106,6 +106,31 @@ app.post("/create-project", authenticate, async (req, res) => {
 	}
 });
 
+app.get('/get-log-by-id/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log("Requested ID:", id);
+
+        await client.connect();
+        const db = client.db('test');
+        const log = await db.collection("test_results").findOne({ testId: id });
+
+        console.log("Database Query Result:", log); // Debugging log
+
+        if (!log) {
+            console.log("No test case found for ID:", id);
+            return res.status(404).json({ message: "Test case not found" });
+        }
+
+        res.json(log);
+    } catch (error) {
+        console.error("Error fetching log by ID:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    } finally {
+        await client.close();
+    }
+});
+
 // API to fetch test logs from MongoDB
 app.get("/get-logs", authenticate, async (req, res) => {
 	try {
@@ -121,12 +146,27 @@ app.get("/get-logs", authenticate, async (req, res) => {
 
 // API to fetch all projects
 app.get("/projects", authenticate, async (req, res) => {
+    const token = req.headers['authorization']?.split(' ')[1]; // Bearer <token>
+    if (!token) {
+        return res.status(401).json({ error: "Unauthorized" });
+    }
+
 	try {
+        // Verify token
+        const decoded = jwt.verify(token, SECRET_KEY);
+        const userId = decoded.userid; // Get user id from the token
+
 		await client.connect();
 		const db = client.db("test");
 		const collection = db.collection("projects");
 
-		const projects = await collection.find({}).toArray(); // Get all projects
+        // Fetch projects associated with the user
+		const projects = await collection.find({ userId }).toArray(); // Assuming `userId` field exists in the projects collection
+
+        if (projects.length === 0) {
+            return res.status(404).json({ message: "No projects found for this user" });
+        }
+
 		res.status(200).json(projects);
 	} catch (error) {
 		console.error("Error fetching projects:", error);
