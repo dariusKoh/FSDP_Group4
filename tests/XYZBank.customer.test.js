@@ -133,6 +133,7 @@ browsers.forEach((browserName) => {
             await withdrawButton.click();
             await withdrawButton.click();
 
+            let screenshot = await driver.takeScreenshot();
 
             var amountInput = await driver.wait(
                 until.elementIsVisible(driver.findElement(By.xpath("//input[@ng-model='amount']"))),

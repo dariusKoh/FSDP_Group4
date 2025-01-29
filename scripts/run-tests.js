@@ -35,9 +35,9 @@ async function runTestInContainers() {
         .then(() => {
             console.log("Tests completed. Proceeding to clean up...");
         })
-        /*.then(() => {
+        .then(() => {
             return pushResults();
-        })*/
+        })
         .catch(error => {
             console.error("Error during setup or test execution:", error);
         })
