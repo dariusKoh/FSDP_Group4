@@ -10,23 +10,32 @@ const LoginPage = () => {
 
     const handleLogin = async () => {
         try {
-            const response = await fetch('http://localhost:3001/api/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password }),
-            });
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || "Login failed");
-            }
-
-            alert("Login successful!");
-            console.log("Token:", data.token); // Store the token securely if used
+          const response = await fetch('http://localhost:3001/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password }),
+          });
+          const data = await response.json();
+      
+          if (!response.ok) {
+            throw new Error(data.message || "Login failed");
+          }
+      
+          // Store the token and user data in local storage
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("username", username);
+          localStorage.setItem("role", data.role);
+      
+          // Redirect to the homepage based on the user's role
+          if (data.role === "admin") {
+            window.location.href = "/admin/dashboard"; // Assuming you have an admin dashboard page
+          } else {
+            window.location.href = "/"; // Redirect to the homepage for users
+          }
         } catch (err) {
-            setError(err.message);
+          setError(err.message);
         }
-    };
+      };
 
     return (
         <div>

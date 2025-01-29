@@ -25,11 +25,35 @@ const client = new MongoClient(constants.MONGO_URI);
 app.use(cors());
 app.use(express.json());
 
+// Authentication middleware
+const authenticate = async (req, res, next) => {
+	const token = req.header("Authorization");
+
+	if (!token) return res.status(401).json({ error: "Access denied" });
+
+	try {
+		const decoded = jwt.verify(token, SECRET_KEY);
+		req.user = decoded;
+
+		// Get the required permission for the route
+		const requiredPermission = req.route.path.split("/").pop();
+
+		// Check if the user has the required permission
+		if (!permissions[requiredPermission].includes(req.user.role)) {
+			return res.status(403).json({ error: "Forbidden" });
+		}
+
+		next();
+	} catch (ex) {
+		res.status(400).json({ error: "Invalid token" });
+	}
+};
+
 // API to trigger test run
-app.get("/run-tests", async (req, res) => {
+app.get("/run-tests", authenticate, async (req, res) => {
 	console.log("App.js run-tests");
 	try {
-		await runTestInContainers(); // Call runTests function
+		// Call runTests function
 		res.status(200).json({ message: "Tests started successfully" });
 	} catch (error) {
 		console.error("Failed to start tests:", error);
@@ -37,7 +61,7 @@ app.get("/run-tests", async (req, res) => {
 	}
 });
 
-app.post("/create-project", async (req, res) => {
+app.post("/create-project", authenticate, async (req, res) => {
 	const { projectName, visibility, files } = req.body;
 
 	try {
@@ -83,7 +107,7 @@ app.post("/create-project", async (req, res) => {
 });
 
 // API to fetch test logs from MongoDB
-app.get("/get-logs", async (req, res) => {
+app.get("/get-logs", authenticate, async (req, res) => {
 	try {
 		const logs = await dbQuery.queryAllData("test_results"); // Call queryAllData function
 		res.json(logs);
@@ -96,7 +120,7 @@ app.get("/get-logs", async (req, res) => {
 });
 
 // API to fetch all projects
-app.get("/projects", async (req, res) => {
+app.get("/projects", authenticate, async (req, res) => {
 	try {
 		await client.connect();
 		const db = client.db("test");
@@ -112,7 +136,7 @@ app.get("/projects", async (req, res) => {
 	}
 });
 
-app.post("/webhook", async (req, res) => {
+app.post("/webhook", authenticate, async (req, res) => {
 	const { branch, commit } = req.body;
 
 	console.log(`Webhook triggered for branch: ${branch}`);
@@ -139,7 +163,7 @@ app.post("/webhook", async (req, res) => {
 });
 
 // API to fetch test cases from MongoDB
-app.get("/get-scripts", async (req, res) => {
+app.get("/get-scripts", authenticate, async (req, res) => {
 	try {
 		const scripts = await dbQuery.queryAllData("scripts"); // Call queryAllData function
 		res.json(scripts);
@@ -188,7 +212,12 @@ app.post("/api/login", async (req, res) => {
 
 // User registration
 app.post("/api/register", async (req, res) => {
-	const { username, email, password } = req.body;
+	const { username, email, password, role } = req.body;
+
+	// Validate role
+	if (!roles[role]) {
+		return res.status(400).json({ message: "Invalid role" });
+	}
 
 	try {
 		await client.connect();
