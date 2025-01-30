@@ -17,7 +17,7 @@ const client = new MongoClient(constants.MONGO_URI, {
   },
 });
 
-async function pushResults(projectId) {
+async function pushResults(proj_id) {
   console.log("insert-db.js run");
   try {
     // Connect the client to the server (optional starting in v4.7)
@@ -77,7 +77,7 @@ async function pushResults(projectId) {
     const totalDuration = parseInt(perfStats.runtime, 10) / 1000; // Convert runtime to seconds
 
     console.log("Test Summary:");
-    console.log(projectId);
+    console.log(proj_id);
     const documents = testResults.map((test, index) => {
       const testId = `${constants.TEST_ID_PREFIX}${index + 1}`;
       const ancestorTitles = test.ancestorTitles.join(" > "); // Join ancestor titles to create a hierarchy
@@ -108,7 +108,7 @@ async function pushResults(projectId) {
         failureMessages,
         failureDetails,
         userid: user.userid, // Assuming `user` is defined elsewhere
-        projectId, // Directly using projectId here
+        proj_id, // Directly using proj_id here
         createdAt,
       };
     });

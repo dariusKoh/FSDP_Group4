@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import './Sidebar.css';
 
-function Sidebar({ base, projectId, onProjectSelect, onProjectOpened, projectName, setActiveState }) {
+function Sidebar({ base, proj_id, onProjectSelect, onProjectOpened, projectName, setActiveState }) {
     console.log("Type of setActiveState in Sidebar:", typeof setActiveState); // Should log "function"
 
     // Define items based on login state and whether a project is opened

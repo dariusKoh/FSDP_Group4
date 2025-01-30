@@ -47,7 +47,7 @@ export default function MyProjects({ projects, add, title, desc, onProjectSelect
                                 key={project._id} // Use MongoDB's unique `_id` as the key
                                 id={project.proj_id}
                                 name={project.projectName}
-                                onClick={() => onProjectSelect(project.proj_id, project.projectName, "myProjects")} // Pass projectId
+                                onClick={() => onProjectSelect(project.proj_id, project.projectName, "myProjects")} // Pass proj_id
                             />
                         ))}
 

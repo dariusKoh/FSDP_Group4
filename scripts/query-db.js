@@ -47,7 +47,7 @@ async function queryDataByUserId(collectionName, userId) {
     }
 }
 
-async function queryDataByProjectId(collectionName, projectId) {
+async function queryDataByproj_id(collectionName, proj_id) {
     try {
         // Connect the client to the server (optional starting in v4.7)
         await client.connect();
@@ -58,8 +58,8 @@ async function queryDataByProjectId(collectionName, projectId) {
         // Select the database and collection
         const db = client.db();
         const collection = db.collection(collectionName);
-        const query = { projectId: projectId };
-        console.log("Fetching from here to view: Project ID" + projectId)
+        const query = { proj_id: proj_id };
+        console.log("Fetching from here to view: Project ID" + proj_id)
         // Execute the query and fetch the results
         const results = await collection.find(query).toArray();
         console.log(`Found ${results.length} documents that match the query.`);
@@ -106,5 +106,5 @@ async function queryAllData(collectionName) {
 module.exports = { 
     queryAllData, 
     queryDataByUserId,
-    queryDataByProjectId
+    queryDataByproj_id
 };

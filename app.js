@@ -27,14 +27,14 @@ app.use(express.json());
 // API to trigger test run
 app.post("/run-tests", async (req, res) => {
     console.log("App.js run-tests");
-    const { projectId } = req.body;
+    const { proj_id } = req.body;
 
-    if (!projectId) {
+    if (!proj_id) {
         return res.status(400).json({ error: "Project ID is required" });
     }
 
     try {
-        await runTestInContainers(projectId); // Pass projectId to test runner
+        await runTestInContainers(proj_id); // Pass proj_id to test runner
         res.status(200).json({ message: "Tests started successfully" });
     } catch (error) {
         console.error("Failed to start tests:", error);
@@ -54,11 +54,11 @@ app.post("/create-project", async (req, res) => {
 
     // Get the current count of projects for unique ID
     const projectCount = await projectsCollection.countDocuments();
-    const newProjectId = projectCount + 1;
+    const newproj_id = projectCount + 1;
 
     // Create project object
     const newProject = {
-      proj_id: newProjectId,
+      proj_id: newproj_id,
       projectName,
       visibility,
       createdAt: new Date(),
@@ -69,7 +69,7 @@ app.post("/create-project", async (req, res) => {
 
     // Insert scripts associated with the project
     const scriptDocuments = files.map((file) => ({
-      proj_id: newProjectId,
+      proj_id: newproj_id,
       scriptName: file.name,
       scriptContent: file.content,
       createdAt: new Date(),
@@ -89,10 +89,10 @@ app.post("/create-project", async (req, res) => {
 
 // API to fetch test logs from MongoDB
 app.post("/get-logs", async (req, res) => {
-    const { projectId } = req.body;
-    console.log("Project ID: "+projectId);
+    const { proj_id } = req.body;
+    console.log("Project ID: "+proj_id);
   try {
-    const logs = await dbQuery.queryDataByProjectId("test_results", projectId); // Call queryAllData function
+    const logs = await dbQuery.queryDataByproj_id("test_results", proj_id); // Call queryAllData function
     console.log("Jsoning now");
     res.json(logs);
   } catch (error) {
@@ -148,17 +148,24 @@ app.post("/webhook", async (req, res) => {
 });
 
 // API to fetch test cases from MongoDB
-app.get("/get-scripts", async (req, res) => {
-  try {
-    const scripts = await dbQuery.queryAllData("scripts"); // Call queryAllData function
-    res.json(scripts);
-  } catch (error) {
-    console.error("Error fetching test cases from MongoDB:", error);
-    res.status(500).send("Failed to fetch test cases");
-  } finally {
-    await client.close();
-  }
-});
+app.post("/get-scripts", async (req, res) => {
+    try {
+      const { proj_id } = req.body;
+  
+      if (!proj_id) {
+        return res.status(400).json({ error: "Missing proj_id" });
+      }
+  
+      const scripts = await dbQuery.queryDataByproj_id("scripts", proj_id); 
+      res.json(scripts);
+    } catch (error) {
+      console.error("Error fetching test cases from MongoDB:", error);
+      res.status(500).send("Failed to fetch test cases");
+    } finally {
+      await client.close();
+    }
+  });
+  
 
 // User login
 app.post("/api/login", async (req, res) => {

@@ -4,7 +4,7 @@ import Typed from "typed.js";
 import "./overview.css";
 //Removed Jest
 
-function Overview({ testLogs, projectId, projName, lastDate = "11/12/2024", onClose}) {
+function Overview({ testLogs, proj_id, projName, lastDate = "11/12/2024", onClose}) {
     const [filter, setFilter] = useState("All");
     // const [testLogs, setTestLogs] = useState([]);
     const el = useRef(null);
@@ -27,7 +27,7 @@ function Overview({ testLogs, projectId, projName, lastDate = "11/12/2024", onCl
         return () => {
             typed.destroy();
         };
-    }, [projName, projectId]); // Also trigger when projectId changes
+    }, [projName, proj_id]); // Also trigger when proj_id changes
     
 
     // Sample data
@@ -92,16 +92,16 @@ function Overview({ testLogs, projectId, projName, lastDate = "11/12/2024", onCl
 
     // Function to fetch logs from the backend
     // const fetchLogsFromDB = async () => {
-    //     console.log("Project ID: "+projectId)
+    //     console.log("Project ID: "+proj_id)
     //     try {
     //         const response = await fetch('http://localhost:3001/get-logs', {
     //             method: 'POST',
     //             headers: {
     //                 'Content-Type': 'application/json',
     //             },
-    //             body: JSON.stringify({ projectId: projectId }), // Sending projectId in the body
+    //             body: JSON.stringify({ proj_id: proj_id }), // Sending proj_id in the body
     //         });
-    //         console.log(projectId)
+    //         console.log(proj_id)
     //         const logsData = await response.json();
     //         setTestLogs(logsData);
     //     } catch (error) {
@@ -112,6 +112,8 @@ function Overview({ testLogs, projectId, projName, lastDate = "11/12/2024", onCl
 
     // Filter logs based on status
     const filteredLogs = filter === "All" ? testLogs : testLogs.filter(log => log.status === filter);
+    console.log("testLogs data:", testLogs);
+
     return (
         <div className="overview-container">
             <button onClick={onClose} className="returnBtn" id="backProj">Close</button>
@@ -191,7 +193,13 @@ function Overview({ testLogs, projectId, projName, lastDate = "11/12/2024", onCl
                                 <td>{log.testId}</td>
                                 <td>{log.status}</td>
                                 <td>{log.duration}</td>
-                                <td>{log.failureMessages[0].length > 30 ? `${log.failureMessages[0].slice(0, 50)}...` : log.failureMessages}</td>
+                                <td>
+                                    {Array.isArray(log.failureMessages) && log.failureMessages.length > 0
+                                        ? log.failureMessages[0].length > 30
+                                            ? `${log.failureMessages[0].slice(0, 50)}...`
+                                            : log.failureMessages[0]
+                                        : "No Errors"}
+                                </td>
                                 <td>{new Date(log.createdAt).toLocaleString()}</td>
                             </tr>
                         ))}

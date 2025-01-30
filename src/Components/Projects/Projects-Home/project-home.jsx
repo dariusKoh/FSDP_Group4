@@ -5,7 +5,7 @@ import MyProjects from "./my-projects";
 import './project-home.css';
 import Overview from "../../ProjectOverview/overview";
 
-export default function ProjectHome({ updateActiveState, projectId, setProjectId, setCurrentProject, setActiveState }) {
+export default function ProjectHome({ updateActiveState, proj_id, setproj_id, setCurrentProject, setActiveState }) {
     const el = useRef(null);
     const [selectedProject, setSelectedProject] = useState(null);
     const [projects, setProjects] = useState([]); // Manage projects state here
@@ -63,7 +63,7 @@ export default function ProjectHome({ updateActiveState, projectId, setProjectId
         setSelectedProject(projectName);
         setCurrentCategory(category);
         setCurrentProject(projectName);
-        setProjectId(project_Id); // Store projectId
+        setproj_id(project_Id); // Store proj_id
         setActiveState(projectName);
         updateActiveState(projectName);
         console.log("Selected Project ID:", project_Id); // Debugging
@@ -85,7 +85,7 @@ export default function ProjectHome({ updateActiveState, projectId, setProjectId
     return (
         <div>
             {selectedProject ? (
-                <Overview projectId={projectId} projName={selectedProject} lastDate="11/12/2024" onClose={handleCloseProject} />
+                <Overview proj_id={proj_id} projName={selectedProject} lastDate="11/12/2024" onClose={handleCloseProject} />
             ) : (
                 <section className="projectHome">
                     <span className="mainHead" ref={el} />

@@ -16,12 +16,12 @@ export default function ProjectPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [testCases, setTestCases] = useState([]);
     const [testLogs, setTestLogs] = useState([]);
-    const [projectId, setProjectId] = useState(null);
+    const [proj_id, setproj_id] = useState(null);
     const [showCreateProject, setShowCreateProject] = useState(null);
 
     // Handle running test cases
     const handleRunCases = async () => {
-        if (!projectId) {
+        if (!proj_id) {
             console.error("No project selected.");
             return;
         }
@@ -33,7 +33,7 @@ export default function ProjectPage() {
             const response = await fetch("http://localhost:3001/run-tests", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ projectId }),
+                body: JSON.stringify({ proj_id }),
             });
 
             if (!response.ok) {
@@ -44,6 +44,7 @@ export default function ProjectPage() {
 
             console.log("Tests started, waiting for completion...");
             await fetchLogsFromDB();
+            setIsLoading(false);
         } catch (error) {
             console.error("Failed to run tests:", error);
             setIsLoading(false);
@@ -52,46 +53,62 @@ export default function ProjectPage() {
 
     // Function to fetch logs from the DB
     const fetchLogsFromDB = async () => {
-        if (!projectId) {
-            console.warn("fetchLogsFromDB called with null projectId!");
+        if (!proj_id) {
+            console.warn("fetchLogsFromDB called with null proj_id!");
             return;
         }
-
-        console.log("Fetching logs for projectId:", projectId);
+    
+        console.log("Fetching logs for proj_id:", proj_id);
         try {
             const response = await fetch("http://localhost:3001/get-logs", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ projectId }), // Sending projectId in the body
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ proj_id }),
             });
-
+    
             const logsData = await response.json();
+            
+            if (!Array.isArray(logsData)) {
+                console.error("Unexpected response format:", logsData);
+                return;
+            }
+    
             setTestLogs(logsData);
         } catch (error) {
             console.error("Failed to fetch logs:", error);
         }
     };
+    
 
     // Function to fetch test cases when "View Cases" is active
     const fetchTestCases = async () => {
+        if (!proj_id) {
+            console.warn("fetchTestCases called with null proj_id!");
+            return;
+        }
+    
         try {
-            const response = await fetch("http://localhost:3001/get-scripts");
+            const response = await fetch("http://localhost:3001/get-scripts", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ proj_id }),
+            });
+    
             const data = await response.json();
             setTestCases(data);
         } catch (error) {
             console.error("Error fetching test cases:", error);
         }
     };
+    
 
-    // Trigger log fetching only when projectId is updated
+    // Trigger log fetching only when proj_id is updated
     useEffect(() => {
-        if (projectId && activeState !== "Help" && activeState !== "Documentation") {
-            console.log("useEffect triggered: Fetching logs for projectId:", projectId);
+        if (proj_id && activeState !== "Help" && activeState !== "Documentation") {
+            console.log("useEffect triggered: Fetching logs for proj_id:", proj_id);
             fetchLogsFromDB();
         }
-    }, [projectId]); // Runs only when projectId changes
+    }, [proj_id]); // Runs only when proj_id changes
 
     // Determine which component to render based on active state
     const renderComponent = () => {
@@ -103,8 +120,8 @@ export default function ProjectPage() {
                         projects={projects}
                         setCurrentProject={setCurrentProject}
                         setActiveState={setActiveState}
-                        setProjectId={setProjectId}
-                        projectId={projectId}
+                        setproj_id={setproj_id}
+                        proj_id={proj_id}
                         updateActiveState={updateActiveState}
                     />
                 );
@@ -116,23 +133,23 @@ export default function ProjectPage() {
                 return <Docs />;
             default:
                 if (isLoading) {
-                    return <LoadingScreen logs={testLogs} />;
+                    return <LoadingScreen />;
                 }
                 return (
                     <Overview
                         testLogs={testLogs}
                         projName={currentProject}
-                        projectId={projectId}
+                        proj_id={proj_id}
                         onClose={() => setActiveState(null)}
                     />
                 );
         }
     };
 
-    // Update active state while ensuring projectId is set first
-    const updateActiveState = (val, newProjectId = null) => {
-        if (newProjectId) {
-            setProjectId(newProjectId);
+    // Update active state while ensuring proj_id is set first
+    const updateActiveState = (val, newproj_id = null) => {
+        if (newproj_id) {
+            setproj_id(newproj_id);
         }
 
         if (val === "Run Cases") {
@@ -157,7 +174,7 @@ export default function ProjectPage() {
                 setActiveState={updateActiveState}
                 projectName={currentProject}
                 onProjectOpened={!!currentProject}
-                projectId={projectId}
+                proj_id={proj_id}
             />
             {renderComponent()}
             {showCreateProject && (
