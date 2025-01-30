@@ -16,6 +16,7 @@ export default function ProjectPage() {
     const [activeState, setActiveState] = useState(null);
     const [showCreateProject, setShowCreateProject] = useState(false);
     const [currentProject, setCurrentProject] = useState(null);
+    const [proj_id, setproj_id] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [logs, setLogs] = useState("");
     const [testCases, setTestCases] = useState([]); // State to store test cases
@@ -71,11 +72,20 @@ export default function ProjectPage() {
     
     // Determine which component to render
     const renderComponent = () => {
+        console.log(activeState)
         switch (activeState) {
-            case "Project Overview":
-                return <Overview projName={currentProject} onClose={() => {
-                    setActiveState(false);
-                }} />;
+            case "Project Home":
+            case null:
+                return (
+                    <ProjectHome
+                        projects={projects}
+                        setCurrentProject={setCurrentProject}
+                        setActiveState={setActiveState}
+                        setproj_id={setproj_id}
+                        proj_id={proj_id}
+                        updateActiveState={updateActiveState}
+                    />
+                );
             case "View Cases":
                 return <ViewCases cases={testCases} projName={currentProject} />; // Pass test cases to ViewCases
             case "Help":
