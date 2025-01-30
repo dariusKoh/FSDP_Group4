@@ -6,7 +6,6 @@ import "./overview.css";
 function Overview({ testLogs, proj_id, projName, lastDate = "11/12/2024", onClose}) {
     const [filter, setFilter] = useState("All");
     const [searchInput, setSearchInput] = useState(""); // State for the search input
-    const [testLogs, setTestLogs] = useState([]);
     const [searchResult, setSearchResult] = useState(null); // State for search results
     // const [testLogs, setTestLogs] = useState([]);
     const el = useRef(null);

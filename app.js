@@ -3,13 +3,9 @@ const cors = require("cors");
 const { MongoClient } = require("mongodb");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken"); // Optional, for token-based authentication
-const express = require("express");
-const cors = require("cors");
-const { MongoClient } = require("mongodb");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken"); // Optional, for token-based authentication
+const roles = require("./scripts/roles");
 
-const SECRET_KEY = "your_secret_key"; // Replace with a secure key for JWT
+const SECRET_KEY = "TESTINGKEYMAYBE?"; // Replace with a secure key for JWT
 
 const {
 	runTestInContainers,
@@ -275,9 +271,8 @@ app.post("/api/login", async (req, res) => {
 // User registration
 app.post("/api/register", async (req, res) => {
 	const { username, email, password, role } = req.body;
-
 	// Validate role
-	if (!roles[role]) {
+	if (!roles["roles"][role]) {
 		return res.status(400).json({ message: "Invalid role" });
 	}
 

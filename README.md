@@ -37,7 +37,7 @@ npm i @google/generative-ai apexcharts bcrypt cors dockerode dotenv express jest
 #### If that also does not work, run the script below
 
 ```shell
-npm i @google/generative-ai apexcharts bcrypt cors dockerode dotenv express jest jest-stare jsonwebtoken lottie-react mongodb mongoose pdfkit react-apexcharts react-bootstrapreact-dom react-router-dom react realm-web selenium-webdriver typed.js vite --force
+npm i @google/generative-ai apexcharts bcrypt cors dockerode dotenv express jest jest-stare jsonwebtoken lottie-react mongodb mongoose pdfkit react-apexcharts react-bootstrap react-dom react-router-dom react realm-web selenium-webdriver typed.js vite --force
 ```
 
 ## Technologies Used
