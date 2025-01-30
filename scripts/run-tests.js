@@ -1,72 +1,77 @@
-const { exec } = require('child_process');
-const docker = require('./docker-management');
-const { pushResults } = require('./insert-db');
-const { run } = require('jest');
+const { exec } = require("child_process");
+const docker = require("./docker-management");
+
+const { pushResults } = require("./insert-db");
+const { run } = require("jest");
 
 // Run tests and return the output
 async function runTests() {
-    console.log("Running tests...");
+  console.log("Running tests...");
 
-    return new Promise((resolve, reject) => {
-        // Execute ``npm test`` in the current directory
-        exec('npm test', (error, stdout, stderr) => {
-            if (error) {
+  return new Promise((resolve, reject) => {
+    // Execute ``npm test`` in the current directory
+    exec("npm test", (error, stdout, stderr) => {
+      /*if (error) {
                 console.error(`Error executing npm test: ${error.message}`);
                 reject(error);
-            }
+            }*/
 
-            console.log(`Output:\n${stdout}`);
-            if (stderr) {
-                console.error(`Errors:\n${stderr}`);
-            }
-
-            // Return the output of the test run
-            resolve({ stdout, stderr });
-        });
+      console.log(`Output:\n${stdout}`);
+      if (stderr) {
+        console.error(`Errors:\n${stderr}`);
+      }
+      resolve(stdout);
     });
+  });
 }
 
-async function runTestInContainers(projectId, projectName, userId) {
-    try {
-        console.log(`Running tests for project: ${projectName} (ID: ${projectId})`);
+async function runTestInContainers(projectId) {
+  try {
+    await docker.setupSeleniumGrid();
+    await docker.createContainers(1);
+    await runTests();
 
-        // 1. Start the Docker containers and set up Selenium Grid
-        await docker.setupSeleniumGrid();
-        await docker.createContainers(1);  // Assuming you're creating 1 container
+    console.log("Tests completed. Proceeding to push results...");
+    const testResults = await pushResults(projectId); // Await the pushResults call
 
-        // 2. Run the tests (wait for the tests to complete before proceeding)
-        const testOutput = await runTests();  // This will wait until the tests are finished
-        console.log(`Test results: ${testOutput}`);
+    console.log("Cleaning up containers...");
+    await docker.stopAllContainers();
+    console.log("All containers removed successfully.");
 
-        // 3. Push results to DB (add projectId, projectName, userId to results)
-        await pushResults(testOutput, projectId, projectName, userId);
-
-        console.log("Test results pushed to the database");
-
-        // 4. Clean up containers
-        await docker.stopAllContainers();
-        console.log("Containers stopped and removed");
-
-    } catch (error) {
-        console.error("Error during test execution:", error);
-        throw error; // Rethrow error to be caught in the API handler
+    // Check the test results
+    if (testResults.success) {
+      console.log("All tests passed!");
+      return { success: true };
+    } else {
+      console.log("Tests failed. Reason: Tests did not pass.");
+      return { success: false, error: "Tests failed" };
     }
+  } catch (error) {
+    console.error("Error during test execution or cleanup:", error);
+    throw error; // Propagate error to the calling function
+  }
 }
 
+async function runTestsOnLocalRepo() {
+  try {
+    // Ensure we are awaiting the result of runTestInContainers
+    const testResults = await runTestInContainers(); // This will wait until everything is complete.
 
-// Generate a summary of the test results from the output
-function generateTestSummary(output) {
-    const passed = (output.match(/PASS/g) || []).length;
-    const failed = (output.match(/FAIL/g) || []).length;
-    const skipped = (output.match(/SKIPPED/g) || []).length;
+    if (!testResults.success) {
+      console.log("Tests failed:", testResults.error);
+      throw new Error("Tests failed");
+    }
 
-    return {
-        passed,
-        failed,
-        skipped
-    };
+    console.log("Tests passed successfully!");
+  } catch (error) {
+    console.error("Error running tests:", error);
+    throw error; // Re-throw error to be caught in the webhook handler
+  }
 }
+
+//runTestInContainers();
 
 module.exports = {
-    runTestInContainers
-}
+  runTestInContainers,
+  runTestsOnLocalRepo,
+};

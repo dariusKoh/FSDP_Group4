@@ -2,17 +2,10 @@ import Card from 'react-bootstrap/Card';
 import "./add-project.css";
 import addProjImg from '../../assets/add-project.png';
 import defaultImg from "../../assets/white_background_smooth.jpg";
-import { useState } from 'react';
 
 function AddProject({ name, icon, id, lastOpened, onClick }) {
-  const [currentProject, setCurrentProject] = useState(null);
   const handleClick = () => {
     onClick(id);  // Pass the `id` prop when clicking
-    const project = {
-      "projectName": name,
-      "proj_id": id
-    }
-    setCurrentProject(project);
   };
 
   if (name == null) {

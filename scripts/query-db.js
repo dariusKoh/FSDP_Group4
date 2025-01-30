@@ -47,6 +47,33 @@ async function queryDataByUserId(collectionName, userId) {
     }
 }
 
+async function queryDataByProjectId(collectionName, projectId) {
+    try {
+        // Connect the client to the server (optional starting in v4.7)
+        await client.connect();
+        // Send a ping to confirm a successful connection
+        await client.db("admin").command({ ping: 1 });
+        console.log("Pinged your deployment. You successfully connected to MongoDB!");
+
+        // Select the database and collection
+        const db = client.db();
+        const collection = db.collection(collectionName);
+        const query = { projectId: projectId };
+        console.log("Fetching from here to view: Project ID" + projectId)
+        // Execute the query and fetch the results
+        const results = await collection.find(query).toArray();
+        console.log(`Found ${results.length} documents that match the query.`);
+        // Return the results
+        return results;
+    } catch (error) {
+        console.error("Error querying data:", error);
+        throw error;
+    } finally {
+        // Close the connection to the database
+        await client.close();
+    }
+}
+
 async function queryAllData(collectionName) {
     try {
         // Connect the client to the server (optional starting in v4.7)
@@ -78,5 +105,6 @@ async function queryAllData(collectionName) {
 
 module.exports = { 
     queryAllData, 
-    queryDataByUserId
+    queryDataByUserId,
+    queryDataByProjectId
 };

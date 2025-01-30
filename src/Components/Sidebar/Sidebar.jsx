@@ -1,32 +1,28 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import './Sidebar.css';
 
-function Sidebar({ base, onProjectSelect, onProjectOpened, projectName, projectId, setActiveState }) {
+function Sidebar({ base, projectId, onProjectSelect, onProjectOpened, projectName, setActiveState }) {
     console.log("Type of setActiveState in Sidebar:", typeof setActiveState); // Should log "function"
 
     // Define items based on login state and whether a project is opened
     let items;
     if (onProjectOpened) {
         items = [projectName, "Help", "Documentation"];
-    } else {
+    } 
+    // else if (base) {
+    //     items = ["Projects", "Guide", "Account"];
+    // }
+     else {
         items = ["Project Home", "Help", "Documentation"];
     }
 
     const [activeItem, setActiveItem] = useState(items[0] || "Project Home"); // Default to "Project Home"
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-    const handleItemClick = (item) => {
-        // Ensure valid active item
-        if (item && item !== activeItem) {
-            setActiveItem(item);
-            setActiveState(item);  // Only call setActiveState with valid values
-        }
-    };
-
+    console.log("onProjOpen: "+onProjectOpened)
     return (
         <ul className="sideList">
-            {items.map((item, index) => (
-                <React.Fragment key={item + index}>  {/* Unique key using item + index */}
+            {items.map((item) => (
+                <React.Fragment key={item}>
                     {item === "Project Home" && !onProjectOpened ? (
                         <>
                             <li
@@ -41,8 +37,8 @@ function Sidebar({ base, onProjectSelect, onProjectOpened, projectName, projectI
                             </li>
                             {isDropdownOpen && (
                                 <ul className="dropdownList">
-                                    {["My Projects", "Shared with You", "All Projects"].map((subItem, subIndex) => (
-                                        <li key={subItem + subIndex}>  {/* Ensure unique key for subItems */}
+                                    {["My Projects", "Shared with You", "All Projects"].map((subItem) => (
+                                        <li key={subItem}>
                                             <button 
                                                 className={activeItem === subItem ? 'active btnItem' : 'btnItem'}
                                                 onClick={() => {
@@ -71,8 +67,8 @@ function Sidebar({ base, onProjectSelect, onProjectOpened, projectName, projectI
                             </li>
                             {isDropdownOpen && (
                                 <ul className="dropdownList">
-                                    {["Project Overview", "View Cases", "Run Cases"].map((subItem, subIndex) => (
-                                        <li key={subItem + subIndex}>  {/* Ensure unique key for subItems */}
+                                    {["Project Overview", "View Cases", "Run Cases"].map((subItem) => (
+                                        <li key={subItem}>
                                             <button
                                                 className={activeItem === subItem ? 'active btnItem' : 'btnItem'}
                                                 onClick={() => {
@@ -90,7 +86,10 @@ function Sidebar({ base, onProjectSelect, onProjectOpened, projectName, projectI
                     ) : (
                         <li 
                             className={activeItem === item ? 'active listItem' : 'listItem'}
-                            onClick={() => handleItemClick(item)} // Updated to handle item click
+                            onClick={() => {
+                                setActiveItem(item);
+                                setActiveState(item); // Set active state for regular items
+                            }}
                         >
                             {item}
                         </li>

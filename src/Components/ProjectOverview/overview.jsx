@@ -2,19 +2,20 @@ import React, { useState, useEffect, useRef } from "react";
 import ReactApexChart from "react-apexcharts";
 import Typed from "typed.js";
 import "./overview.css";
+//Removed Jest
 
-function Overview({ projName = "No Project", projId = "No ID", lastDate = "11/12/2024", onClose }) {
+function Overview({ testLogs, projectId, projName, lastDate = "11/12/2024", onClose}) {
     const [filter, setFilter] = useState("All");
-    const [testLogs, setTestLogs] = useState([]);
+    // const [testLogs, setTestLogs] = useState([]);
     const el = useRef(null);
 
-    useEffect(() => {
-        fetchLogsFromDB();
-    }, []);
+    // Fetch logs from MongoDB when the component mounts
 
     useEffect(() => {
+        // fetchLogsFromDB(); // Call the function
+    
         const typed = new Typed(el.current, {
-            strings: ["Yes", " Overview"],
+            strings: [projName, projName + " Overview"],
             startDelay: 300,
             typeSpeed: 100,
             backSpeed: 150,
@@ -22,29 +23,24 @@ function Overview({ projName = "No Project", projId = "No ID", lastDate = "11/12
             loop: false,
             showCursor: false,
         });
+    
         return () => {
             typed.destroy();
         };
-    }, [projName]);
+    }, [projName, projectId]); // Also trigger when projectId changes
+    
 
-    const fetchLogsFromDB = async () => {
-        try {
-            const response = await fetch("http://localhost:3001/get-logs");
-            const logsData = await response.json();
-            setTestLogs(logsData);
-        } catch (error) {
-            console.error("Failed to fetch logs:", error);
-        }
-    };
-
-    let passed = testLogs.filter((test) => test.status === "PASSED");
-    let failed = testLogs.filter((test) => test.status !== "PASSED");
+    // Sample data
+    let passed = testLogs.filter(test => test.status == "PASSED");
+    let failed = testLogs.filter(test => test.status !== "PASSED");
     const data = {
         totalTasks: testLogs.length,
         passedTasks: passed.length,
         failedTasks: failed.length,
         pendingTasks: testLogs.length - passed.length - failed.length,
     };
+    
+
 
     const createChartData = (value) => ({
         series: [value],
@@ -94,8 +90,28 @@ function Overview({ projName = "No Project", projId = "No ID", lastDate = "11/12
         return "pending";
     };
 
-    const filteredLogs = filter === "All" ? testLogs : testLogs.filter((log) => log.status === filter);
+    // Function to fetch logs from the backend
+    // const fetchLogsFromDB = async () => {
+    //     console.log("Project ID: "+projectId)
+    //     try {
+    //         const response = await fetch('http://localhost:3001/get-logs', {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify({ projectId: projectId }), // Sending projectId in the body
+    //         });
+    //         console.log(projectId)
+    //         const logsData = await response.json();
+    //         setTestLogs(logsData);
+    //     } catch (error) {
+    //         console.error("Failed to fetch logs:", error);
+    //     }
+    // };
+    
 
+    // Filter logs based on status
+    const filteredLogs = filter === "All" ? testLogs : testLogs.filter(log => log.status === filter);
     return (
         <div className="overview-container">
             <button onClick={onClose} className="returnBtn" id="backProj">Close</button>
@@ -113,6 +129,7 @@ function Overview({ projName = "No Project", projId = "No ID", lastDate = "11/12
                     <h1>{data.pendingTasks}</h1>
                     <p>out of {data.totalTasks} tasks Pending</p>
                 </div>
+
                 <div className="chart-container">
                     <div className="radial-chart">
                         <div className={`chart-status ${getStatusClass("Pass")}`}>Passed</div>
@@ -143,6 +160,9 @@ function Overview({ projName = "No Project", projId = "No ID", lastDate = "11/12
                     </div>
                 </div>
             </div>
+            
+
+            {/* Test Logs Section */}
             <div className="test-table">
                 <h3>View Test Logs</h3>
                 <div className="filter">
@@ -171,7 +191,7 @@ function Overview({ projName = "No Project", projId = "No ID", lastDate = "11/12
                                 <td>{log.testId}</td>
                                 <td>{log.status}</td>
                                 <td>{log.duration}</td>
-                                <td>{log.failureMessages[0]?.slice(0, 50)}...</td>
+                                <td>{log.failureMessages[0].length > 30 ? `${log.failureMessages[0].slice(0, 50)}...` : log.failureMessages}</td>
                                 <td>{new Date(log.createdAt).toLocaleString()}</td>
                             </tr>
                         ))}
