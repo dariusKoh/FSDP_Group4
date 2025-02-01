@@ -48,9 +48,14 @@ export default function ProjectPage() {
 		setShowRunCases(true); // Show popup instead of running immediately
 	};
 
-	const handleRunWithInput = async (numContainers) => {
+	const handleRunWithInput = async (numContainers, selectedTests) => {
 		setShowRunCases(false);
-		console.log("Running with", numContainers, "containers.");
+		console.log(
+			"Running with",
+			numContainers,
+			"containers and tests:",
+			selectedTests
+		);
 
 		const username = localStorage.getItem("username");
 		setIsLoading(true);
@@ -60,7 +65,12 @@ export default function ProjectPage() {
 			const response = await fetch("http://localhost:3001/run-tests", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ proj_id, username, numContainers }),
+				body: JSON.stringify({
+					proj_id,
+					username,
+					numContainers,
+					selectedTests,
+				}),
 			});
 
 			if (!response.ok) {

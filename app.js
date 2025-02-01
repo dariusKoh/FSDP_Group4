@@ -9,6 +9,7 @@ const SECRET_KEY = "your_secret_key"; // Replace with a secure key for JWT
 const {
 	runTestInContainers,
 	runTestsOnLocalRepo,
+	getTestFiles,
 } = require("./scripts/run-tests"); // Import runTests
 const dbQuery = require("./scripts/query-db"); // Import databse query script
 const { pushScripts } = require("./scripts/push-scripts"); // Import pushScripts
@@ -26,10 +27,15 @@ app.use(express.json());
 
 // API to trigger test run
 app.post("/run-tests", async (req, res) => {
-	const { proj_id, username, numContainers } = req.body;
-	console.log(numContainers);
+	const { proj_id, username, numContainers, selectedTests } = req.body;
+	console.log(numContainers, selectedTests);
 	try {
-		await runTestInContainers(proj_id, username, numContainers); // Assuming req.user.id contains the logged-in user ID
+		await runTestInContainers(
+			proj_id,
+			username,
+			numContainers,
+			selectedTests
+		); // Assuming req.user.id contains the logged-in user ID
 		res.status(200).json({
 			message: "Tests started successfully and completed",
 		});
@@ -48,12 +54,6 @@ app.post("/webhook", async (req, res) => {
 	try {
 		// Here, we can perform a git pull or any necessary setup before running tests.
 		console.log("Pulling the latest changes...");
-
-		// Example: you might want to ensure the local repository is up-to-date
-		// You can use an appropriate Git command or library (e.g., nodegit) to fetch/pull latest changes if needed.
-		// await runGitCommand('git pull origin ' + branch);
-
-		// Now, run the tests (via your previously defined function)
 		console.log("Running tests...");
 		await runTestsOnLocalRepo(); // Call the function to run the tests inside Docker containers
 		// Send back a successful response
@@ -61,6 +61,15 @@ app.post("/webhook", async (req, res) => {
 	} catch (error) {
 		console.error("Failed to run tests:", error);
 		res.status(500).json({ error: "Failed to start tests" });
+	}
+});
+
+app.get("/get-test-files", async (req, res) => {
+	try {
+		const data = await getTestFiles();
+		res.json({ files: data });
+	} catch (error) {
+		console.error("Error fetching test files:", error);
 	}
 });
 

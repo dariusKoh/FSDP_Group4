@@ -70,12 +70,15 @@ async function runTests(selectedFiles = []) {
 	}
 }
 
-async function runTestInContainers(proj_id, username, containers = 1) {
+async function runTestInContainers(
+	proj_id,
+	username,
+	containers = 1,
+	selectedFiles = []
+) {
 	try {
 		// Default code testresults
 		var testResults = { success: false };
-
-		const selectedFiles = ["googlefail.test.js"];
 
 		await docker.setupSeleniumGrid();
 		await docker.createContainers(containers);
@@ -97,20 +100,24 @@ async function runTestInContainers(proj_id, username, containers = 1) {
 		await docker.stopAllContainers();
 		console.log("All containers removed successfully.");
 
-		console.log(testResults);
-
 		// Check the test results (for Git Hook helper function)
 		if (testResults && testResults.success) {
 			console.log("All tests passed!");
 			return { success: true };
 		} else {
 			// Ensure testResults exists before referencing its properties
-			const errorMessage =
-				testResults && testResults.error
+			console.log(
+				"Tests failed. Reason: " + testResults && testResults.error
 					? testResults.error
-					: "Tests did not pass.";
-			console.log("Tests failed. Reason: " + errorMessage);
-			return { success: false, error: errorMessage };
+					: "Tests did not pass."
+			);
+			return {
+				success: false,
+				error:
+					testResults && testResults.error
+						? testResults.error
+						: "Tests did not pass.",
+			};
 		}
 	} catch (error) {
 		console.error("Error during test execution or cleanup:", error);
@@ -141,4 +148,5 @@ async function runTestsOnLocalRepo() {
 module.exports = {
 	runTestInContainers,
 	runTestsOnLocalRepo,
+	getTestFiles,
 };
