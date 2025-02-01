@@ -70,7 +70,7 @@ async function runTests(selectedFiles = []) {
 	}
 }
 
-async function runTestInContainers(proj_id) {
+async function runTestInContainers(proj_id, username) {
 	try {
 		// Hard code testresults
 		var testResults = { success: false };
@@ -83,7 +83,7 @@ async function runTestInContainers(proj_id) {
 
 		console.log("Tests completed. Proceeding to push results...");
 		try {
-			testResults = await pushResults(proj_id);
+			testResults = await pushResults(proj_id, username);
 			console.log("Test results pushed successfully.");
 		} catch (error) {
 			console.error("Error pushing test results:", error);

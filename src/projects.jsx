@@ -8,6 +8,8 @@ import CreateProject from "./Components/Projects/create-project";
 import ViewCases from "./Components/Viewcase/View-Cases";
 import Docs from "./Components/Docs/docs";
 import Help from "./Components/Help/help";
+import TestCaseDetails from "./Components/TestLog/TestCaseDetails";
+import RunCases from "./Components/Runtime/runCases";
 
 export default function ProjectPage() {
 	const [projects, setProjects] = useState([]);
@@ -19,6 +21,8 @@ export default function ProjectPage() {
 	const [testLogs, setTestLogs] = useState([]);
 	const [showCreateProject, setShowCreateProject] = useState(null);
 	const [isAdmin, setIsAdmin] = useState(false);
+	const [selectedTestCase, setSelectedTestCase] = useState(null);
+	const [showRunCases, setShowRunCases] = useState(false);
 
 	useEffect(() => {
 		const token = localStorage.getItem("token");
@@ -36,13 +40,19 @@ export default function ProjectPage() {
 		}
 	}, []);
 
-	// Handle running test cases
-	const handleRunCases = async () => {
+	const handleRunCases = () => {
 		if (!proj_id) {
 			console.error("No project selected.");
 			return;
 		}
+		setShowRunCases(true); // Show popup instead of running immediately
+	};
 
+	const handleRunWithInput = async (numContainers) => {
+		setShowRunCases(false);
+		console.log("Running with", numContainers, "containers.");
+
+		const username = localStorage.getItem("username");
 		setIsLoading(true);
 		setActiveState("Run Cases");
 
@@ -50,7 +60,7 @@ export default function ProjectPage() {
 			const response = await fetch("http://localhost:3001/run-tests", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ proj_id }),
+				body: JSON.stringify({ proj_id, username, numContainers }),
 			});
 
 			if (!response.ok) {
@@ -68,7 +78,6 @@ export default function ProjectPage() {
 		}
 	};
 
-	// Function to fetch logs from the DB
 	const fetchLogsFromDB = async () => {
 		if (!proj_id) {
 			console.warn("fetchLogsFromDB called with null proj_id!");
@@ -84,7 +93,7 @@ export default function ProjectPage() {
 			});
 
 			const logsData = await response.json();
-
+			console.log(logsData);
 			if (!Array.isArray(logsData)) {
 				console.error("Unexpected response format:", logsData);
 				return;
@@ -96,7 +105,6 @@ export default function ProjectPage() {
 		}
 	};
 
-	// Function to fetch test cases when "View Cases" is active
 	const fetchTestCases = async () => {
 		if (!proj_id) {
 			console.warn("fetchTestCases called with null proj_id!");
@@ -117,7 +125,6 @@ export default function ProjectPage() {
 		}
 	};
 
-	// Trigger log fetching only when proj_id is updated
 	useEffect(() => {
 		if (
 			proj_id &&
@@ -130,56 +137,19 @@ export default function ProjectPage() {
 			);
 			fetchLogsFromDB();
 		}
-	}, [proj_id]); // Runs only when proj_id changes
+	}, [proj_id]);
 
-	// Determine which component to render based on active state
-	const renderComponent = () => {
-		console.log(activeState);
-		switch (activeState) {
-			case "Project Home":
-			case null:
-				return (
-					<ProjectHome
-						projects={projects}
-						setCurrentProject={setCurrentProject}
-						setActiveState={setActiveState}
-						setproj_id={setproj_id}
-						proj_id={proj_id}
-						updateActiveState={updateActiveState}
-					/>
-				);
-			case "View Cases":
-				return (
-					<ViewCases cases={testCases} projName={currentProject} />
-				);
-			case "Help":
-				return <Help />;
-			case "Documentation":
-				return <Docs />;
-			default:
-				if (isLoading) {
-					return <LoadingScreen />;
-				}
-				return (
-					<Overview
-						testLogs={testLogs}
-						projName={currentProject}
-						proj_id={proj_id}
-						onClose={() => setActiveState(null)}
-					/>
-				);
-		}
-	};
-
-	// Update active state while ensuring proj_id is set first
-	const updateActiveState = (val, newproj_id = null) => {
+	const updateActiveState = (val, newproj_id = null, testCase = null) => {
 		if (newproj_id) {
 			setproj_id(newproj_id);
 		}
-
 		if (val === "Run Cases") {
 			handleRunCases();
 		} else {
+			// If a test case is provided, store it
+			if (testCase) {
+				setSelectedTestCase(testCase);
+			}
 			setActiveState(val);
 			if (val === "View Cases") {
 				fetchTestCases();
@@ -209,39 +179,85 @@ export default function ProjectPage() {
 			"Content-Type": "application/json",
 			Authorization: `Bearer ${token}`,
 		});
+		if (window.confirm("Are you sure you want to delete project?")) {
+			try {
+				const response = await fetch(
+					"http://localhost:3001/delete-project",
+					{
+						method: "POST",
+						headers,
+						body: JSON.stringify({ project: { proj_id } }),
+					}
+				);
 
-		try {
-			const response = await fetch(
-				"http://localhost:3001/delete-project",
-				{
-					method: "POST",
-					headers,
-					body: JSON.stringify({ project: { proj_id } }),
+				if (!response.ok) {
+					console.error(
+						"Error deleting project:",
+						response.statusText
+					);
+					return;
 				}
-			);
 
-			if (!response.ok) {
-				console.error("Error deleting project:", response.statusText);
-				return;
-			}
+				const data = await response.json();
+				console.log("API response:", data);
 
-			const data = await response.json();
-			console.log("API response:", data);
-
-			if (data.error) {
-				console.error("Error deleting project:", data.error);
-			} else {
-				console.log("Project deleted successfully:", data);
-				if (
-					window.confirm(
-						"Project deleted successfully. Do you want to go back to the projects page?"
-					)
-				) {
+				if (data.error) {
+					console.error("Error deleting project:", data.error);
+				} else {
+					console.log("Project deleted successfully:", data);
 					updateActiveState("Project Home");
 				}
+			} catch (error) {
+				console.error("Error deleting project:", error);
 			}
-		} catch (error) {
-			console.error("Error deleting project:", error);
+		}
+	};
+
+	const renderComponent = () => {
+		console.log(activeState);
+		switch (activeState) {
+			case "Project Home":
+			case null:
+				return (
+					<ProjectHome
+						projects={projects}
+						setCurrentProject={setCurrentProject}
+						setActiveState={setActiveState}
+						setproj_id={setproj_id}
+						proj_id={proj_id}
+						updateActiveState={updateActiveState}
+					/>
+				);
+			case "View Cases":
+				return (
+					<ViewCases cases={testCases} projName={currentProject} />
+				);
+			case "TestCaseDetails":
+				return (
+					<TestCaseDetails
+						testCase={selectedTestCase}
+						onClose={() => updateActiveState("Overview")}
+					/>
+				);
+			case "Help":
+				return <Help />;
+			case "Documentation":
+				return <Docs />;
+			default:
+				if (isLoading) {
+					return <LoadingScreen />;
+				}
+				return (
+					<Overview
+						testLogs={testLogs}
+						projName={currentProject}
+						proj_id={proj_id}
+						onClose={() => setActiveState(null)}
+						onTestCaseClick={(state, newProj, test) =>
+							updateActiveState(state, newProj, test)
+						}
+					/>
+				);
 		}
 	};
 
@@ -257,6 +273,14 @@ export default function ProjectPage() {
 				isAdmin={isAdmin}
 				onDeleteProject={handleDeleteProject}
 			/>
+			{showRunCases && (
+				<RunCases
+					proj_id={proj_id}
+					onClose={() => setShowRunCases(false)}
+					onRun={handleRunWithInput}
+				/>
+			)}
+
 			{renderComponent()}
 			{showCreateProject && (
 				<CreateProject
@@ -269,7 +293,7 @@ export default function ProjectPage() {
 				/>
 			)}
 			<div style={{ textAlign: "center" }}>
-				{proj_id && (
+				{activeState === "Project Overview" && (
 					<button
 						style={{ marginTop: "20px" }}
 						onClick={handleDeleteProject}
