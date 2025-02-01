@@ -32,7 +32,7 @@ const LoginPage = () => {
 			if (data.role === "admin") {
 				window.location.href = "/admin/dashboard"; // Assuming you have an admin dashboard page
 			} else {
-				window.location.href = "/"; // Redirect to the homepage for users
+				window.location.href = "/projects"; // Redirect to the homepage for users
 			}
 		} catch (err) {
 			setError(err.message);
