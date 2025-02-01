@@ -20,15 +20,15 @@ const client = new MongoClient(constants.MONGO_URI, {
 });
 
 async function pushResults(proj_id, username) {
-  console.log("insert-db.js run");
-  try {
-    // Connect the client to the server (optional starting in v4.7)
-    await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
+	console.log("insert-db.js run");
+	try {
+		// Connect the client to the server (optional starting in v4.7)
+		await client.connect();
+		// Send a ping to confirm a successful connection
+		await client.db("admin").command({ ping: 1 });
+		console.log(
+			"Pinged your deployment. You successfully connected to MongoDB!"
+		);
 
 		// Define collection and database
 		const db = client.db();
@@ -69,21 +69,20 @@ async function pushResults(proj_id, username) {
 		const perfStats = obj.testResults[0].perfStats; // Performance stats from the first test suite
 
 		const summariesMap = {};
-		
+
 		const aiSummary = await summuriseFailureMessages(testResults);
 		if (aiSummary.success) {
 			console.log("\n\nGenerated Summaries:");
 			// TODO: Insert summaries into the database
 
 			// Store the summaries in a map for quick lookup
-		
+
 			aiSummary.summaries.forEach((summary) => {
 				summariesMap[summary.testId] = summary.summary;
 				console.log(`Test ${summary.testId}:`);
 				console.log(`Summary: ${summary.summary}`);
 				console.log("-------------------");
 			});
-
 		} else {
 			console.error("Failed to generate summaries:", aiSummary.error);
 		}
@@ -176,6 +175,5 @@ async function pushResults(proj_id, username) {
 		await client.close();
 	}
 }
-
 
 module.exports = { pushResults };

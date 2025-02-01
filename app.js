@@ -27,9 +27,9 @@ app.use(express.json());
 // API to trigger test run
 app.post("/run-tests", async (req, res) => {
 	const { proj_id, username, numContainers } = req.body;
-    console.log(numContainers)
+	console.log(numContainers);
 	try {
-		await runTestInContainers(proj_id); // Assuming req.user.id contains the logged-in user ID
+		await runTestInContainers(proj_id, username, numContainers); // Assuming req.user.id contains the logged-in user ID
 		res.status(200).json({
 			message: "Tests started successfully and completed",
 		});

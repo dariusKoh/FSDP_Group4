@@ -70,36 +70,47 @@ async function runTests(selectedFiles = []) {
 	}
 }
 
-async function runTestInContainers(proj_id, username) {
+async function runTestInContainers(proj_id, username, containers = 1) {
 	try {
-		// Hard code testresults
+		// Default code testresults
 		var testResults = { success: false };
 
 		const selectedFiles = ["googlefail.test.js"];
 
 		await docker.setupSeleniumGrid();
-		await docker.createContainers(1);
+		await docker.createContainers(containers);
 		await runTests(selectedFiles);
 
 		console.log("Tests completed. Proceeding to push results...");
 		try {
+			// Attempt to push results
 			testResults = await pushResults(proj_id, username);
 			console.log("Test results pushed successfully.");
 		} catch (error) {
+			// Log if there's an issue pushing results
 			console.error("Error pushing test results:", error);
+			// Ensure we still have a valid testResults object
+			testResults = { success: false, error: "Failed to push results" };
 		}
 
 		console.log("Cleaning up containers...");
 		await docker.stopAllContainers();
 		console.log("All containers removed successfully.");
 
+		console.log(testResults);
+
 		// Check the test results (for Git Hook helper function)
-		if (testResults.success) {
+		if (testResults && testResults.success) {
 			console.log("All tests passed!");
 			return { success: true };
 		} else {
-			console.log("Tests failed. Reason: Tests did not pass.");
-			return { success: false, error: "Tests failed" };
+			// Ensure testResults exists before referencing its properties
+			const errorMessage =
+				testResults && testResults.error
+					? testResults.error
+					: "Tests did not pass.";
+			console.log("Tests failed. Reason: " + errorMessage);
+			return { success: false, error: errorMessage };
 		}
 	} catch (error) {
 		console.error("Error during test execution or cleanup:", error);
