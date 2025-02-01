@@ -64,6 +64,7 @@ function CreateProject({ projCount, onClose, onAddProject }) {
     const newProject = {
         projectName,
         visibility: visibilityOption,
+        ownerid: parseInt(localStorage.getItem("user_id")),
         files: selectedFiles, // Pass uploaded files
     };
 

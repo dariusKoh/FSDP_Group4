@@ -40,9 +40,7 @@ app.post('/run-tests', async (req, res) => {
 
 
 app.post('/create-project', async (req, res) => {
-    const { projectName, visibility, files } = req.body;
-    // Temp owner id 1
-    let ownerid = 1;
+    const { projectName, visibility, ownerid, files } = req.body;
     try {
         await client.connect();
         const db = client.db('test');
@@ -195,7 +193,7 @@ app.post('/api/login', async (req, res) => {
         // Generate token (optional)
         const token = jwt.sign({ userid: user.userid }, SECRET_KEY, { expiresIn: '1h' });
 
-        res.status(200).json({ message: "Login successful", token });
+        res.status(200).json({ message: "Login successful", token, userid: user.userid, role: "User" }); // Temp fix
     } catch (error) {
         console.error("Error during login:", error);
         res.status(500).json({ error: "Internal server error" });
