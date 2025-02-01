@@ -1,0 +1,37 @@
+/* testCaseDetails.css */
+  .test-case-details-container {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    margin-top: max(100px, 5vw); /* Adjust this to match the height of the navbar */
+    margin-left: max(15vw, 200px); /* Adjust this to match the width of the sidebar */
+    border: 1px solid #ccc;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+#testClose{
+    left: 0px;
+    margin-bottom: 100px;
+}
+  
+  .test-case-details-container h1 {
+    margin-bottom: 10px;
+  }
+  
+  .test-case-details-container p {
+    margin: 8px 0;
+    font-size: 16px;
+  }
+  
+  .test-case-details-container pre {
+    background-color: #f4f4f4;
+    padding: 10px;
+    white-space: pre-wrap;
+    border-radius: 4px;
+    overflow-x: auto;
+  }
+  
+  .close-button:hover {
+    background-color: #d00000;
+  }
+  
