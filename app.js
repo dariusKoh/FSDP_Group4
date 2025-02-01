@@ -23,14 +23,10 @@ app.use(express.json());
 
 // API to trigger test run
 app.post('/run-tests', async (req, res) => {
-    const { projectId, projectName } = req.body;
-
-    if (!projectId || !projectName) {
-        return res.status(400).json({ error: 'Missing project information' });
-    }
+    const { proj_id } = req.body;
 
     try {
-        await runTestInContainers(projectId, projectName, req.user.id);  // Assuming req.user.id contains the logged-in user ID
+        await runTestInContainers(proj_id);  // Assuming req.user.id contains the logged-in user ID
         res.status(200).json({ message: 'Tests started successfully and completed' });
     } catch (error) {
         console.error('Error running tests:', error);

@@ -25,14 +25,14 @@ async function runTests() {
 	});
 }
 
-async function runTestInContainers() {
+async function runTestInContainers(proj_id) {
 	try {
 		await docker.setupSeleniumGrid();
 		await docker.createContainers(1);
 		await runTests();
 
 		console.log("Tests completed. Proceeding to push results...");
-		const testResults = await pushResults(); // Await the pushResults call
+		const testResults = await pushResults(proj_id); // Await the pushResults call
 
 		console.log("Cleaning up containers...");
 		await docker.stopAllContainers();
