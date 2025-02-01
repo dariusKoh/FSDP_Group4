@@ -252,7 +252,7 @@ app.post("/api/login", async (req, res) => {
 		const usersCollection = db.collection("users");
 
 		// Find user by username
-		const user = await usersCollection.findOne({ name: username });
+		const user = await usersCollection.findOne({ username: username });
 		if (!user) {
 			return res.status(404).json({ message: "User not found" });
 		}
@@ -284,7 +284,7 @@ app.post("/api/login", async (req, res) => {
 
 // User registration
 app.post("/api/register", async (req, res) => {
-	const { username, email, password } = req.body;
+	const { username, email, password, role } = req.body;
 
 	try {
 		await client.connect();
