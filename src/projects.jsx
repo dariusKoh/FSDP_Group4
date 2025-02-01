@@ -1,4 +1,3 @@
-// app.js (or ProjectPage.jsx)
 import React, { Fragment, useState, useEffect } from "react";
 import NavbarLoggedIn from "./Components/NavBar/NavbarLoggedIn";
 import Sidebar from "./Components/Sidebar/Sidebar";
@@ -10,6 +9,7 @@ import ViewCases from "./Components/Viewcase/View-Cases";
 import Docs from "./Components/Docs/docs";
 import Help from "./Components/Help/help";
 import TestCaseDetails from "./Components/TestLog/TestCaseDetails";
+import RunCases from "./Components/Runtime/runCases";
 
 export default function ProjectPage() {
   const [projects, setProjects] = useState([]);
@@ -22,6 +22,8 @@ export default function ProjectPage() {
   const [showCreateProject, setShowCreateProject] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [selectedTestCase, setSelectedTestCase] = useState(null);
+  const [showRunCases, setShowRunCases] = useState(false);
+
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -37,28 +39,35 @@ export default function ProjectPage() {
     }
   }, []);
 
-  const handleRunCases = async () => {
+  const handleRunCases = () => {
     if (!proj_id) {
       console.error("No project selected.");
       return;
     }
+    setShowRunCases(true); // Show popup instead of running immediately
+  };
+
+  const handleRunWithInput = async (numContainers) => {
+    setShowRunCases(false);
+    console.log("Running with", numContainers, "containers.");
+  
     const username = localStorage.getItem("username");
     setIsLoading(true);
     setActiveState("Run Cases");
-
+  
     try {
       const response = await fetch("http://localhost:3001/run-tests", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ proj_id, username }),
+        body: JSON.stringify({ proj_id, username, numContainers }),
       });
-
+  
       if (!response.ok) {
         console.error("Error running tests");
         setIsLoading(false);
         return;
       }
-
+  
       console.log("Tests started, waiting for completion...");
       await fetchLogsFromDB();
       setIsLoading(false);
@@ -67,6 +76,7 @@ export default function ProjectPage() {
       setIsLoading(false);
     }
   };
+  
 
   const fetchLogsFromDB = async () => {
     if (!proj_id) {
@@ -246,6 +256,14 @@ export default function ProjectPage() {
         isAdmin={isAdmin}
         onDeleteProject={handleDeleteProject}
       />
+      {showRunCases && (
+        <RunCases 
+            proj_id={proj_id} 
+            onClose={() => setShowRunCases(false)} 
+            onRun={handleRunWithInput} 
+        />
+        )}
+
       {renderComponent()}
       {showCreateProject && (
         <CreateProject
