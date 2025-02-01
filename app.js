@@ -93,6 +93,32 @@ app.post("/get-logs", async (req, res) => {
   }
 });
 
+app.get('/get-log-by-id/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log("Requested ID:", id);
+
+        await client.connect();
+        const db = client.db('test');
+        const log = await db.collection("test_results").findOne({ testId: id });
+
+        console.log("Database Query Result:", log); // Debugging log
+
+        if (!log) {
+            console.log("No test case found for ID:", id);
+            return res.status(404).json({ message: "Test case not found" });
+        }
+
+        res.json(log);
+    } catch (error) {
+        console.error("Error fetching log by ID:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    } finally {
+        await client.close();
+    }
+});
+
+
 // API to fetch all projects
 app.get('/projects', async (req, res) => {
     const user_id = req.headers['user-id']; // Get user_id from request headers
