@@ -37,7 +37,7 @@ async function runTestInContainers(proj_id) {
 		console.log("Cleaning up containers...");
 		await docker.stopAllContainers();
 		console.log("All containers removed successfully.");
-		
+
 		// Check the test results (for Git Hook helper function)
 		if (testResults.success) {
 			console.log("All tests passed!");

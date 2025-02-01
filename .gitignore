@@ -3,3 +3,4 @@ jest-stare
 package-lock.json
 screenshot*
 jest-results.json
+test.js
