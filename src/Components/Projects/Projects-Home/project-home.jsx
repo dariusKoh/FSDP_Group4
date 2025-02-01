@@ -14,8 +14,8 @@ export default function ProjectHome({ updateActiveState, proj_id, setproj_id, se
     // Fetch projects from the backend
     useEffect(() => {
         const fetchProjects = async () => {
-            const token = localStorage.getItem('authToken');  // Retrieve the token from localStorage
-            if (!token) {
+            const user_id = localStorage.getItem("user_id"); // Retrieve user_id from localStorage
+            if (!user_id) {
                 console.error("User is not authenticated");
                 return;
             }
@@ -24,35 +24,25 @@ export default function ProjectHome({ updateActiveState, proj_id, setproj_id, se
                 const response = await fetch('http://localhost:3001/projects', {
                     method: 'GET',
                     headers: {
-                        'Authorization': `Bearer ${token}`, // Include the token in the request header
+                        'Content-Type': 'application/json',
+                        'User-ID': user_id, // Send user_id in headers
                     },
                 });
+    
+                if (!response.ok) {
+                    throw new Error("Failed to fetch projects");
+                }
+    
                 const data = await response.json();
-                setProjects(data); // Set the fetched projects into state
+                setProjects(data); // Set the filtered projects
             } catch (error) {
                 console.error("Error fetching projects:", error);
             }
-            //Implementation of token (WIP)
-            // try {
-            //     const token = localStorage.getItem('token'); // if token is stored in localStorage
-            //     const response = await fetch('http://localhost:3001/projects', {
-            //         headers: {
-            //             Authorization: `Bearer ${token}`,
-            //         },
-            //     });
-            //     if (response.ok) {
-            //         const data = await response.json();
-            //         setProjects(data);
-            //     } else {
-            //         console.error("Failed to fetch projects:", await response.text());
-            //     }
-            // } catch (error) {
-            //     console.error("Error fetching projects:", error);
-            // }
         };
     
         fetchProjects();
-    }, []);  // Runs once when component mounts
+    }, []);
+    
 
     useEffect(() => {
         const typed = new Typed(el.current, {

@@ -112,4 +112,5 @@ async function queryAllData(collectionName) {
 module.exports = {
 	queryAllData,
 	queryDataByUserId,
+	queryDataByproj_id
 };
