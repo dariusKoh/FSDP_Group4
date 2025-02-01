@@ -13,7 +13,7 @@ function TestCaseDetails({ testCase, onClose }) {
   }
 
   // Destructure the properties from testCase
-  const { testId, ancestorTitles, fullTitle, createdAt, status, duration, failureMessages } = testCase;
+  const { testId, ancestorTitles, fullTitle, createdAt, status, duration, failureMessages, summary } = testCase;
   // Build the full test case name using ancestorTitles if available
   const testCaseName = Array.isArray(ancestorTitles) && ancestorTitles.length > 0 
     ? `${ancestorTitles.join(' > ')} > ${fullTitle}`
@@ -27,7 +27,7 @@ function TestCaseDetails({ testCase, onClose }) {
       <p><strong>Date Ran:</strong> {new Date(createdAt).toLocaleString()}</p>
       <p><strong>STATUS:</strong> {status}</p>
       <p><strong>Duration:</strong> {duration} ms</p>
-      <p><strong>AI Summary:</strong> Nothing here for now</p>
+      <p><strong>AI Summary:</strong> {summary}</p>
       <p><strong>Full failure message:</strong></p>
       <pre>{failureMessages || "N/A"}</pre>
     </div>

@@ -83,7 +83,7 @@ export default function ProjectPage() {
       });
 
       const logsData = await response.json();
-
+      console.log(logsData)
       if (!Array.isArray(logsData)) {
         console.error("Unexpected response format:", logsData);
         return;
