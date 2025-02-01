@@ -10,256 +10,274 @@ import Docs from "./Components/Docs/docs";
 import Help from "./Components/Help/help";
 
 export default function ProjectPage() {
-    const [projects, setProjects] = useState([]);
-    const [activeState, setActiveState] = useState(null);
-    const [currentProject, setCurrentProject] = useState(null);
-    const [proj_id, setproj_id] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const [testCases, setTestCases] = useState([]);
-    const [testLogs, setTestLogs] = useState([]);
-    const [showCreateProject, setShowCreateProject] = useState(null);
-    const [isAdmin, setIsAdmin] = useState(false);
+	const [projects, setProjects] = useState([]);
+	const [activeState, setActiveState] = useState(null);
+	const [currentProject, setCurrentProject] = useState(null);
+	const [proj_id, setproj_id] = useState(null);
+	const [isLoading, setIsLoading] = useState(false);
+	const [testCases, setTestCases] = useState([]);
+	const [testLogs, setTestLogs] = useState([]);
+	const [showCreateProject, setShowCreateProject] = useState(null);
+	const [isAdmin, setIsAdmin] = useState(false);
 
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            fetch("http://localhost:3001/check-admin", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ token }),
-            })
-                .then((response) => response.json())
-                .then((data) => setIsAdmin(data.isAdmin))
-                .catch((error) => console.error("Error checking admin status:", error));
-        }
-    }, []);
+	useEffect(() => {
+		const token = localStorage.getItem("token");
+		if (token) {
+			fetch("http://localhost:3001/check-admin", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ token }),
+			})
+				.then((response) => response.json())
+				.then((data) => setIsAdmin(data.isAdmin))
+				.catch((error) =>
+					console.error("Error checking admin status:", error)
+				);
+		}
+	}, []);
 
-    // Handle running test cases
-    const handleRunCases = async () => {
-        if (!proj_id) {
-            console.error("No project selected.");
-            return;
-        }
+	// Handle running test cases
+	const handleRunCases = async () => {
+		if (!proj_id) {
+			console.error("No project selected.");
+			return;
+		}
 
-        setIsLoading(true);
-        setActiveState("Run Cases");
+		setIsLoading(true);
+		setActiveState("Run Cases");
 
-        try {
-            const response = await fetch("http://localhost:3001/run-tests", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ proj_id }),
-            });
+		try {
+			const response = await fetch("http://localhost:3001/run-tests", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ proj_id }),
+			});
 
-            if (!response.ok) {
-                console.error("Error running tests");
-                setIsLoading(false);
-                return;
-            }
+			if (!response.ok) {
+				console.error("Error running tests");
+				setIsLoading(false);
+				return;
+			}
 
-            console.log("Tests started, waiting for completion...");
-            await fetchLogsFromDB();
-            setIsLoading(false);
-        } catch (error) {
-            console.error("Failed to run tests:", error);
-            setIsLoading(false);
-        }
-    };
+			console.log("Tests started, waiting for completion...");
+			await fetchLogsFromDB();
+			setIsLoading(false);
+		} catch (error) {
+			console.error("Failed to run tests:", error);
+			setIsLoading(false);
+		}
+	};
 
-    // Function to fetch logs from the DB
-    const fetchLogsFromDB = async () => {
-        if (!proj_id) {
-            console.warn("fetchLogsFromDB called with null proj_id!");
-            return;
-        }
+	// Function to fetch logs from the DB
+	const fetchLogsFromDB = async () => {
+		if (!proj_id) {
+			console.warn("fetchLogsFromDB called with null proj_id!");
+			return;
+		}
 
-        console.log("Fetching logs for proj_id:", proj_id);
-        try {
-            const response = await fetch("http://localhost:3001/get-logs", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ proj_id }),
-            });
+		console.log("Fetching logs for proj_id:", proj_id);
+		try {
+			const response = await fetch("http://localhost:3001/get-logs", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ proj_id }),
+			});
 
-            const logsData = await response.json();
+			const logsData = await response.json();
 
-            if (!Array.isArray(logsData)) {
-                console.error("Unexpected response format:", logsData);
-                return;
-            }
+			if (!Array.isArray(logsData)) {
+				console.error("Unexpected response format:", logsData);
+				return;
+			}
 
-            setTestLogs(logsData);
-        } catch (error) {
-            console.error("Failed to fetch logs:", error);
-        }
-    };
+			setTestLogs(logsData);
+		} catch (error) {
+			console.error("Failed to fetch logs:", error);
+		}
+	};
 
-    // Function to fetch test cases when "View Cases" is active
-    const fetchTestCases = async () => {
-        if (!proj_id) {
-            console.warn("fetchTestCases called with null proj_id!");
-            return;
-        }
+	// Function to fetch test cases when "View Cases" is active
+	const fetchTestCases = async () => {
+		if (!proj_id) {
+			console.warn("fetchTestCases called with null proj_id!");
+			return;
+		}
 
-        try {
-            const response = await fetch("http://localhost:3001/get-scripts", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ proj_id }),
-            });
+		try {
+			const response = await fetch("http://localhost:3001/get-scripts", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ proj_id }),
+			});
 
-            const data = await response.json();
-            setTestCases(data);
-        } catch (error) {
-            console.error("Error fetching test cases:", error);
-        }
-    };
+			const data = await response.json();
+			setTestCases(data);
+		} catch (error) {
+			console.error("Error fetching test cases:", error);
+		}
+	};
 
-    // Trigger log fetching only when proj_id is updated
-    useEffect(() => {
-        if (proj_id && activeState !== "Help" && activeState !== "Documentation") {
-            console.log("useEffect triggered: Fetching logs for proj_id:", proj_id);
-            fetchLogsFromDB();
-        }
-    }, [proj_id]); // Runs only when proj_id changes
+	// Trigger log fetching only when proj_id is updated
+	useEffect(() => {
+		if (
+			proj_id &&
+			activeState !== "Help" &&
+			activeState !== "Documentation"
+		) {
+			console.log(
+				"useEffect triggered: Fetching logs for proj_id:",
+				proj_id
+			);
+			fetchLogsFromDB();
+		}
+	}, [proj_id]); // Runs only when proj_id changes
 
-    // Determine which component to render based on active state
-    const renderComponent = () => {
-        console.log(activeState)
-        switch (activeState) {
-            case "Project Home":
-            case null:
-                return (
-                    <ProjectHome
-                        projects={projects}
-                        setCurrentProject={setCurrentProject}
-                        setActiveState={setActiveState}
-                        setproj_id={setproj_id}
-                        proj_id={proj_id}
-                        updateActiveState={updateActiveState}
-                    />
-                );
-                case "View Cases":
-                  return <ViewCases cases={testCases} projName={currentProject} />;
-              case "Help":
-                  return <Help />;
-              case "Documentation":
-                  return <Docs />;
-              default:
-                  if (isLoading) {
-                      return <LoadingScreen />;
-                  }
-                  return (
-                      <Overview
-                          testLogs={testLogs}
-                          projName={currentProject}
-                          proj_id={proj_id}
-                          onClose={() => setActiveState(null)}
-                      />
-                  );
-          }
-      };
-  
-      // Update active state while ensuring proj_id is set first
-      const updateActiveState = (val, newproj_id = null) => {
-          if (newproj_id) {
-              setproj_id(newproj_id);
-          }
-  
-          if (val === "Run Cases") {
-              handleRunCases();
-          } else {
-              setActiveState(val);
-              if (val === "View Cases") {
-                  fetchTestCases();
-              }
-          }
-      };
-  
-      const handleAddProject = (projectName) => {
-          setProjects((prevProjects) => [...prevProjects, projectName]);
-      };
-  
-      const handleDeleteProject = async () => {
-          if (!proj_id) {
-              console.error("No project selected.");
-              return;
-          }
-  
-          const token = localStorage.getItem("token");
-          console.log("Token value:", token);
-  
-          if (!token) {
-              console.error("No token found.");
-              return;
-          }
-  
-          const headers = new Headers({
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-          });
-  
-          try {
-              const response = await fetch("http://localhost:3001/delete-project", {
-                  method: "POST",
-                  headers,
-                  body: JSON.stringify({ project: { proj_id } }),
-              });
-  
-              if (!response.ok) {
-                  console.error("Error deleting project:", response.statusText);
-                  return;
-              }
-  
-              const data = await response.json();
-              console.log("API response:", data);
-  
-              if (data.error) {
-                  console.error("Error deleting project:", data.error);
-              } else {
-                  console.log("Project deleted successfully:", data);
-                  if (window.confirm("Project deleted successfully. Do you want to go back to the projects page?")) {
-                      updateActiveState("Project Home");
-                  }
-              }
-          } catch (error) {
-              console.error("Error deleting project:", error);
-          }
-      };
-  
-      return (
-          <Fragment>
-              <NavbarLoggedIn />
-              <Sidebar
-                  base={false}
-                  setActiveState={updateActiveState}
-                  projectName={currentProject}
-                  onProjectOpened={!!currentProject}
-                  proj_id={proj_id}
-                  isAdmin={isAdmin}
-                  onDeleteProject={handleDeleteProject}
-              />
-              {renderComponent()}
-              {showCreateProject && (
-                  <CreateProject
-                      projCount={projects.length + 1}
-                      onClose={() => {
-                          setShowCreateProject(false);
-                          setCurrentProject(null);
-                      }}
-                      onAddProject={handleAddProject}
-                  />
-              )}
-              <div style={{ textAlign: "center" }}>
-                  {proj_id && (
-                      <button
-                          style={{ marginTop: "20px" }}
-                          onClick={handleDeleteProject}
-                      >
-                          Delete Project
-                      </button>
-                  )}
-              </div>
-          </Fragment>
-      );
-  }
+	// Determine which component to render based on active state
+	const renderComponent = () => {
+		console.log(activeState);
+		switch (activeState) {
+			case "Project Home":
+			case null:
+				return (
+					<ProjectHome
+						projects={projects}
+						setCurrentProject={setCurrentProject}
+						setActiveState={setActiveState}
+						setproj_id={setproj_id}
+						proj_id={proj_id}
+						updateActiveState={updateActiveState}
+					/>
+				);
+			case "View Cases":
+				return (
+					<ViewCases cases={testCases} projName={currentProject} />
+				);
+			case "Help":
+				return <Help />;
+			case "Documentation":
+				return <Docs />;
+			default:
+				if (isLoading) {
+					return <LoadingScreen />;
+				}
+				return (
+					<Overview
+						testLogs={testLogs}
+						projName={currentProject}
+						proj_id={proj_id}
+						onClose={() => setActiveState(null)}
+					/>
+				);
+		}
+	};
+
+	// Update active state while ensuring proj_id is set first
+	const updateActiveState = (val, newproj_id = null) => {
+		if (newproj_id) {
+			setproj_id(newproj_id);
+		}
+
+		if (val === "Run Cases") {
+			handleRunCases();
+		} else {
+			setActiveState(val);
+			if (val === "View Cases") {
+				fetchTestCases();
+			}
+		}
+	};
+
+	const handleAddProject = (projectName) => {
+		setProjects((prevProjects) => [...prevProjects, projectName]);
+	};
+
+	const handleDeleteProject = async () => {
+		if (!proj_id) {
+			console.error("No project selected.");
+			return;
+		}
+
+		const token = localStorage.getItem("token");
+		console.log("Token value:", token);
+
+		if (!token) {
+			console.error("No token found.");
+			return;
+		}
+
+		const headers = new Headers({
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${token}`,
+		});
+
+		try {
+			const response = await fetch(
+				"http://localhost:3001/delete-project",
+				{
+					method: "POST",
+					headers,
+					body: JSON.stringify({ project: { proj_id } }),
+				}
+			);
+
+			if (!response.ok) {
+				console.error("Error deleting project:", response.statusText);
+				return;
+			}
+
+			const data = await response.json();
+			console.log("API response:", data);
+
+			if (data.error) {
+				console.error("Error deleting project:", data.error);
+			} else {
+				console.log("Project deleted successfully:", data);
+				if (
+					window.confirm(
+						"Project deleted successfully. Do you want to go back to the projects page?"
+					)
+				) {
+					updateActiveState("Project Home");
+				}
+			}
+		} catch (error) {
+			console.error("Error deleting project:", error);
+		}
+	};
+
+	return (
+		<Fragment>
+			<NavbarLoggedIn />
+			<Sidebar
+				base={false}
+				setActiveState={updateActiveState}
+				projectName={currentProject}
+				onProjectOpened={!!currentProject}
+				proj_id={proj_id}
+				isAdmin={isAdmin}
+				onDeleteProject={handleDeleteProject}
+			/>
+			{renderComponent()}
+			{showCreateProject && (
+				<CreateProject
+					projCount={projects.length + 1}
+					onClose={() => {
+						setShowCreateProject(false);
+						setCurrentProject(null);
+					}}
+					onAddProject={handleAddProject}
+				/>
+			)}
+			<div style={{ textAlign: "center" }}>
+				{proj_id && (
+					<button
+						style={{ marginTop: "20px" }}
+						onClick={handleDeleteProject}
+					>
+						Delete Project
+					</button>
+				)}
+			</div>
+		</Fragment>
+	);
+}

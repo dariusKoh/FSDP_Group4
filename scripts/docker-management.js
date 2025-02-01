@@ -166,9 +166,12 @@ async function createContainers(containers) {
 async function stopContainer(containerId) {
 	try {
 		const container = docker.getContainer(containerId);
+		const containerName = (await container.inspect()).Name;
 		await container.stop({ t: 0 });
 		await container.remove();
-		console.log(`Container ${containerId} stopped and removed.`);
+		console.log(
+			`Container ${containerName} (${containerId}) stopped and removed.`
+		);
 	} catch (error) {
 		console.error(`Failed to stop container: ${error.message}`);
 	}

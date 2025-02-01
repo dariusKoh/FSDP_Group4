@@ -98,6 +98,10 @@ If four test cases are provided and test cases 1, 2, and 4 failed while test cas
 		};
 	} catch (error) {
 		console.error(`Error requesting prompt: ${error.message}`);
+		return {
+			success: false,
+			error: error.message,
+		};
 	}
 }
 
