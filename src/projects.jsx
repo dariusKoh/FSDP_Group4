@@ -167,28 +167,85 @@ export default function ProjectPage() {
         setProjects((prevProjects) => [...prevProjects, projectName]);
     };
 
-    return (
-        <Fragment>
-            <NavbarLoggedIn />
-            <Sidebar
-                base={false} // Modify as per requirement
-                setActiveState={updateActiveState}
-                projectName={currentProject}
-                onProjectOpened={!!currentProject}
-                proj_id={proj_id}
-            />
-            {renderComponent()}
-            {showCreateProject && (
-                <CreateProject
-                    projCount={projects.length + 1}
-                    onClose={() => {
-                        setShowCreateProject(false);
-                        setCurrentProject(null);
-                    }}
-                    onAddProject={handleAddProject}
-                />
-            )}
-            <button onClick={() => setShowCreateProject(true)}>Add New Project</button>
-        </Fragment>
-    );
+   const handleDeleteProject = async () => {
+    if (!proj_id) {
+      console.error("No project selected.");
+      return;
+    }
+  
+    const token = localStorage.getItem("token");
+    console.log("Token value:", token);
+  
+    if (!token) {
+      console.error("No token found.");
+      return;
+    }
+  
+    const headers = new Headers({
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    });
+  
+    try {
+      const response = await fetch("http://localhost:3001/delete-project", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ project: { proj_id } }),
+      });
+  
+      if (!response.ok) {
+        console.error("Error deleting project:", response.statusText);
+        return;
+      }
+  
+      const data = await response.json();
+      console.log("API response:", data);
+  
+      if (data.error) {
+        console.error("Error deleting project:", data.error);
+      } else {
+        console.log("Project deleted successfully:", data);
+        if (window.confirm("Project deleted successfully. Do you want to go back to the projects page?")) {
+          updateActiveState("Project Home");
+        }
+      }
+    } catch (error) {
+      console.error("Error deleting project:", error);
+    }
+  };
+  return (
+<Fragment>
+  <NavbarLoggedIn />
+  <Sidebar
+    base={false}
+    setActiveState={updateActiveState}
+    projectName={currentProject}
+    onProjectOpened={!!currentProject}
+    proj_id={proj_id}
+    isAdmin={isAdmin}
+    onDeleteProject={handleDeleteProject}
+  />
+  {renderComponent()}
+  {showCreateProject && (
+    <CreateProject
+      projCount={projects.length + 1}
+      onClose={() => {
+        setShowCreateProject(false);
+        setCurrentProject(null);
+      }}
+      onAddProject={handleAddProject}
+    />
+  )}
+  <div style={{ textAlign: "center" }}>
+    {proj_id && (
+      <button
+        style={{ marginTop: "20px" }}
+        onClick={handleDeleteProject}
+      >
+        Delete Project
+      </button>
+    )}
+  </div>
+</Fragment>
+  );
 }
