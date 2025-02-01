@@ -60,7 +60,7 @@ app.post('/create-project', async (req, res) => {
         // Insert the project
         const projectResult = await projectsCollection.insertOne(newProject);
 
-        // Insert scripts associated with the project   
+        // Insert scripts associated with the project
         const scriptDocuments = files.map(file => ({
             proj_id: newProjectId,
             scriptName: file.name,
@@ -175,7 +175,7 @@ app.post('/api/login', async (req, res) => {
         const usersCollection = db.collection('users');
 
         // Find user by username
-        const user = await usersCollection.findOne({ name: username });
+        const user = await usersCollection.findOne({ username });
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
@@ -189,7 +189,12 @@ app.post('/api/login', async (req, res) => {
         // Generate token (optional)
         const token = jwt.sign({ userid: user.userid }, SECRET_KEY, { expiresIn: '1h' });
 
-        res.status(200).json({ message: "Login successful", token, userid: user.userid, role: "User" }); // Temp fix
+        res.status(200).json({ 
+            message: "Login successful", 
+            token, 
+            userid: user.userid, 
+            role: user.role 
+        });
     } catch (error) {
         console.error("Error during login:", error);
         res.status(500).json({ error: "Internal server error" });
@@ -200,40 +205,40 @@ app.post('/api/login', async (req, res) => {
 
 // User registration
 app.post('/api/register', async (req, res) => {
-    const { username, email, password } = req.body;
-
+    const { username, email, password, role } = req.body;
+  
     try {
-        await client.connect();
-        const db = client.db('test');
-        const usersCollection = db.collection('users');
-
-        // Check if username already exists
-        const existingUser = await usersCollection.findOne({ name: username });
-        if (existingUser) {
-            return res.status(400).json({ message: "Username already exists" });
-        }
-
-        // Hash the password
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        // Insert new user
-        const result = await usersCollection.insertOne({
-            userid: new Date().getTime(), // Generate unique userid
-            name: username,
-            email,
-            password: hashedPassword,
-        });
-
-        res.status(201).json({ message: "User registered successfully", userId: result.insertedId });
+      await client.connect();
+      const db = client.db('test');
+      const usersCollection = db.collection('users');
+  
+      // Check if username already exists
+      const existingUser = await usersCollection.findOne({ username });
+      if (existingUser) {
+        return res.status(400).json({ message: "Username already exists" });
+      }
+  
+      // Hash the password
+      const hashedPassword = await bcrypt.hash(password, 10);
+  
+      // Insert new user
+      const result = await usersCollection.insertOne({
+        userid: new Date().getTime(), // Generate unique userid
+        username,
+        email,
+        password: hashedPassword,
+        role, // Assign role to user
+      });
+  
+      res.status(201).json({ message: "User registered successfully", userId: result.insertedId });
     } catch (error) {
-        console.error("Error during registration:", error);
-        res.status(500).json({ error: "Internal server error" });
+      console.error("Error during registration:", error);
+      res.status(500).json({ error: "Internal server error" });
     } finally {
-        await client.close();
+      await client.close();
     }
-});
-
+  });
 
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+    console.log("Server is running on http://localhost:3001");
 });
