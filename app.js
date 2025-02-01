@@ -124,6 +124,56 @@ app.post("/get-logs", async (req, res) => {
 	}
 });
 
+app.get("/get-log-by-id/:id", async (req, res) => {
+	try {
+		const { id } = req.params;
+		console.log("Requested ID:", id);
+
+		await client.connect();
+		const db = client.db("test");
+		const log = await db.collection("test_results").findOne({ testId: id });
+
+		console.log("Database Query Result:", log); // Debugging log
+
+		if (!log) {
+			console.log("No test case found for ID:", id);
+			return res.status(404).json({ message: "Test case not found" });
+		}
+
+		res.json(log);
+	} catch (error) {
+		console.error("Error fetching log by ID:", error);
+		res.status(500).json({ error: "Internal Server Error" });
+	} finally {
+		await client.close();
+	}
+});
+
+app.get("/get-log-by-id/:id", async (req, res) => {
+	try {
+		const { id } = req.params;
+		console.log("Requested ID:", id);
+
+		await client.connect();
+		const db = client.db("test");
+		const log = await db.collection("test_results").findOne({ testId: id });
+
+		console.log("Database Query Result:", log); // Debugging log
+
+		if (!log) {
+			console.log("No test case found for ID:", id);
+			return res.status(404).json({ message: "Test case not found" });
+		}
+
+		res.json(log);
+	} catch (error) {
+		console.error("Error fetching log by ID:", error);
+		res.status(500).json({ error: "Internal Server Error" });
+	} finally {
+		await client.close();
+	}
+});
+
 // API to fetch all projects
 app.get("/projects", async (req, res) => {
 	const user_id = req.headers["user-id"]; // Get user_id from request headers
@@ -222,8 +272,8 @@ app.post("/api/login", async (req, res) => {
 			message: "Login successful",
 			token,
 			userid: user.userid,
-			role: "User",
-		}); // Temp fix
+			role: user.role,
+		});
 	} catch (error) {
 		console.error("Error during login:", error);
 		res.status(500).json({ error: "Internal server error" });
@@ -242,7 +292,7 @@ app.post("/api/register", async (req, res) => {
 		const usersCollection = db.collection("users");
 
 		// Check if username already exists
-		const existingUser = await usersCollection.findOne({ name: username });
+		const existingUser = await usersCollection.findOne({ username });
 		if (existingUser) {
 			return res.status(400).json({ message: "Username already exists" });
 		}
@@ -253,9 +303,10 @@ app.post("/api/register", async (req, res) => {
 		// Insert new user
 		const result = await usersCollection.insertOne({
 			userid: new Date().getTime(), // Generate unique userid
-			name: username,
+			username,
 			email,
 			password: hashedPassword,
+			role, // Assign role to user
 		});
 
 		res.status(201).json({
@@ -267,6 +318,58 @@ app.post("/api/register", async (req, res) => {
 		res.status(500).json({ error: "Internal server error" });
 	} finally {
 		await client.close();
+	}
+});
+
+// API to delete project
+app.post("/delete-project", async (req, res) => {
+	try {
+		const { project } = req.body;
+
+		if (!project || !project.proj_id) {
+			console.error("Invalid project data");
+			return res.status(400).json({ error: "Invalid project data" });
+		}
+
+		await client.connect();
+		console.log("Connected to MongoDB");
+
+		const db = client.db("test");
+		console.log("Selected database");
+
+		const projectsCollection = db.collection("projects");
+		const scriptsCollection = db.collection("scripts");
+		const testResultsCollection = db.collection("test_results");
+
+		console.log("Deleting project");
+		const projectDeleteResult = await projectsCollection.deleteOne({
+			proj_id: project.proj_id,
+		});
+		console.log("Project deleted:", projectDeleteResult);
+
+		console.log("Deleting associated scripts");
+		const scriptDeleteResult = await scriptsCollection.deleteMany({
+			proj_id: project.proj_id,
+		});
+		console.log("Scripts deleted:", scriptDeleteResult);
+
+		console.log("Deleting associated test results");
+		const testResultDeleteResult = await testResultsCollection.deleteMany({
+			proj_id: project.proj_id,
+		});
+		console.log("Test results deleted:", testResultDeleteResult);
+
+		res.status(200).json({ message: "Project deleted successfully" });
+	} catch (error) {
+		console.error("Error deleting project:", error);
+		res.status(500).json({ error: "Internal Server Error" });
+	} finally {
+		try {
+			await client.close();
+			console.log("Disconnected from MongoDB");
+		} catch (error) {
+			console.error("Error closing MongoDB connection:", error);
+		}
 	}
 });
 

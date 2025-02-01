@@ -80,13 +80,13 @@ async function run() {
 			}
 		}
 
-		// Example usage
+		/* Example usage
 		const userData = {
 			name: "JunHao",
 			password: "password123",
 		};
 		const result = await addUser(userData);
-		console.log(`Inserted user with ID: ${result.insertedId}`);
+		console.log(`Inserted user with ID: ${result.insertedId}`);*/
 
 		const user = await getUserByName(userData.name);
 	} finally {
