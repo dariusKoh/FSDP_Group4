@@ -17,7 +17,6 @@ export default function ProjectPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [testCases, setTestCases] = useState([]);
     const [testLogs, setTestLogs] = useState([]);
-    const [proj_id, setproj_id] = useState(null);
     const [showCreateProject, setShowCreateProject] = useState(null);
 
     // Handle running test cases
