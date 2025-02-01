@@ -4,6 +4,13 @@ const docker = new Docker({ socketPath: "//./pipe/docker_engine" });
 // Create and pull Docker images
 async function pullImage(imageName) {
 	try {
+		// Check if image already exists
+		const images = await docker.listImages();
+		if (images.some((image) => image.RepoTags?.includes(imageName))) {
+			console.log(`Image ${imageName} already exists, skipping pull.`);
+			return;
+		}
+
 		return new Promise((resolve, reject) => {
 			docker.pull(imageName, (err, stream) => {
 				if (err) return reject(err);
@@ -39,11 +46,12 @@ async function createNetwork() {
 
 // Setup the Selenium Grid with a hub and browser nodes
 async function setupSeleniumGrid() {
+	console.log("Setting up Selenium Grid...");
+
 	// Pull the images
 	await pullImage("selenium/hub");
 	await createNetwork();
 
-	var success = false;
 	// Create the Selenium Hub container
 	try {
 		const hub = await docker.createContainer({
@@ -66,23 +74,28 @@ async function setupSeleniumGrid() {
 
 		await hub.start();
 		console.log("Selenium Hub started");
-		success = true;
+
+		// Pull browser images in parallel
+		console.log("Creating images for browsers...");
+		await Promise.all([
+			pullImage("selenium/node-chrome"),
+			pullImage("selenium/node-firefox"),
+			pullImage("selenium/node-edge"),
+		]);
 	} catch (error) {
 		console.error("Error starting Selenium Hub:", error);
-	}
-
-	// If the hub container was successfully started, create containers for browsers
-	if (success === true) {
-		// Start image and container for each browser
-		console.log("Creating images for browsers...");
-		await pullImage("selenium/node-chrome");
-		await pullImage("selenium/node-firefox");
-		await pullImage("selenium/node-edge");
 	}
 }
 
 // Start a browser node container
 async function startBrowserNode(image, name) {
+	// Check if the container already exists
+	const existingContainers = await listContainers();
+	if (existingContainers.some((c) => c.name === `/${name}`)) {
+		console.log(`Container ${name} already exists. Skipping creation.`);
+		return;
+	}
+
 	// Ensure the hub is ready before starting nodes
 	const hubStatus = await docker.getContainer("selenium-hub").inspect();
 	if (!hubStatus.State.Running) {
@@ -96,7 +109,7 @@ async function startBrowserNode(image, name) {
 	// Ensure that image exists
 	await pullImage(image);
 
-	// Create and start the container
+	// Create and start the container in detached mode
 	try {
 		console.log("Creating container for image", image);
 
@@ -132,18 +145,20 @@ async function createContainers(containers) {
 		runningContainers.length < 1 ? 0 : (runningContainers.length - 1) / 3;
 
 	for (var i = 0; i < containers; i++) {
-		await startBrowserNode(
-			"selenium/node-chrome",
-			`chrome-node-${nodesPerBrowser + i + 1}`
-		);
-		await startBrowserNode(
-			"selenium/node-firefox",
-			`firefox-node-${nodesPerBrowser + i + 1}`
-		);
-		await startBrowserNode(
-			"selenium/node-edge",
-			`edge-node-${nodesPerBrowser + i + 1}`
-		);
+		await Promise.all([
+			startBrowserNode(
+				"selenium/node-chrome",
+				`chrome-node-${nodesPerBrowser + i + 1}`
+			),
+			startBrowserNode(
+				"selenium/node-firefox",
+				`firefox-node-${nodesPerBrowser + i + 1}`
+			),
+			startBrowserNode(
+				"selenium/node-edge",
+				`edge-node-${nodesPerBrowser + i + 1}`
+			),
+		]);
 	}
 }
 
@@ -151,7 +166,7 @@ async function createContainers(containers) {
 async function stopContainer(containerId) {
 	try {
 		const container = docker.getContainer(containerId);
-		await container.stop();
+		await container.stop({ t: 0 });
 		await container.remove();
 		console.log(`Container ${containerId} stopped and removed.`);
 	} catch (error) {
@@ -175,12 +190,15 @@ async function stopAllContainers() {
 	try {
 		const containers = await listContainersOnNetwork();
 
-		// Loop through all containers and stop them, except the hub
-		for (const container of containers) {
-			if (!container[1].Name.includes("selenium-hub")) {
-				await stopContainer(container[0]);
-			}
-		}
+		// Filter out selenium-hub
+		const containersToStop = containers.filter(
+			(container) => !container[1].Name.includes("selenium-hub")
+		);
+
+		// Stop all containers in parallel
+		await Promise.all(
+			containersToStop.map((container) => stopContainer(container[0]))
+		);
 		console.log("Stopped and removed all containers.");
 	} catch (error) {
 		console.error(
