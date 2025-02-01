@@ -39,7 +39,7 @@ async function pushResults(proj_id, username) {
 		async function getUserByName(name) {
 			try {
 				const user = await usersCollection.findOne(
-					{ name },
+					{ username },
 					{ projection: { _id: 0, userid: 1, name: 1 } }
 				);
 				return user;
