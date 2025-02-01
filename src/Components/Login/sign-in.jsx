@@ -30,11 +30,7 @@ const LoginPage = () => {
 			localStorage.setItem("user_id",data.userid)
 
 			// Redirect to the homepage based on the user's role
-			if (data.role === "admin") {
-				window.location.href = "/projects"; // Assuming you have an admin dashboard page
-			} else {
-				window.location.href = "/projects"; // Redirect to the homepage for users
-			}
+			navigate("/projects");
 		} catch (err) {
 			setError(err.message);
 		}
