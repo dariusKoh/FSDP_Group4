@@ -60,7 +60,7 @@ app.post('/create-project', async (req, res) => {
         // Insert the project
         const projectResult = await projectsCollection.insertOne(newProject);
 
-        // Insert scripts associated with the project
+        // Insert scripts associated with the project   
         const scriptDocuments = files.map(file => ({
             proj_id: newProjectId,
             scriptName: file.name,
@@ -235,5 +235,5 @@ app.post('/api/register', async (req, res) => {
 
 
 app.listen(port, () => {
-    console.log("Server is running on http://localhost:${port}");
+    console.log(`Server is running on http://localhost:${port}`);
 });
