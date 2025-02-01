@@ -40,7 +40,7 @@ export default function ProjectPage() {
             console.error("No project selected.");
             return;
         }
-
+        const username = localStorage.getItem("username");
         setIsLoading(true);
         setActiveState("Run Cases");
 
@@ -48,7 +48,7 @@ export default function ProjectPage() {
             const response = await fetch("http://localhost:3001/run-tests", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ proj_id }),
+                body: JSON.stringify({ proj_id, username }),
             });
 
             if (!response.ok) {
@@ -198,33 +198,33 @@ export default function ProjectPage() {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
           });
-  
-          try {
-              const response = await fetch("http://localhost:3001/delete-project", {
-                  method: "POST",
-                  headers,
-                  body: JSON.stringify({ project: { proj_id } }),
-              });
-  
-              if (!response.ok) {
-                  console.error("Error deleting project:", response.statusText);
-                  return;
-              }
-  
-              const data = await response.json();
-              console.log("API response:", data);
-  
-              if (data.error) {
-                  console.error("Error deleting project:", data.error);
-              } else {
-                  console.log("Project deleted successfully:", data);
-                  if (window.confirm("Project deleted successfully. Do you want to go back to the projects page?")) {
-                      updateActiveState("Project Home");
-                  }
-              }
-          } catch (error) {
-              console.error("Error deleting project:", error);
+          if (window.confirm("Are you sure you want to delete project?")){
+            try {
+                const response = await fetch("http://localhost:3001/delete-project", {
+                    method: "POST",
+                    headers,
+                    body: JSON.stringify({ project: { proj_id } }),
+                });
+    
+                if (!response.ok) {
+                    console.error("Error deleting project:", response.statusText);
+                    return;
+                }
+    
+                const data = await response.json();
+                console.log("API response:", data);
+    
+                if (data.error) {
+                    console.error("Error deleting project:", data.error);
+                } else {
+                    console.log("Project deleted successfully:", data);
+                    updateActiveState("Project Home");
+                }
+            } catch (error) {
+                console.error("Error deleting project:", error);
+            }
           }
+          
       };
   
       return (
