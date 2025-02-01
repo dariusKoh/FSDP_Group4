@@ -3,8 +3,9 @@ const cors = require("cors");
 const { MongoClient } = require("mongodb");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken"); // Optional, for token-based authentication
+const roles = require("./scripts/roles");
 
-const SECRET_KEY = "your_secret_key"; // Replace with a secure key for JWT
+const SECRET_KEY = "TESTINGKEYMAYBE?"; // Replace with a secure key for JWT
 
 const {
 	runTestInContainers,
@@ -50,25 +51,31 @@ const authenticate = async (req, res, next) => {
 };
 
 // API to trigger test run
-app.get("/run-tests", authenticate, async (req, res) => {
-	console.log("App.js run-tests");
-	try {
-		// Call runTests function
-		res.status(200).json({ message: "Tests started successfully" });
-	} catch (error) {
-		console.error("Failed to start tests:", error);
-		res.status(500).json({ error: "Failed to start tests" });
-	}
+app.post("/run-tests", async (req, res) => {
+    console.log("App.js run-tests");
+    const { proj_id } = req.body;
+
+    if (!proj_id) {
+        return res.status(400).json({ error: "Project ID is required" });
+    }
+
+    try {
+        await runTestInContainers(proj_id); // Pass proj_id to test runner
+        res.status(200).json({ message: "Tests started successfully" });
+    } catch (error) {
+        console.error("Failed to start tests:", error);
+        res.status(500).json({ error: "Failed to start tests" });
+    }
 });
 
 app.post("/create-project", authenticate, async (req, res) => {
 	const { projectName, visibility, files } = req.body;
 
-	try {
-		await client.connect();
-		const db = client.db("test");
-		const projectsCollection = db.collection("projects");
-		const scriptsCollection = db.collection("scripts");
+  try {
+    await client.connect();
+    const db = client.db("test");
+    const projectsCollection = db.collection("projects");
+    const scriptsCollection = db.collection("scripts");
 
 		// Get the current count of projects for unique ID
 		const projectCount = await projectsCollection.countDocuments();
@@ -132,17 +139,21 @@ app.get('/get-log-by-id/:id', async (req, res) => {
 });
 
 // API to fetch test logs from MongoDB
-app.get("/get-logs", authenticate, async (req, res) => {
-	try {
-		const logs = await dbQuery.queryAllData("test_results"); // Call queryAllData function
-		res.json(logs);
-	} catch (error) {
-		console.error("Error fetching logs from MongoDB:", error);
-		res.status(500).json({ error: "Failed to fetch logs" });
-	} finally {
-		await client.close();
-	}
+app.post("/get-logs", authenticate, async (req, res) => {
+    const { proj_id } = req.body;
+    console.log("Project ID: "+proj_id);
+  try {
+    const logs = await dbQuery.queryDataByproj_id("test_results", proj_id); // Call queryAllData function
+    console.log("Jsoning now");
+    res.json(logs);
+  } catch (error) {
+    console.error("Error fetching logs from MongoDB:", error);
+    res.status(500).json({ error: "Failed to fetch logs" });
+  } finally {
+    await client.close();
+  }
 });
+
 
 // API to fetch all projects
 app.get("/projects", authenticate, async (req, res) => {
@@ -203,17 +214,24 @@ app.post("/webhook", authenticate, async (req, res) => {
 });
 
 // API to fetch test cases from MongoDB
-app.get("/get-scripts", authenticate, async (req, res) => {
-	try {
-		const scripts = await dbQuery.queryAllData("scripts"); // Call queryAllData function
-		res.json(scripts);
-	} catch (error) {
-		console.error("Error fetching test cases from MongoDB:", error);
-		res.status(500).send("Failed to fetch test cases");
-	} finally {
-		await client.close();
-	}
-});
+app.post("/get-scripts", authenticate,  async (req, res) => {
+    try {
+      const { proj_id } = req.body;
+  
+      if (!proj_id) {
+        return res.status(400).json({ error: "Missing proj_id" });
+      }
+  
+      const scripts = await dbQuery.queryDataByproj_id("scripts", proj_id); 
+      res.json(scripts);
+    } catch (error) {
+      console.error("Error fetching test cases from MongoDB:", error);
+      res.status(500).send("Failed to fetch test cases");
+    } finally {
+      await client.close();
+    }
+  });
+  
 
 // User login
 app.post("/api/login", async (req, res) => {
@@ -241,21 +259,20 @@ app.post("/api/login", async (req, res) => {
 			expiresIn: "1h",
 		});
 
-		res.status(200).json({ message: "Login successful", token });
-	} catch (error) {
-		console.error("Error during login:", error);
-		res.status(500).json({ error: "Internal server error" });
-	} finally {
-		await client.close();
-	}
+        res.status(200).json({ message: "Login successful", token });
+    } catch (error) {
+        console.error("Error during login:", error);
+        res.status(500).json({ error: "Internal server error" });
+    } finally {
+        await client.close();
+    }
 });
 
 // User registration
 app.post("/api/register", async (req, res) => {
 	const { username, email, password, role } = req.body;
-
 	// Validate role
-	if (!roles[role]) {
+	if (!roles["roles"][role]) {
 		return res.status(400).json({ message: "Invalid role" });
 	}
 

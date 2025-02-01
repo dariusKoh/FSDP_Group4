@@ -10,24 +10,33 @@ import Docs from "./Components/Docs/docs";
 import Help from "./Components/Help/help";
 
 export default function ProjectPage() {
-    const [projects, setProjects] = useState([
-        
-    ]);
+    const [projects, setProjects] = useState([]);
     const [activeState, setActiveState] = useState(null);
-    const [showCreateProject, setShowCreateProject] = useState(false);
     const [currentProject, setCurrentProject] = useState(null);
     const [proj_id, setproj_id] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [logs, setLogs] = useState("");
-    const [testCases, setTestCases] = useState([]); // State to store test cases
+    const [testCases, setTestCases] = useState([]);
+    const [testLogs, setTestLogs] = useState([]);
+    const [proj_id, setproj_id] = useState(null);
+    const [showCreateProject, setShowCreateProject] = useState(null);
 
+    // Handle running test cases
     const handleRunCases = async () => {
+        if (!proj_id) {
+            console.error("No project selected.");
+            return;
+        }
+
         setIsLoading(true);
         setActiveState("Run Cases");
 
         try {
-            // Trigger the test run by calling the backend endpoint
-            const response = await fetch('http://localhost:3001/run-tests');
+            const response = await fetch("http://localhost:3001/run-tests", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ proj_id }),
+            });
+
             if (!response.ok) {
                 console.error("Error running tests");
                 setIsLoading(false);
@@ -35,34 +44,57 @@ export default function ProjectPage() {
             }
 
             console.log("Tests started, waiting for completion...");
-
-            // Poll for logs after a short delay
-            setTimeout(fetchLogsFromDB, 60000);
+            await fetchLogsFromDB();
+            setIsLoading(false);
         } catch (error) {
             console.error("Failed to run tests:", error);
             setIsLoading(false);
         }
     };
 
-    // Function to fetch logs from MongoDB
+    // Function to fetch logs from the DB
     const fetchLogsFromDB = async () => {
+        if (!proj_id) {
+            console.warn("fetchLogsFromDB called with null proj_id!");
+            return;
+        }
+    
+        console.log("Fetching logs for proj_id:", proj_id);
         try {
-            const response = await fetch('http://localhost:3001/get-logs');
+            const response = await fetch("http://localhost:3001/get-logs", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ proj_id }),
+            });
+    
             const logsData = await response.json();
-            const latestLogs = logsData.map(log => log.log).join("\n");
-            setLogs(latestLogs);
-            setTimeout(setIsLoading(false),5000);
-            setActiveState("Project Overview");
+            
+            if (!Array.isArray(logsData)) {
+                console.error("Unexpected response format:", logsData);
+                return;
+            }
+    
+            setTestLogs(logsData);
         } catch (error) {
             console.error("Failed to fetch logs:", error);
-            setIsLoading(false);
         }
     };
+    
 
     // Function to fetch test cases when "View Cases" is active
     const fetchTestCases = async () => {
+        if (!proj_id) {
+            console.warn("fetchTestCases called with null proj_id!");
+            return;
+        }
+    
         try {
-            const response = await fetch('http://localhost:3001/get-scripts');
+            const response = await fetch("http://localhost:3001/get-scripts", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ proj_id }),
+            });
+    
             const data = await response.json();
             setTestCases(data);
         } catch (error) {
@@ -70,7 +102,16 @@ export default function ProjectPage() {
         }
     };
     
-    // Determine which component to render
+
+    // Trigger log fetching only when proj_id is updated
+    useEffect(() => {
+        if (proj_id && activeState !== "Help" && activeState !== "Documentation") {
+            console.log("useEffect triggered: Fetching logs for proj_id:", proj_id);
+            fetchLogsFromDB();
+        }
+    }, [proj_id]); // Runs only when proj_id changes
+
+    // Determine which component to render based on active state
     const renderComponent = () => {
         console.log(activeState)
         switch (activeState) {
@@ -87,46 +128,55 @@ export default function ProjectPage() {
                     />
                 );
             case "View Cases":
-                return <ViewCases cases={testCases} projName={currentProject} />; // Pass test cases to ViewCases
+                return <ViewCases cases={testCases} projName={currentProject} />;
             case "Help":
-                return <Help />
+                return <Help />;
             case "Documentation":
-                return <Docs />
+                return <Docs />;
             default:
                 if (isLoading) {
-                    return <LoadingScreen logs={logs} />;
+                    return <LoadingScreen />;
                 }
-                return <ProjectHome projects={projects} setCurrentProject={setCurrentProject} setActiveState={setActiveState} />;
-
+                return (
+                    <Overview
+                        testLogs={testLogs}
+                        projName={currentProject}
+                        proj_id={proj_id}
+                        onClose={() => setActiveState(null)}
+                    />
+                );
         }
     };
 
-    function handleAddProject(projectName) {
-        setProjects((prevProjects) => [...prevProjects, projectName]);
-    }
+    // Update active state while ensuring proj_id is set first
+    const updateActiveState = (val, newproj_id = null) => {
+        if (newproj_id) {
+            setproj_id(newproj_id);
+        }
 
-    const updateActiveState = (val) => {
-        console.log("updateActiveState called with value:", val); // Added for debugging
         if (val === "Run Cases") {
             handleRunCases();
         } else {
             setActiveState(val);
             if (val === "View Cases") {
-                console.log("Fetching test cases..."); // Added for debugging
-                fetchTestCases(); // Fetch test cases when "View Cases" is selected
+                fetchTestCases();
             }
         }
     };
-    
+
+    const handleAddProject = (projectName) => {
+        setProjects((prevProjects) => [...prevProjects, projectName]);
+    };
 
     return (
         <Fragment>
             <NavbarLoggedIn />
             <Sidebar
-                base={false} //Edits here
+                base={false} // Modify as per requirement
                 setActiveState={updateActiveState}
                 projectName={currentProject}
-                onProjectOpened={currentProject !== null} 
+                onProjectOpened={!!currentProject}
+                proj_id={proj_id}
             />
             {renderComponent()}
             {showCreateProject && (
@@ -134,7 +184,8 @@ export default function ProjectPage() {
                     projCount={projects.length + 1}
                     onClose={() => {
                         setShowCreateProject(false);
-                        setCurrentProject(null)}}
+                        setCurrentProject(null);
+                    }}
                     onAddProject={handleAddProject}
                 />
             )}

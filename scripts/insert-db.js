@@ -19,16 +19,16 @@ const client = new MongoClient(constants.MONGO_URI, {
 	},
 });
 
-async function pushResults() {
-	console.log("insert-db.js run");
-	try {
-		// Connect the client to the server (optional starting in v4.7)
-		await client.connect();
-		// Send a ping to confirm a successful connection
-		await client.db("admin").command({ ping: 1 });
-		console.log(
-			"Pinged your deployment. You successfully connected to MongoDB!"
-		);
+async function pushResults(proj_id) {
+  console.log("insert-db.js run");
+  try {
+    // Connect the client to the server (optional starting in v4.7)
+    await client.connect();
+    // Send a ping to confirm a successful connection
+    await client.db("admin").command({ ping: 1 });
+    console.log(
+      "Pinged your deployment. You successfully connected to MongoDB!"
+    );
 
 		// Define collection and database
 		const db = client.db();
@@ -142,7 +142,8 @@ async function pushResults() {
 				failureMessages,
 				failureDetails,
 				summary, // Add the AI-generated summary
-				userid: user.userid, // Assuming `user` is defined elsewhere
+				userid: user.userid, // Assuming `user` is defined elsewhere,
+				proj_id,
 				createdAt,
 			};
 		});
@@ -172,5 +173,6 @@ async function pushResults() {
 		await client.close();
 	}
 }
+
 
 module.exports = { pushResults };

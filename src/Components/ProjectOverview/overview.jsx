@@ -3,19 +3,18 @@ import ReactApexChart from "react-apexcharts";
 import Typed from "typed.js";
 import "./overview.css";
 
-function Overview({ projName, lastDate = "11/12/2024", onClose }) {
+function Overview({ testLogs, proj_id, projName, lastDate = "11/12/2024", onClose}) {
     const [filter, setFilter] = useState("All");
     const [searchInput, setSearchInput] = useState(""); // State for the search input
-    const [testLogs, setTestLogs] = useState([]);
     const [searchResult, setSearchResult] = useState(null); // State for search results
+    // const [testLogs, setTestLogs] = useState([]);
     const el = useRef(null);
 
     // Fetch logs from MongoDB when the component mounts
-    useEffect(() => {
-        fetchLogsFromDB();
-    }, []);
 
     useEffect(() => {
+        // fetchLogsFromDB(); // Call the function
+    
         const typed = new Typed(el.current, {
             strings: [projName, projName + " Overview"],
             startDelay: 300,
@@ -25,10 +24,12 @@ function Overview({ projName, lastDate = "11/12/2024", onClose }) {
             loop: false,
             showCursor: false,
         });
+    
         return () => {
             typed.destroy();
         };
-    }, [projName]);
+    }, [projName, proj_id]); // Also trigger when proj_id changes
+    
 
     const passed = testLogs.filter(test => test.status === "PASSED");
     const failed = testLogs.filter(test => test.status !== "PASSED");
@@ -84,15 +85,25 @@ function Overview({ projName, lastDate = "11/12/2024", onClose }) {
         return "pending";
     };
 
-    const fetchLogsFromDB = async () => {
-        try {
-            const response = await fetch("http://localhost:3001/get-logs");
-            const logsData = await response.json();
-            setTestLogs(logsData);
-        } catch (error) {
-            console.error("Failed to fetch logs:", error);
-        }
-    };
+    // Function to fetch logs from the backend
+    // const fetchLogsFromDB = async () => {
+    //     console.log("Project ID: "+proj_id)
+    //     try {
+    //         const response = await fetch('http://localhost:3001/get-logs', {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //             body: JSON.stringify({ proj_id: proj_id }), // Sending proj_id in the body
+    //         });
+    //         console.log(proj_id)
+    //         const logsData = await response.json();
+    //         setTestLogs(logsData);
+    //     } catch (error) {
+    //         console.error("Failed to fetch logs:", error);
+    //     }
+    // };
+    
 
     // Search for specific case by caseId
     const searchByCaseId = async () => {
@@ -112,6 +123,8 @@ function Overview({ projName, lastDate = "11/12/2024", onClose }) {
     };
 
     const filteredLogs = filter === "All" ? testLogs : testLogs.filter(log => log.status === filter);
+
+    console.log("testLogs data:", testLogs);
 
     return (
         <div className="overview-container">
@@ -229,6 +242,13 @@ function Overview({ projName, lastDate = "11/12/2024", onClose }) {
                                 <td>{log.status}</td>
                                 <td>{log.duration}</td>
                                 <td>{log.failureMessages[0]?.slice(0, 50) || "N/A"}...</td>
+                                <td>
+                                    {Array.isArray(log.failureMessages) && log.failureMessages.length > 0
+                                        ? log.failureMessages[0].length > 30
+                                            ? `${log.failureMessages[0].slice(0, 50)}...`
+                                            : log.failureMessages[0]
+                                        : "No Errors"}
+                                </td>
                                 <td>{new Date(log.createdAt).toLocaleString()}</td>
                             </tr>
                         ))}
