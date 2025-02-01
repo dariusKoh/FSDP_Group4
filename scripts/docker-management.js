@@ -31,7 +31,9 @@ async function createNetwork() {
 		console.log(`Network ${network.Name} created with ID: ${network.id}`);
 		return network;
 	} catch (error) {
-		console.error(`Error creating network: ${error}`);
+		if (error.statusCode !== 409) {
+			console.error(`Error creating network: ${error}`);
+		}
 	}
 }
 
