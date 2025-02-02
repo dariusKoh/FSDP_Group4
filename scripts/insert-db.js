@@ -20,7 +20,6 @@ const client = new MongoClient(constants.MONGO_URI, {
 });
 
 async function pushResults(proj_id, username) {
-	console.log("insert-db.js run");
 	try {
 		// Connect the client to the server (optional starting in v4.7)
 		await client.connect();
@@ -50,42 +49,17 @@ async function pushResults(proj_id, username) {
 
 		// Get the current user
 		const user = await getUserByName(username);
-		if (!user) {
-			console.log("User not found");
-			return;
-		}
 
-		const count = await testResultsCollection.countDocuments({
-			userid: user.userid,
-		});
-		console.log(`Current document count for user ${username}: ${count}`);
+		if (!user) {
+			console.log("User not found, proceeding with test result check...");
+		}
 
 		const data = fs.readFileSync(constants.FILE_PATH);
 		const obj = JSON.parse(data);
-		// Loop through the top-level test results
 		const testResults = obj.testResults.flatMap(
 			(testResult) => testResult.testResults
 		); // Flattening nested testResults
 		const perfStats = obj.testResults[0].perfStats; // Performance stats from the first test suite
-
-		const summariesMap = {};
-
-		const aiSummary = await summuriseFailureMessages(testResults);
-		if (aiSummary.success) {
-			console.log("\n\nGenerated Summaries:");
-			// TODO: Insert summaries into the database
-
-			// Store the summaries in a map for quick lookup
-
-			aiSummary.summaries.forEach((summary) => {
-				summariesMap[summary.testId] = summary.summary;
-				console.log(`Test ${summary.testId}:`);
-				console.log(`Summary: ${summary.summary}`);
-				console.log("-------------------");
-			});
-		} else {
-			console.error("Failed to generate summaries:", aiSummary.error);
-		}
 
 		const {
 			numFailedTests,
@@ -96,7 +70,44 @@ async function pushResults(proj_id, username) {
 		} = obj;
 		const totalDuration = parseInt(perfStats.runtime, 10) / 1000; // Convert runtime to seconds
 
-		//console.log("Test Summary:");
+		// Perform the test checks even if no user is found
+		console.log(
+			"Passed Tests: " +
+				numPassedTests +
+				" / Total Tests: " +
+				numTotalTests
+		);
+		if (numPassedTests === numTotalTests) {
+			console.log("All test cases passed.");
+		} else {
+			console.log("Not all test cases passed.");
+		}
+
+		// If the user is not found, skip document insertion but still check tests
+		if (!user) {
+			return { success: numPassedTests === numTotalTests };
+		}
+
+		// If user exists, proceed with inserting the results into the DB
+		const count = await testResultsCollection.countDocuments({
+			userid: user.userid,
+		});
+		console.log(`Current document count for user ${username}: ${count}`);
+
+		const summariesMap = {};
+
+		const aiSummary = await summuriseFailureMessages(testResults);
+		if (aiSummary.success) {
+			console.log("\n\nGenerated Summaries:");
+			aiSummary.summaries.forEach((summary) => {
+				summariesMap[summary.testId] = summary.summary;
+				console.log(`Test ${summary.testId}:`);
+				console.log(`Summary: ${summary.summary}`);
+				console.log("-------------------");
+			});
+		} else {
+			console.error("Failed to generate summaries:", aiSummary.error);
+		}
 
 		// Map the test results and integrate AI summaries
 		const documents = testResults.map((test, index) => {
@@ -120,20 +131,10 @@ async function pushResults(proj_id, username) {
 			// Parse the AI-generated summary
 			let summary = "None";
 			if (status === "FAILED") {
-				// Get the AI-generated summary or default to a fallback
 				summary =
 					summariesMap[testId] ||
 					`The test failed but no detailed AI summary was provided. Failure Messages: ${failureMessages}`;
 			}
-
-			// Log each test's details
-			// console.log(`Test id: ${testId}`);
-			// console.log(`Status: ${status}`);
-			// console.log(`Duration: ${duration}ms`);
-			// console.log(`Failure messages: ${failureMessages}`);
-			// console.log(`Failure details: ${failureDetails}`);
-			// console.log(`Summary: ${summary}`);
-			// console.log("-------------------");
 
 			return {
 				testId,
@@ -144,32 +145,27 @@ async function pushResults(proj_id, username) {
 				failureMessages,
 				failureDetails,
 				summary, // Add the AI-generated summary
-				userid: user.userid, // Assuming `user` is defined elsewhere,
+				userid: user ? user.userid : null, // If user exists, use the user ID
 				proj_id,
 				createdAt,
 			};
 		});
 
 		// Check if documents array is empty
-		if (documents.length > 0) {
+		if (documents.length > 0 && user) {
 			const result = await testResultsCollection.insertMany(documents);
 			console.log(
 				`Inserted ${result.insertedCount} documents into the collection for user ${username}`
 			);
 		} else {
-			console.log("No documents to insert");
+			console.log("No documents to insert or user not found.");
 		}
 
-		// console.log(
-		// 	`Total tests: ${numTotalTests}\nTotal failed: ${numFailedTests}\nTotal passed: ${numPassedTests}\nTotal pending: ${numPendingTests}\nTotal todo: ${numTodoTests}\nTotal duration: ${totalDuration}s`
-		// );
-
-		// Log if there are failed tests
-		console.log("number of failed tests" + numFailedTests);
-		if (numFailedTests > 0) {
-			return { success: false };
-		}
-		return { success: true };
+		// Return the result based on the test results
+		return { success: numPassedTests === numTotalTests };
+	} catch (error) {
+		console.error("Failed to push results:", error);
+		return { success: false };
 	} finally {
 		// Ensures that the client will close when you finish/error
 		await client.close();
