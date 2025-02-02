@@ -87,6 +87,31 @@ export default function ProjectPage() {
 			setIsLoading(false);
 		}
 	};
+	
+	const handleExportPdf = async () => {
+		try {
+			const response = await fetch(`http://localhost:3001/export-pdf`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ proj_id }),
+			});
+			if (!response.ok) {
+				throw new Error("Failed to export PDF");
+			}
+			const blob = await response.blob();
+			const url = window.URL.createObjectURL(blob);
+			const a = document.createElement("a");
+			a.href = url;
+			a.download = `project-${proj_id}-report.pdf`;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			window.URL.revokeObjectURL(url);
+		} catch (error) {
+			console.error("Error exporting PDF:", error);
+			// Optionally show error to user
+		}
+	};
 
 	const fetchLogsFromDB = async () => {
 		if (!proj_id) {

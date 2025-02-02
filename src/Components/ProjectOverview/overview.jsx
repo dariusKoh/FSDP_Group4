@@ -137,12 +137,20 @@ function Overview({
 
 	return (
 		<div className="overview-container">
-			<button onClick={onClose} className="returnBtn" id="backProj">
-				Close
-			</button>
-			<button onClick={handleExportPdf} className="returnBtn">
-				Export PDF
-			</button>
+			<div className="overview-buttons">
+				<button onClick={onClose} className="returnBtn">
+					Close
+				</button>
+				<button 
+					onClick={handleExportPdf} 
+					className="returnBtn"
+					disabled={testLogs.length === 0} // Disable if no logs
+				>
+					Export PDF
+				</button>
+			</div>
+
+
 			<span className="mainHead Title" ref={el} />
 			<h2 className="Title">
 				<span>Last Edited: {lastDate}</span>

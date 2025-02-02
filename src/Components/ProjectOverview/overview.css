@@ -177,13 +177,14 @@ table tr.fail {
 }
 
 .overview-buttons {
-	position: relative;
-	left: 10px;
-	top: 10px;
-	display: flex;
-	gap: 10px;
-	margin-bottom: 20px;
+    position: relative; /* Change to absolute for precise placement */
+    top: -50px; /* Adjust based on the actual header position */
+    left: 0%;
+    transform: translateX(-50%); /* Center the buttons horizontally */
+    display: flex;
+    gap: 10px;
 }
+
 
 .returnBtn {
 	padding: 8px 16px;
