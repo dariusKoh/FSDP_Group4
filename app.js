@@ -14,6 +14,8 @@ const {
 const dbQuery = require("./scripts/query-db"); // Import databse query script
 const { pushScripts } = require("./scripts/push-scripts"); // Import pushScripts
 const { run } = require("jest");
+const { generatePDF } = require("./scripts/exportToPDF");
+
 const app = express();
 const port = 3001;
 const constants = {
@@ -61,6 +63,24 @@ app.post("/webhook", async (req, res) => {
 	} catch (error) {
 		console.error("Failed to run tests:", error);
 		res.status(500).json({ error: "Failed to start tests" });
+	}
+});
+
+app.post("/export-pdf", async (req, res) => {
+	try {
+		const { proj_id } = req.body;
+		const logs = await dbQuery.queryDataByproj_id("test_results", proj_id); // Call queryDataByProjectId
+		if (!Array.isArray(logs)) {
+			console.error("Unexpected response format:", logs);
+			return;
+		}
+
+		//const data = await fetch("http://localhost:3001/get-logs");
+
+		await generatePDF(res, logs);
+		console.log("PDF generated successfully");
+	} catch (error) {
+		console.error("Error fetching test files:", error);
 	}
 });
 
@@ -128,31 +148,6 @@ app.post("/get-logs", async (req, res) => {
 	} catch (error) {
 		console.error("Error fetching logs from MongoDB:", error);
 		res.status(500).json({ error: "Failed to fetch logs" });
-	} finally {
-		await client.close();
-	}
-});
-
-app.get("/get-log-by-id/:id", async (req, res) => {
-	try {
-		const { id } = req.params;
-		console.log("Requested ID:", id);
-
-		await client.connect();
-		const db = client.db("test");
-		const log = await db.collection("test_results").findOne({ testId: id });
-
-		console.log("Database Query Result:", log); // Debugging log
-
-		if (!log) {
-			console.log("No test case found for ID:", id);
-			return res.status(404).json({ message: "Test case not found" });
-		}
-
-		res.json(log);
-	} catch (error) {
-		console.error("Error fetching log by ID:", error);
-		res.status(500).json({ error: "Internal Server Error" });
 	} finally {
 		await client.close();
 	}
