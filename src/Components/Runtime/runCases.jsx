@@ -5,6 +5,7 @@ export default function RunCases({ proj_id, onClose, onRun }) {
 	const [numContainers, setNumContainers] = useState(1);
 	const [testFiles, setTestFiles] = useState([]);
 	const [selectedTests, setSelectedTests] = useState([]);
+	const [allSelected, setAllSelected] = useState(false); // Track select all state
 
 	useEffect(() => {
 		const fetchTestFiles = async () => {
@@ -17,7 +18,6 @@ export default function RunCases({ proj_id, onClose, onRun }) {
 				setTestFiles(data.files || []);
 			} catch (error) {
 				console.error("Error:", error.message);
-				// Consider adding error state handling here
 			}
 		};
 
@@ -30,6 +30,15 @@ export default function RunCases({ proj_id, onClose, onRun }) {
 				? prev.filter((f) => f !== testFile)
 				: [...prev, testFile]
 		);
+	};
+
+	const handleSelectAll = () => {
+		if (allSelected) {
+			setSelectedTests([]); // Deselect all
+		} else {
+			setSelectedTests([...testFiles]); // Select all
+		}
+		setAllSelected(!allSelected); // Toggle state
 	};
 
 	const handleRunClick = () => {
@@ -60,6 +69,9 @@ export default function RunCases({ proj_id, onClose, onRun }) {
 
 				<div className="test-selection">
 					<h3>Select Tests to Run:</h3>
+					<button className="select-all-btn" onClick={handleSelectAll}>
+						{allSelected ? "Deselect All" : "Select All"}
+					</button>
 					<div className="test-checkboxes">
 						{testFiles.map((testFile) => (
 							<label key={testFile}>
