@@ -107,9 +107,10 @@ async function runTestInContainers(
 		} else {
 			// Ensure testResults exists before referencing its properties
 			console.log(
-				"Tests failed. Reason: " + testResults && testResults.error
-					? testResults.error
-					: "Tests did not pass."
+				"Tests failed. Reason: " +
+					(testResults && testResults.error
+						? testResults.error
+						: "Tests did not pass.")
 			);
 			return {
 				success: false,
@@ -129,7 +130,16 @@ async function runTestInContainers(
 async function runTestsOnLocalRepo() {
 	try {
 		// Ensure we are awaiting the result of runTestInContainers
-		const testResults = await runTestInContainers(); // This will wait until everything is complete.
+
+		// DEMO TESTS PASSING
+		// const testResults = await runTestInContainers(null, null, 1, [
+		// 	"pass.test.js",
+		// ]);
+
+		// DEMO TESTS FAILING
+		const testResults = await runTestInContainers(null, null, 1, [
+			"googlefail.test.js",
+		]);
 
 		if (!testResults.success) {
 			console.log("Tests failed:", testResults.error);

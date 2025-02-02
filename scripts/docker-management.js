@@ -83,7 +83,11 @@ async function setupSeleniumGrid() {
 			pullImage("selenium/node-edge"),
 		]);
 	} catch (error) {
-		console.error("Error starting Selenium Hub:", error);
+		if (error.statusCode !== 409) {
+			console.error("Error starting Selenium Hub:", error);
+		} else {
+			console.log("Selenium Grid already exists. Skipping creation.");
+		}
 	}
 }
 
@@ -167,8 +171,8 @@ async function stopContainer(containerId) {
 	try {
 		const container = docker.getContainer(containerId);
 		const containerName = (await container.inspect()).Name;
-		await container.stop({ t: 0 });
-		await container.remove();
+		await container.stop();
+		await container.remove({ force: true });
 		console.log(
 			`Container ${containerName} (${containerId}) stopped and removed.`
 		);

@@ -3,4 +3,4 @@ jest-stare
 package-lock.json
 screenshot*
 jest-results.json
-pee.js
+.env
