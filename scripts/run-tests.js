@@ -32,7 +32,6 @@ async function runTests(selectedFiles = []) {
 		console.log("Fetching available test files...");
 		const testFiles = await getTestFiles();
 
-		// Run all files if not specified
 		if (selectedFiles.length === 0) {
 			console.warn(
 				"No specific test files selected. Running all test files..."
@@ -138,7 +137,7 @@ async function runTestsOnLocalRepo() {
 
 		// DEMO TESTS FAILING
 		const testResults = await runTestInContainers(null, null, 1, [
-			"googlefail.test.js",
+			"fail.test.js",
 		]);
 
 		if (!testResults.success) {

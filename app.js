@@ -75,8 +75,6 @@ app.post("/export-pdf", async (req, res) => {
 			return;
 		}
 
-		//const data = await fetch("http://localhost:3001/get-logs");
-
 		await generatePDF(res, logs);
 		console.log("PDF generated successfully");
 	} catch (error) {
