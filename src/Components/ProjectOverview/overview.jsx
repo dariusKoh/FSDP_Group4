@@ -253,6 +253,13 @@ function Overview({
 							</thead>
 							<tbody>
 								<tr
+									onClick={() =>
+										onTestCaseClick(
+											"TestCaseDetails",
+											null,
+											searchResult
+										)
+									}
 									className={
 										searchResult.status === "PASSED"
 											? "pass"
