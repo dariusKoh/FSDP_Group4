@@ -64,9 +64,12 @@ function CreateProject({ projCount, onClose, onAddProject }) {
     const newProject = {
         projectName,
         visibility: visibilityOption,
+        ownerid: parseInt(localStorage.getItem("user_id")),
         files: selectedFiles, // Pass uploaded files
     };
-
+    if (selectedFiles.length === 0){
+      return;
+    }
     try {
         const response = await fetch('http://localhost:3001/create-project', {
             method: 'POST',

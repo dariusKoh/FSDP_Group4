@@ -9,10 +9,12 @@ const SECRET_KEY = "your_secret_key"; // Replace with a secure key for JWT
 const {
 	runTestInContainers,
 	runTestsOnLocalRepo,
+	getTestFiles,
 } = require("./scripts/run-tests"); // Import runTests
 const dbQuery = require("./scripts/query-db"); // Import databse query script
 const { pushScripts } = require("./scripts/push-scripts"); // Import pushScripts
 const { run } = require("jest");
+const { generatePDF } = require("./scripts/exportToPDF");
 
 const app = express();
 const port = 3001;
@@ -25,45 +27,74 @@ const client = new MongoClient(constants.MONGO_URI);
 app.use(cors());
 app.use(express.json());
 
-// Authentication middleware
-const authenticate = async (req, res, next) => {
-	const token = req.header("Authorization");
-
-	if (!token) return res.status(401).json({ error: "Access denied" });
-
-	try {
-		const decoded = jwt.verify(token, SECRET_KEY);
-		req.user = decoded;
-
-		// Get the required permission for the route
-		const requiredPermission = req.route.path.split("/").pop();
-
-		// Check if the user has the required permission
-		if (!permissions[requiredPermission].includes(req.user.role)) {
-			return res.status(403).json({ error: "Forbidden" });
-		}
-
-		next();
-	} catch (ex) {
-		res.status(400).json({ error: "Invalid token" });
-	}
-};
-
 // API to trigger test run
-app.get("/run-tests", authenticate, async (req, res) => {
-	console.log("App.js run-tests");
+app.post("/run-tests", async (req, res) => {
+	const { proj_id, username, numContainers, selectedTests } = req.body;
+	console.log(numContainers, selectedTests);
 	try {
-		// Call runTests function
+		await runTestInContainers(
+			proj_id,
+			username,
+			numContainers,
+			selectedTests
+		); // Assuming req.user.id contains the logged-in user ID
+		res.status(200).json({
+			message: "Tests started successfully and completed",
+		});
+	} catch (error) {
+		console.error("Error running tests:", error);
+		res.status(500).json({ error: "Failed to run tests" });
+	}
+});
+
+// Webhook for CICD
+app.post("/webhook", async (req, res) => {
+	const { branch, commit } = req.body;
+	console.log(`Webhook triggered for branch: ${branch}`);
+	console.log(`Commit hash: ${commit}`);
+
+	try {
+		// Here, we can perform a git pull or any necessary setup before running tests.
+		console.log("Pulling the latest changes...");
+		console.log("Running tests...");
+		await runTestsOnLocalRepo(); // Call the function to run the tests inside Docker containers
+		// Send back a successful response
 		res.status(200).json({ message: "Tests started successfully" });
 	} catch (error) {
-		console.error("Failed to start tests:", error);
+		console.error("Failed to run tests:", error);
 		res.status(500).json({ error: "Failed to start tests" });
 	}
 });
 
-app.post("/create-project", authenticate, async (req, res) => {
-	const { projectName, visibility, files } = req.body;
+app.post("/export-pdf", async (req, res) => {
+	try {
+		const { proj_id } = req.body;
+		const logs = await dbQuery.queryDataByproj_id("test_results", proj_id); // Call queryDataByProjectId
+		if (!Array.isArray(logs)) {
+			console.error("Unexpected response format:", logs);
+			return;
+		}
 
+		//const data = await fetch("http://localhost:3001/get-logs");
+
+		await generatePDF(res, logs);
+		console.log("PDF generated successfully");
+	} catch (error) {
+		console.error("Error fetching test files:", error);
+	}
+});
+
+app.get("/get-test-files", async (req, res) => {
+	try {
+		const data = await getTestFiles();
+		res.json({ files: data });
+	} catch (error) {
+		console.error("Error fetching test files:", error);
+	}
+});
+
+app.post("/create-project", async (req, res) => {
+	const { projectName, visibility, ownerid, files } = req.body;
 	try {
 		await client.connect();
 		const db = client.db("test");
@@ -77,6 +108,8 @@ app.post("/create-project", authenticate, async (req, res) => {
 		// Create project object
 		const newProject = {
 			proj_id: newProjectId,
+			owner_id: ownerid,
+			shared_with: {},
 			projectName,
 			visibility,
 			createdAt: new Date(),
@@ -106,35 +139,11 @@ app.post("/create-project", authenticate, async (req, res) => {
 	}
 });
 
-app.get('/get-log-by-id/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        console.log("Requested ID:", id);
-
-        await client.connect();
-        const db = client.db('test');
-        const log = await db.collection("test_results").findOne({ testId: id });
-
-        console.log("Database Query Result:", log); // Debugging log
-
-        if (!log) {
-            console.log("No test case found for ID:", id);
-            return res.status(404).json({ message: "Test case not found" });
-        }
-
-        res.json(log);
-    } catch (error) {
-        console.error("Error fetching log by ID:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-    } finally {
-        await client.close();
-    }
-});
-
 // API to fetch test logs from MongoDB
-app.get("/get-logs", authenticate, async (req, res) => {
+app.post("/get-logs", async (req, res) => {
+	const { proj_id } = req.body;
 	try {
-		const logs = await dbQuery.queryAllData("test_results"); // Call queryAllData function
+		const logs = await dbQuery.queryDataByproj_id("test_results", proj_id); // Call queryDataByProjectId
 		res.json(logs);
 	} catch (error) {
 		console.error("Error fetching logs from MongoDB:", error);
@@ -144,29 +153,47 @@ app.get("/get-logs", authenticate, async (req, res) => {
 	}
 });
 
-// API to fetch all projects
-app.get("/projects", authenticate, async (req, res) => {
-    const token = req.headers['authorization']?.split(' ')[1]; // Bearer <token>
-    if (!token) {
-        return res.status(401).json({ error: "Unauthorized" });
-    }
-
+app.get("/get-log-by-id/:id", async (req, res) => {
 	try {
-        // Verify token
-        const decoded = jwt.verify(token, SECRET_KEY);
-        const userId = decoded.userid; // Get user id from the token
+		const { id } = req.params;
+		console.log("Requested ID:", id);
 
 		await client.connect();
 		const db = client.db("test");
+		const log = await db.collection("test_results").findOne({ testId: id });
+
+		console.log("Database Query Result:", log); // Debugging log
+
+		if (!log) {
+			console.log("No test case found for ID:", id);
+			return res.status(404).json({ message: "Test case not found" });
+		}
+
+		res.json(log);
+	} catch (error) {
+		console.error("Error fetching log by ID:", error);
+		res.status(500).json({ error: "Internal Server Error" });
+	} finally {
+		await client.close();
+	}
+});
+
+// API to fetch all projects
+app.get("/projects", async (req, res) => {
+	const user_id = req.headers["user-id"]; // Get user_id from request headers
+
+	if (!user_id) {
+		return res.status(400).json({ error: "Missing user ID" });
+	}
+
+	try {
+		await client.connect();
+		const db = client.db("test");
 		const collection = db.collection("projects");
-
-        // Fetch projects associated with the user
-		const projects = await collection.find({ userId }).toArray(); // Assuming `userId` field exists in the projects collection
-
-        if (projects.length === 0) {
-            return res.status(404).json({ message: "No projects found for this user" });
-        }
-
+		// Fetch projects only for the logged-in user
+		const projects = await collection
+			.find({ owner_id: parseInt(user_id) })
+			.toArray();
 		res.status(200).json(projects);
 	} catch (error) {
 		console.error("Error fetching projects:", error);
@@ -176,36 +203,40 @@ app.get("/projects", authenticate, async (req, res) => {
 	}
 });
 
-app.post("/webhook", authenticate, async (req, res) => {
-	const { branch, commit } = req.body;
-
-	console.log(`Webhook triggered for branch: ${branch}`);
-	console.log(`Commit hash: ${commit}`);
+// API to fetch project details by projectName
+app.get("/projects/:projectName", async (req, res) => {
+	const { projectName } = req.params;
 
 	try {
-		// Here, we can perform a git pull or any necessary setup before running tests.
-		console.log("Pulling the latest changes...");
+		await client.connect();
+		const db = client.db("test");
+		const projectsCollection = db.collection("projects");
 
-		// Example: you might want to ensure the local repository is up-to-date
-		// You can use an appropriate Git command or library (e.g., nodegit) to fetch/pull latest changes if needed.
-		// await runGitCommand('git pull origin ' + branch);
+		// Find the project by projectName
+		const project = await projectsCollection.findOne({ projectName });
+		if (!project) {
+			return res.status(404).json({ message: "Project not found" });
+		}
 
-		// Now, run the tests (via your previously defined function)
-		console.log("Running tests...");
-		await runTestsOnLocalRepo(); // Call the function to run the tests inside Docker containers
-
-		// Send back a successful response
-		res.status(200).json({ message: "Tests started successfully" });
+		res.status(200).json(project);
 	} catch (error) {
-		console.error("Failed to run tests:", error);
-		res.status(500).json({ error: "Failed to start tests" });
+		console.error("Error fetching project details:", error);
+		res.status(500).json({ error: "Failed to fetch project details" });
+	} finally {
+		await client.close();
 	}
 });
 
 // API to fetch test cases from MongoDB
-app.get("/get-scripts", authenticate, async (req, res) => {
+app.post("/get-scripts", async (req, res) => {
 	try {
-		const scripts = await dbQuery.queryAllData("scripts"); // Call queryAllData function
+		const { proj_id } = req.body;
+
+		if (!proj_id) {
+			return res.status(400).json({ error: "Missing proj_id" });
+		}
+
+		const scripts = await dbQuery.queryDataByproj_id("scripts", proj_id);
 		res.json(scripts);
 	} catch (error) {
 		console.error("Error fetching test cases from MongoDB:", error);
@@ -225,7 +256,7 @@ app.post("/api/login", async (req, res) => {
 		const usersCollection = db.collection("users");
 
 		// Find user by username
-		const user = await usersCollection.findOne({ name: username });
+		const user = await usersCollection.findOne({ username: username });
 		if (!user) {
 			return res.status(404).json({ message: "User not found" });
 		}
@@ -241,7 +272,12 @@ app.post("/api/login", async (req, res) => {
 			expiresIn: "1h",
 		});
 
-		res.status(200).json({ message: "Login successful", token });
+		res.status(200).json({
+			message: "Login successful",
+			token,
+			userid: user.userid,
+			role: user.role,
+		});
 	} catch (error) {
 		console.error("Error during login:", error);
 		res.status(500).json({ error: "Internal server error" });
@@ -254,18 +290,13 @@ app.post("/api/login", async (req, res) => {
 app.post("/api/register", async (req, res) => {
 	const { username, email, password, role } = req.body;
 
-	// Validate role
-	if (!roles[role]) {
-		return res.status(400).json({ message: "Invalid role" });
-	}
-
 	try {
 		await client.connect();
 		const db = client.db("test");
 		const usersCollection = db.collection("users");
 
 		// Check if username already exists
-		const existingUser = await usersCollection.findOne({ name: username });
+		const existingUser = await usersCollection.findOne({ username });
 		if (existingUser) {
 			return res.status(400).json({ message: "Username already exists" });
 		}
@@ -276,9 +307,10 @@ app.post("/api/register", async (req, res) => {
 		// Insert new user
 		const result = await usersCollection.insertOne({
 			userid: new Date().getTime(), // Generate unique userid
-			name: username,
+			username,
 			email,
 			password: hashedPassword,
+			role, // Assign role to user
 		});
 
 		res.status(201).json({
@@ -290,6 +322,58 @@ app.post("/api/register", async (req, res) => {
 		res.status(500).json({ error: "Internal server error" });
 	} finally {
 		await client.close();
+	}
+});
+
+// API to delete project
+app.post("/delete-project", async (req, res) => {
+	try {
+		const { project } = req.body;
+
+		if (!project || !project.proj_id) {
+			console.error("Invalid project data");
+			return res.status(400).json({ error: "Invalid project data" });
+		}
+
+		await client.connect();
+		console.log("Connected to MongoDB");
+
+		const db = client.db("test");
+		console.log("Selected database");
+
+		const projectsCollection = db.collection("projects");
+		const scriptsCollection = db.collection("scripts");
+		const testResultsCollection = db.collection("test_results");
+
+		console.log("Deleting project");
+		const projectDeleteResult = await projectsCollection.deleteOne({
+			proj_id: project.proj_id,
+		});
+		console.log("Project deleted:", projectDeleteResult);
+
+		console.log("Deleting associated scripts");
+		const scriptDeleteResult = await scriptsCollection.deleteMany({
+			proj_id: project.proj_id,
+		});
+		console.log("Scripts deleted:", scriptDeleteResult);
+
+		console.log("Deleting associated test results");
+		const testResultDeleteResult = await testResultsCollection.deleteMany({
+			proj_id: project.proj_id,
+		});
+		console.log("Test results deleted:", testResultDeleteResult);
+
+		res.status(200).json({ message: "Project deleted successfully" });
+	} catch (error) {
+		console.error("Error deleting project:", error);
+		res.status(500).json({ error: "Internal Server Error" });
+	} finally {
+		try {
+			await client.close();
+			console.log("Disconnected from MongoDB");
+		} catch (error) {
+			console.error("Error closing MongoDB connection:", error);
+		}
 	}
 });
 

@@ -1,10 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import './NavbarLoggedIn.css';
 
 const NavbarLoggedIn = () => {
     const navigate = useNavigate(); // Initialize navigate function
     const [showLogoutModal, setShowLogoutModal] = useState(false); // State to manage the modal visibility
+
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+      const [username, setUsername] = useState("");
+    
+      useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+          setIsLoggedIn(true);
+          setUsername(localStorage.getItem("username"));
+        }
+      }, []);
 
     const handleLogout = () => {
         localStorage.removeItem('authToken'); // Clear the authentication token from localStorage
@@ -19,10 +30,12 @@ const NavbarLoggedIn = () => {
             <img src="/src/assets/Logo-ocbc.png" alt="Logo" className="logo-image" />
 
             <nav className="navbar">
+            <span>Welcome, {username}!</span>
                 {/* Logout Link */}
                 <a href="/" className="logout-link" onClick={handleLogout}>
                     Logout
                 </a>
+
 
                 {/* Profile Picture with Link to Account Page */}
                 <a href="/profile">

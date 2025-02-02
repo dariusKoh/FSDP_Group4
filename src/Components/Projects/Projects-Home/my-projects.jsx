@@ -21,6 +21,8 @@ export default function MyProjects({ projects, add, title, desc, onProjectSelect
     const handleCardClick = (id, name) => {
         setSelectedProject(id);
         onProjectSelect(name);
+        setActiveState("Project Overview");
+        onProjectSelect(project.proj_id, project.projectName, "myProjects")
     };
 
     const handleCloseCreateProject = () => {
@@ -42,13 +44,14 @@ export default function MyProjects({ projects, add, title, desc, onProjectSelect
                         <div className="projList">
                         {projects.map((project, index) => (
                             <AddProject
-                                key={index}
+                                key={project._id} // Use MongoDB's unique `_id` as the key
                                 id={project.proj_id}
-                                name={project.projectName} // Access project name directly
-                                onClick={() => onProjectSelect(project.projectName)} // Pass project name only
+                                name={project.projectName}
+                                onClick={() => onProjectSelect(project.proj_id, project.projectName, "myProjects")} // Pass proj_id
                             />
                         ))}
 
+                        
                             {add && (
                                 <AddProject
                                     name={null}

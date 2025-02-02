@@ -20,7 +20,7 @@ async function collectionExists(dbo, collectionName) {
   
   // Function to drop collections if they exist
   async function dropCollections(dbo) {
-    const collections = ['projects', 'scripts', 'test_results'];
+    const collections = ['projects', 'scripts', 'test_results', 'users'];
   
     for (const collection of collections) {
       const exists = await collectionExists(dbo, collection);
@@ -36,7 +36,7 @@ async function collectionExists(dbo, collectionName) {
   
   // Function to create collections if they do not exist
   async function createCollections(dbo) {
-    const collections = ['projects', 'scripts', 'test_results'];
+    const collections = ['projects', 'scripts', 'test_results', 'users'];
   
     for (const collection of collections) {
       const exists = await collectionExists(dbo, collection);

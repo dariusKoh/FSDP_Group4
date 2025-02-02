@@ -5,7 +5,7 @@ import MyProjects from "./my-projects";
 import './project-home.css';
 import Overview from "../../ProjectOverview/overview";
 
-export default function ProjectHome({ setCurrentProject, setActiveState }) {
+export default function ProjectHome({ updateActiveState, proj_id, setproj_id, setCurrentProject, setActiveState }) {
     const el = useRef(null);
     const [selectedProject, setSelectedProject] = useState(null);
     const [projects, setProjects] = useState([]); // Manage projects state here
@@ -14,8 +14,8 @@ export default function ProjectHome({ setCurrentProject, setActiveState }) {
     // Fetch projects from the backend
     useEffect(() => {
         const fetchProjects = async () => {
-            const token = localStorage.getItem('authToken');  // Retrieve the token from localStorage
-            if (!token) {
+            const user_id = localStorage.getItem("user_id"); // Retrieve user_id from localStorage
+            if (!user_id) {
                 console.error("User is not authenticated");
                 return;
             }
@@ -24,35 +24,25 @@ export default function ProjectHome({ setCurrentProject, setActiveState }) {
                 const response = await fetch('http://localhost:3001/projects', {
                     method: 'GET',
                     headers: {
-                        'Authorization': `Bearer ${token}`, // Include the token in the request header
+                        'Content-Type': 'application/json',
+                        'User-ID': user_id, // Send user_id in headers
                     },
                 });
+    
+                if (!response.ok) {
+                    throw new Error("Failed to fetch projects");
+                }
+    
                 const data = await response.json();
-                setProjects(data); // Set the fetched projects into state
+                setProjects(data); // Set the filtered projects
             } catch (error) {
                 console.error("Error fetching projects:", error);
             }
-            //Implementation of token (WIP)
-            // try {
-            //     const token = localStorage.getItem('token'); // if token is stored in localStorage
-            //     const response = await fetch('http://localhost:3001/projects', {
-            //         headers: {
-            //             Authorization: `Bearer ${token}`,
-            //         },
-            //     });
-            //     if (response.ok) {
-            //         const data = await response.json();
-            //         setProjects(data);
-            //     } else {
-            //         console.error("Failed to fetch projects:", await response.text());
-            //     }
-            // } catch (error) {
-            //     console.error("Error fetching projects:", error);
-            // }
         };
     
         fetchProjects();
-    }, []);  // Runs once when component mounts
+    }, []);
+    
 
     useEffect(() => {
         const typed = new Typed(el.current, {
@@ -70,12 +60,17 @@ export default function ProjectHome({ setCurrentProject, setActiveState }) {
         };
     }, []);
 
-    const handleProjectSelect = (projectName, category) => {
+    const handleProjectSelect = (project_Id, projectName, category) => {
         setSelectedProject(projectName);
         setCurrentCategory(category);
         setCurrentProject(projectName);
+        setproj_id(project_Id); // Store proj_id
         setActiveState(projectName);
+        updateActiveState(projectName);
+        console.log("Selected Project ID:", project_Id); // Debugging
     };
+    
+    
 
     const handleAddNewProject = (newProject) => {
         setProjects([...projects, newProject]);
@@ -91,7 +86,7 @@ export default function ProjectHome({ setCurrentProject, setActiveState }) {
     return (
         <div>
             {selectedProject ? (
-                <Overview projName={selectedProject} lastDate="11/12/2024" onClose={handleCloseProject} />
+                <Overview proj_id={proj_id} projName={selectedProject} lastDate="11/12/2024" onClose={handleCloseProject} />
             ) : (
                 <section className="projectHome">
                     <span className="mainHead" ref={el} />

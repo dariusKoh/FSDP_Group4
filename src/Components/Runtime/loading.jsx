@@ -5,7 +5,7 @@ import LoadingBar from '../../assets/Loading-bar.json';
 import Typed from 'typed.js';
 import './loading.css';
 
-function LoadingScreen({ logs }) {
+function LoadingScreen() {
     const el = useRef(null);
 
     useEffect(() => {
@@ -59,7 +59,6 @@ function LoadingScreen({ logs }) {
                     <span ref={el} />
                 </div>
                 {LoadingBarAnimation}
-                <pre className="logOutput">{logs}</pre>
             </section>
         </Fragment>
     );

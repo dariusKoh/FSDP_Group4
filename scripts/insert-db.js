@@ -19,7 +19,7 @@ const client = new MongoClient(constants.MONGO_URI, {
 	},
 });
 
-async function pushResults() {
+async function pushResults(proj_id, username) {
 	console.log("insert-db.js run");
 	try {
 		// Connect the client to the server (optional starting in v4.7)
@@ -39,7 +39,7 @@ async function pushResults() {
 		async function getUserByName(name) {
 			try {
 				const user = await usersCollection.findOne(
-					{ name },
+					{ username },
 					{ projection: { _id: 0, userid: 1, name: 1 } }
 				);
 				return user;
@@ -49,7 +49,6 @@ async function pushResults() {
 		}
 
 		// Get the current user
-		const username = "teoym";
 		const user = await getUserByName(username);
 		if (!user) {
 			console.log("User not found");
@@ -69,14 +68,17 @@ async function pushResults() {
 		); // Flattening nested testResults
 		const perfStats = obj.testResults[0].perfStats; // Performance stats from the first test suite
 
+		const summariesMap = {};
+
 		const aiSummary = await summuriseFailureMessages(testResults);
 		if (aiSummary.success) {
 			console.log("\n\nGenerated Summaries:");
 			// TODO: Insert summaries into the database
 
 			// Store the summaries in a map for quick lookup
-			const summariesMap = {};
+
 			aiSummary.summaries.forEach((summary) => {
+				summariesMap[summary.testId] = summary.summary;
 				console.log(`Test ${summary.testId}:`);
 				console.log(`Summary: ${summary.summary}`);
 				console.log("-------------------");
@@ -142,7 +144,8 @@ async function pushResults() {
 				failureMessages,
 				failureDetails,
 				summary, // Add the AI-generated summary
-				userid: user.userid, // Assuming `user` is defined elsewhere
+				userid: user.userid, // Assuming `user` is defined elsewhere,
+				proj_id,
 				createdAt,
 			};
 		});
